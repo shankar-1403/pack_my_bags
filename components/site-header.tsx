@@ -38,7 +38,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
     const observer = new ResizeObserver(setHeight);
     if (header) observer.observe(header);
 
-    const onScroll = () => setSolid(!onHome || window.scrollY > 12);
+    const onScroll = () => setSolid(!onHome || window.scrollY > 12 || document.documentElement.dataset.intro === "on");
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {

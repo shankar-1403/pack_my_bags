@@ -4,8 +4,24 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import type { Post } from "@/lib/types";
 
-const stitches = [0, 1, 2, 3, 4, 5, 6];
-const coverEdge = Array.from({ length: 11 }, (_, layer) => layer);
+const PAPER = "#fbf8f2";
+const PAPER_BACK = "#f3ecdf";
+const BOARD = "#163028";
+const GILT = "#d9bb86";
+const EDGE_TONES = ["#f4eee3", "#f0e9dc", "#ece4d5", "#e8dfce", "#e4d9c7", "#dfd3bf"];
+const BLOCK_MIN = 1.5;
+const BLOCK_MAX = 6;
+const BOARD_EDGE = 3;
+const BOARD_BASE = 2;
+const COVER_DEPTH = 10;
+const COVER_RADIUS = 20;
+const ARC_STEPS = 6;
+const EDGE_DARK = "#122a22";
+const EDGE_LIGHT = "#244a3f";
+
+const px = (n: number) => `${n.toFixed(2)}px`;
+const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 export function JournalShelf({ posts }: { posts: Post[] }) {
   const root = useRef<HTMLDivElement>(null);
@@ -15,192 +31,310 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
     const node = root.current;
     if (!node) return;
 
-    const leaves = [...node.querySelectorAll<HTMLElement>("[data-leaf]")];
-    const left = node.querySelector<HTMLElement>("[data-left]");
-    const right = node.querySelector<HTMLElement>("[data-right]");
-    const spine = node.querySelector<HTMLElement>("[data-spine]");
-    const folio = node.querySelector<HTMLElement>("[data-folio]");
+    const stage = node.querySelector<HTMLElement>("[data-stage]");
+    const pin = node.querySelector<HTMLElement>("[data-pin]");
+    const ground = node.querySelector<HTMLElement>("[data-ground]");
+    const folio =node.querySelector<HTMLElement>("[data-folio]");
+    const bar = node.querySelector<HTMLElement>("[data-bar]");
+    const leaves = [...node.querySelectorAll<HTMLElement>("[data-leaf]")].map((leaf) => ({
+      leaf,
+      shades: [...leaf.querySelectorAll<HTMLElement>("[data-shade]")],
+    }));
+    const half = node.querySelector<HTMLElement>("[data-half]");
+    const blocks = (["left", "right"] as const).map((side) => ({
+      board: node.querySelector<HTMLElement>(`[data-board="${side}"]`),
+      layers: [...node.querySelectorAll<HTMLElement>(`[data-stack="${side}"]`)].map((el) => ({
+        el,
+        f: Number(el.dataset.step) / EDGE_TONES.length,
+      })),
+    }));
+    const stories = Math.max(posts.length, 1);
+    const last = Math.max(leaves.length - 1, 1);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let target = 0;
+    let current = 0;
     let frame = 0;
+    let pageWidth = 1;
 
-    const update = () => {
-      frame = 0;
+    // Widen from the spine only, so the stack shows on the fore-edge while the gutter and bottom stay level.
+    const widen = (dx: number, base = 0) => `translate3d(0, ${base}px, 0) scaleX(${(pageWidth + dx) / pageWidth})`;
+
+    const measure = () => {
+      pageWidth = half?.offsetWidth || 1;
       const rect = node.getBoundingClientRect();
-      const bookHeight = right?.offsetHeight ?? 0;
-      const span = Math.max(rect.height - bookHeight, 1);
-      const scrolled = Math.min(Math.max(-rect.top, 0), span);
-      const cursor = leaves.length < 2 ? 0 : (scrolled / span) * (leaves.length - 1);
-      const pageWidth = right?.getBoundingClientRect().width ?? 0;
-      const cover = Math.min(1, Math.max(0, cursor));
-      const shift = 1 - (1 - Math.min(1, cover / 0.36)) ** 3;
-      const coverTurn = Math.min(1, Math.max(0, (cover - 0.28) / 0.72));
+      const span = Math.max(rect.height - (pin?.offsetHeight ?? 0), 1);
+      target = (clamp(-rect.top, 0, span) / span) * last;
+    };
 
-      const opened = coverTurn >= 0.995;
-      if (left) left.style.width = `${shift * pageWidth}px`;
-      const sheet = left?.querySelector<HTMLElement>("[data-sheet]");
-      if (sheet) sheet.style.opacity = opened ? "1" : "0";
-      node.querySelectorAll<HTMLElement>("[data-shadow]").forEach((shadow) => {
-        shadow.style.opacity = opened ? "1" : "0";
-      });
-      if (spine) {
-        spine.style.width = opened ? "0px" : "40px";
-        spine.style.opacity = opened ? "0" : "1";
-      }
+    const paint = (cursor: number) => {
+      const open = easeInOut(clamp(cursor / 0.85));
+      if (stage) stage.style.transform = `translate3d(${(open - 1) * 25}%, 0, 0)`;
+      if (ground) ground.style.transform = `translateX(${(1 - open) * 25}%) scaleX(${0.46 + 0.46 * open})`;
 
-      leaves.forEach((leaf, index) => {
-        const local = index === 0 ? coverTurn : Math.min(1, Math.max(0, cursor - index));
-        const turned = local >= 0.995;
-        leaf.style.visibility = turned ? "hidden" : "visible";
-        if (index === 0) {
-          leaf.style.right = "";
-          leaf.style.width = "";
-          const fade = local <= 0.01 || local >= 0.99 ? 0 : 1;
-          leaf.querySelectorAll<HTMLElement>("[data-edge]").forEach((edge) => {
-            edge.style.opacity = String(fade);
-          });
-        }
+      // The story showing on the right stays clickable mid-scroll; once a page visibly lifts, the one beneath takes over.
+      const base = Math.floor(cursor);
+      const active = easeInOut(clamp(cursor - base)) < 0.15 ? base : base + 1;
+
+      let turned = 0;
+      leaves.forEach(({ leaf, shades }, index) => {
+        const local = easeInOut(clamp(cursor - index));
+        if (index > 0) turned += local;
         leaf.style.transform = `rotateY(${local * -180}deg)`;
-        leaf.style.zIndex = local > 0.5 ? String(index) : String(100 + leaves.length - index);
-        leaf.style.pointerEvents = !turned && index === Math.min(leaves.length - 1, Math.round(cursor)) ? "auto" : "none";
+        leaf.style.zIndex = String(local > 0.5 ? index + 1 : 200 - index);
+        leaf.style.pointerEvents = index === active ? "auto" : "none";
+        const shade = String(Math.sin(local * Math.PI) * 0.28);
+        shades.forEach((s) => (s.style.opacity = shade));
       });
 
-      if (folio) {
-        const story = Math.max(0, Math.min(posts.length, Math.round(cursor)));
-        folio.textContent = story === 0 ? "Cover" : `${story} / ${posts.length}`;
-      }
+      const depths = [BLOCK_MIN + (BLOCK_MAX * turned) / stories, BLOCK_MIN + (BLOCK_MAX * (stories - turned)) / stories];
+      blocks.forEach(({ board, layers }, i) => {
+        const depth = depths[i];
+        layers.forEach(({ el, f }) => (el.style.transform = widen(depth * f)));
+        if (board) board.style.transform = widen(depth + BOARD_EDGE, BOARD_BASE);
+      });
+
+      const story = Math.round(cursor);
+      if (folio) folio.textContent = story === 0 ? "Cover" : `Story ${story} of ${posts.length}`;
+      if (bar) bar.style.transform = `scaleX(${cursor / last})`;
+    };
+
+    const tick = () => {
+      const diff = target - current;
+      current = reduced.matches || Math.abs(diff) < 0.0008 ? target : current + diff * 0.12;
+      paint(current);
+      frame = current === target ? 0 : window.requestAnimationFrame(tick);
     };
 
     const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(update);
+      measure();
+      if (!frame) frame = window.requestAnimationFrame(tick);
     };
 
-    update();
-    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    measure();
+    current = target;
+    paint(current);
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
-      document.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, [posts]);
 
   return (
-    <div ref={root} className="relative mt-10" style={{ height: `${turns * 200 + 80}vh` }}>
-      <div className="sticky top-[calc(var(--site-header-height,7.5rem)+1rem)]">
-        <div data-book className="mx-auto flex h-[min(62vh,560px)] items-stretch justify-center">
-          <div data-left className="relative h-full" style={{ width: 0 }}>
-            <div className="pointer-events-none absolute inset-0" style={{ clipPath: "inset(calc(100% - 42px) 0px -14px -8px)" }}>
-              <span
-                data-shadow
-                aria-hidden
-                className="absolute inset-0 rounded-l-[28px] bg-[#f7f1e6]"
-                style={{ opacity: 0, filter: "drop-shadow(0 5px 2px rgba(154, 148, 140, 0.9))" }}
-              />
-            </div>
-            <div className="relative h-full overflow-hidden">
-              <div data-sheet className="relative h-full rounded-l-[28px] bg-[#f7f1e6]" style={{ opacity: 0 }}>
-                <span className="pointer-events-none absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-[#6a655f]/80 to-transparent" />
+    <div ref={root} className="relative mt-10" style={{ height: `${turns * 160 + 100}vh` }}>
+      <div
+        data-pin
+        className="sticky flex flex-col items-center justify-center overflow-hidden"
+        style={{
+          top: "var(--site-header-height, 5rem)",
+          height: "calc(100dvh - var(--site-header-height, 5rem))",
+          ["--page-w" as string]: "min(420px, calc(50vw - 1.25rem), calc((100dvh - var(--site-header-height, 5rem) - 11rem) * 0.72))",
+        }}
+      >
+        <div data-stage className="relative flex will-change-transform" style={{ width: "calc(var(--page-w) * 2)", height: "calc(var(--page-w) / 0.72)" }}>
+          {/* ground shadow */}
+          <span
+            data-ground
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 -bottom-6 h-10 rounded-[50%] bg-[#3b2f22]/25 blur-2xl"
+            style={{ transform: "translateX(25%) scaleX(0.46)" }}
+          />
+
+          <div aria-hidden className="h-full w-1/2" />
+
+          {/* right side: page block + leaves */}
+          <div data-half className="relative h-full w-1/2 [perspective:3200px]">
+            <PageBlock side="right" />
+
+            <article data-leaf className="absolute inset-0 origin-left will-change-transform [transform-style:preserve-3d]">
+              <div
+                className="absolute inset-0 overflow-hidden rounded-r-[20px] [backface-visibility:hidden]"
+                style={{ transform: `translateZ(${COVER_DEPTH / 2}px)` }}
+              >
+                <CoverFace />
+                <span data-shade aria-hidden className="pointer-events-none absolute inset-0 bg-black" style={{ opacity: 0 }} />
               </div>
-            </div>
-          </div>
-          <div className="flex h-full shrink-0">
-            <div data-spine className="relative h-full w-10 shrink-0 overflow-hidden bg-[#163028]">
-              <span className="absolute inset-x-0 top-0 h-2 bg-[#d4652f]" />
-              <span className="absolute inset-x-0 bottom-0 h-2 bg-[#d4652f]" />
-              <span className="absolute top-6 bottom-6 left-1/2 w-px -translate-x-1/2 bg-[#c4a36a]/80" />
-              <span className="absolute inset-y-8 left-0 flex w-full flex-col justify-between">
-                {stitches.map((stitch) => (
-                  <span key={stitch} className="relative mx-auto block h-4 w-6">
-                    <span className="absolute top-0 left-0 h-4 w-px bg-[#c4a36a]" />
-                    <span className="absolute top-0 right-0 h-4 w-px bg-[#c4a36a]" />
-                    <span className="absolute top-0 left-0 h-px w-6 bg-[#c4a36a]" />
-                    <span className="absolute bottom-0 left-0 h-px w-6 bg-[#c4a36a]" />
-                  </span>
-                ))}
-              </span>
-              <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#163028] px-0.5 font-header text-[9px] font-semibold uppercase tracking-[0.22em] text-[#e7c99a] [writing-mode:vertical-rl] rotate-180">
-                Journal
-              </span>
-            </div>
-            <div data-right className="relative h-full w-[min(420px,calc((100vw-6rem)/2))] [perspective:1800px] [transform-style:preserve-3d]">
-            <div className="pointer-events-none absolute inset-0 z-0" style={{ clipPath: "inset(calc(100% - 42px) -8px -14px 0px)" }}>
-              <span
-                data-shadow
-                aria-hidden
-                className="absolute inset-0 bg-[#fbf8f3]"
-                style={{ opacity: 0, borderRadius: "0 28px 28px 0", filter: "drop-shadow(0 5px 2px rgba(154, 148, 140, 0.9))" }}
-              />
-            </div>
-            <article data-leaf className="absolute inset-0 origin-left [transform-style:preserve-3d]">
-              <div data-face="front" className="absolute inset-0 overflow-hidden [backface-visibility:hidden]" style={{ borderRadius: "0 28px 28px 0", transform: "translateZ(10px)" }}>
-                <CoverFace side="right" />
+              <CoverEdge />
+              <div
+                className="absolute inset-0 [backface-visibility:hidden]"
+                style={{ transform: `rotateY(180deg) translateZ(${COVER_DEPTH / 2}px)` }}
+              >
+                <PageBlock side="left" />
+                <div className="absolute inset-0 overflow-hidden rounded-l-[18px]" style={{ background: PAPER_BACK }}>
+                  <Endpaper />
+                  <span data-shade aria-hidden className="pointer-events-none absolute inset-0 bg-black" style={{ opacity: 0 }} />
+                </div>
               </div>
-              <span aria-hidden className="absolute inset-0 [backface-visibility:hidden]" style={{ transform: "rotateY(180deg)" }}>
-                <span className="relative block h-full rounded-l-[28px] bg-[#efe6d8]">
-                  <span className="pointer-events-none absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-[#6a655f]/70 to-transparent" />
-                </span>
-              </span>
-              <span data-edge aria-hidden className="pointer-events-none absolute inset-0 [transform-style:preserve-3d]" style={{ opacity: 0 }}>
-                {coverEdge.map((layer) => (
-                  <span
-                    key={layer}
-                    className="absolute inset-0 box-border border-r-[10px] border-y-0 border-l-0"
-                    style={{ borderColor: "#1b3a33", borderRadius: "0 28px 28px 0", transform: `translateZ(${layer}px)` }}
-                  />
-                ))}
-              </span>
             </article>
-            {posts.map((post) => (
-              <article key={post.id} data-leaf className="absolute inset-0 origin-left [transform-style:preserve-3d]">
-                <Link href={`/blog/${post.slug}`} data-face="front" className="absolute inset-0 overflow-hidden [backface-visibility:hidden]" style={{ borderRadius: "0 28px 28px 0" }}>
-                  <StoryFace post={post} side="right" />
+
+            {posts.map((post, i) => (
+              <article key={post.id} data-leaf className="absolute inset-0 origin-left will-change-transform [transform-style:preserve-3d]">
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group absolute inset-0 overflow-hidden rounded-r-[18px] outline-none [backface-visibility:hidden] focus-visible:ring-2 focus-visible:ring-clay"
+                >
+                  <StoryFace post={post} />
+                  <span data-shade aria-hidden className="pointer-events-none absolute inset-0 bg-black" style={{ opacity: 0 }} />
                 </Link>
-                <span aria-hidden className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                  <span className="relative block h-full rounded-l-[28px] bg-[#efe6d8]">
-                  <span className="pointer-events-none absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-[#6a655f]/70 to-transparent" />
-                </span>
-                </span>
+                <div aria-hidden className="absolute inset-0 overflow-hidden rounded-l-[18px] [backface-visibility:hidden] [transform:rotateY(180deg)]" style={{ background: PAPER_BACK }}>
+                  <span className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
+                  <span className="absolute bottom-6 left-7 font-header text-[10px] font-semibold uppercase tracking-[0.2em] text-mist/80">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="absolute inset-x-10 top-1/2 -translate-y-1/2 text-center font-serif text-xl leading-snug text-ink/45 italic">
+                    {post.excerpt.split(".")[0]}.
+                  </p>
+                  <span data-shade className="pointer-events-none absolute inset-0 bg-black" style={{ opacity: 0 }} />
+                </div>
               </article>
             ))}
           </div>
-          </div>
         </div>
-        <p data-folio className="pointer-events-none mt-4 text-center font-header text-[11px] font-semibold uppercase tracking-[0.18em] text-mist">
-          Cover
+
+        <div className="mt-10 flex w-40 flex-col items-center gap-3">
+          <p data-folio className="font-header text-[10px] font-semibold uppercase tracking-[0.24em] text-mist tabular-nums">
+            Cover
+          </p>
+          <span className="relative h-px w-full overflow-hidden bg-ink/10">
+            <span data-bar className="absolute inset-0 origin-left bg-clay" style={{ transform: "scaleX(0)" }} />
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PageBlock({ side }: { side: "left" | "right" }) {
+  const right = side === "right";
+  const shape = right ? "origin-top-left rounded-r-[18px]" : "origin-top-right rounded-l-[18px]";
+  const edgeLine = right ? "inset -1px -1px 0 rgba(110, 88, 60, 0.16)" : "inset 1px -1px 0 rgba(110, 88, 60, 0.16)";
+  return (
+    <>
+      <span
+        data-board={side}
+        aria-hidden
+        className={`absolute inset-0 ${right ? "origin-top-left rounded-r-[20px]" : "origin-top-right rounded-l-[20px]"}`}
+        style={{ background: BOARD }}
+      />
+      {[...EDGE_TONES].reverse().map((tone, i) => (
+        <span
+          key={tone}
+          data-stack={side}
+          data-step={EDGE_TONES.length - i}
+          aria-hidden
+          className={`absolute inset-0 ${shape}`}
+          style={{ background: tone, boxShadow: edgeLine }}
+        />
+      ))}
+    </>
+  );
+}
+
+// The board's outer rim as real 3D geometry: straight bands on the top, fore-edge and bottom, and short chords
+// tracing each rounded corner, so the cover reads as one solid slab at every angle.
+function CoverEdge() {
+  const t = COVER_DEPTH + 1;
+  const r = COVER_RADIUS;
+  const across = (deg: number) => `linear-gradient(${deg}deg, ${EDGE_DARK} 0%, ${EDGE_LIGHT} 50%, ${EDGE_DARK} 100%)`;
+  const step = Math.PI / 2 / ARC_STEPS;
+  const chord = 2 * r * Math.sin(step / 2) + 0.75;
+  const reach = r * Math.cos(step / 2);
+
+  const pieces: React.CSSProperties[] = [
+    { left: 0, right: r, top: -t / 2, height: t, transform: "rotateX(90deg)", background: across(180) },
+    { left: 0, right: r, bottom: -t / 2, height: t, transform: "rotateX(90deg)", background: across(180) },
+    { right: -t / 2, top: r, bottom: r, width: t, transform: "rotateY(90deg)", background: across(90) },
+  ];
+
+  for (let i = 0; i < ARC_STEPS * 2; i++) {
+    const bottom = i >= ARC_STEPS;
+    const angle = (bottom ? 0 : -Math.PI / 2) + step * ((i % ARC_STEPS) + 0.5);
+    const dx = reach * Math.cos(angle);
+    const dy = reach * Math.sin(angle);
+    pieces.push({
+      width: px(chord),
+      height: t,
+      right: px(r - dx - chord / 2),
+      ...(bottom ? { bottom: px(r - dy - t / 2) } : { top: px(r + dy - t / 2) }),
+      transform: `rotateZ(${((angle * 180) / Math.PI + 90).toFixed(2)}deg) rotateX(90deg)`,
+      background: across(180),
+    });
+  }
+
+  return (
+    <>
+      <span aria-hidden className="absolute inset-0 rounded-r-[20px]" style={{ background: EDGE_DARK }} />
+      {pieces.map((style, i) => (
+        <span key={i} aria-hidden className="absolute" style={style} />
+      ))}
+    </>
+  );
+}
+
+function CoverFace() {
+  return (
+    <div className="relative h-full text-cream" style={{ background: `radial-gradient(120% 80% at 70% 20%, #1f4238 0%, ${BOARD} 60%, #0f231d 100%)` }}>
+      <span className="absolute inset-y-0 left-0 w-7 bg-gradient-to-r from-black/35 via-black/10 to-transparent" />
+      <span className="absolute inset-y-0 left-7 w-px bg-white/10" />
+      <div className="absolute inset-5 left-10 rounded-[12px] border" style={{ borderColor: `${GILT}55` }} />
+      <div className="absolute inset-[26px] left-[46px] rounded-[9px] border" style={{ borderColor: `${GILT}26` }} />
+      <div className="relative flex h-full flex-col items-center justify-center pl-8 pr-6 text-center">
+        <p className="font-header text-[10px] font-semibold uppercase tracking-[0.32em]" style={{ color: GILT }}>
+          Pack my bags
         </p>
+        <span className="mt-5 block h-px w-10" style={{ background: GILT }} />
+        <h2 className="mt-5 font-serif text-4xl leading-[1.02] tracking-tight sm:text-5xl">
+          Stories
+          <br />
+          <span className="italic" style={{ color: "#f0dcb8" }}>from the desk</span>
+        </h2>
+        <p className="mt-5 max-w-[15rem] text-[13px] leading-6 text-cream/65">Notes on packing, pacing, and choosing a first group trip.</p>
+        <p className="absolute bottom-8 font-header text-[9px] uppercase tracking-[0.3em] text-cream/40">Scroll to open</p>
       </div>
     </div>
   );
 }
 
-function CoverFace({ side }: { side: "left" | "right" }) {
+function Endpaper() {
   return (
-    <div className={`relative h-full overflow-hidden bg-pine text-cream ${side === "left" ? "rounded-none" : ""}`}>
-      <div className={`absolute border border-[#e7c99a]/35 ${side === "right" ? "inset-y-4 right-4 left-0 rounded-r-[18px] border-l-0" : "inset-y-4 inset-x-4 border-x"}`} />
-      <span className="pointer-events-none absolute inset-y-0 left-0 w-5 bg-gradient-to-r from-black/25 to-transparent" />
-      <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-        <p className="font-header text-[11px] font-semibold uppercase tracking-[0.22em] text-[#f0c7b0]">Pack my bags</p>
-        <h2 className="mt-4 font-serif text-4xl leading-none tracking-tight sm:text-5xl">Stories from the desk</h2>
-        <p className="mt-4 max-w-xs text-sm leading-7 text-cream/75">Notes on packing, pacing, and choosing a first group trip.</p>
+    <div className="relative h-full">
+      <span className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: `radial-gradient(${BOARD} 1px, transparent 1px)`, backgroundSize: "14px 14px" }} />
+      <span className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
+      <div className="relative flex h-full flex-col items-center justify-center px-10 text-center">
+        <p className="font-header text-[10px] font-semibold uppercase tracking-[0.28em] text-clay">Ex libris</p>
+        <p className="mt-3 font-serif text-2xl italic text-ink/70">The Journal</p>
       </div>
     </div>
   );
 }
 
-function StoryFace({ post, side }: { post: Post; side: "left" | "right" }) {
+function StoryFace({ post }: { post: Post }) {
   return (
-    <div className={`relative flex h-full flex-col overflow-hidden bg-[#fbf8f3] ${side === "left" ? "rounded-none" : ""}`}>
-      <span className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5 bg-gradient-to-r from-[#6a655f]/80 to-transparent" />
-      <span className="relative block h-[46%] overflow-hidden">
-        <span aria-hidden className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url("${post.image}")` }} />
-      </span>
-      <span className="flex flex-1 flex-col px-6 py-4">
-        <span className="font-header text-[11px] font-semibold uppercase tracking-[0.16em] text-mist">
-          {new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · {post.readMinutes} min
+    <div className="relative flex h-full flex-col" style={{ background: PAPER }}>
+      <span className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-[#5c4a36]/20 to-transparent" />
+      <div className="p-4 pb-0">
+        <span className="relative block aspect-[4/3] overflow-hidden rounded-[10px]">
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-[1200ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]"
+            style={{ backgroundImage: `url("${post.image}")` }}
+          />
         </span>
-        <h2 className="mt-2 font-serif text-2xl leading-tight tracking-tight sm:text-3xl">{post.title}</h2>
-        <p className="mt-2 line-clamp-3 text-sm leading-6 text-ink/70">{post.excerpt}</p>
-      </span>
+      </div>
+      <div className="flex flex-1 flex-col px-6 pt-5 pb-6">
+        <span className="font-header text-[10px] font-semibold uppercase tracking-[0.2em] text-clay">
+          {new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · {post.readMinutes} min read
+        </span>
+        <h2 className="mt-3 font-serif text-2xl leading-[1.1] tracking-tight text-ink sm:text-[1.75rem]">{post.title}</h2>
+        <p className="mt-3 line-clamp-3 text-[13px] leading-6 text-ink/65">{post.excerpt}</p>
+        <span className="mt-auto inline-flex items-center gap-2 pt-4 font-header text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/70">
+          Read story
+          <span className="inline-block transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1">→</span>
+        </span>
+      </div>
     </div>
   );
 }

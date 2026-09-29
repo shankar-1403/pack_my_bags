@@ -4,6 +4,7 @@ import { DepartureBoard } from "@/components/departure-board";
 import { FaqList } from "@/components/faq-list";
 import { Frame } from "@/components/frame";
 import { HomeBanner } from "@/components/home-banner";
+import { TrolleyIntro } from "@/components/intro/trolley-intro";
 import { JournalStrip } from "@/components/journal-strip";
 import { PlacesGrid } from "@/components/places-grid";
 import { RoadNotes } from "@/components/road-notes";
@@ -47,12 +48,15 @@ export default function HomePage() {
 
   return (
     <div>
-      <HomeBanner
-        routeCount={trips.length}
-        startsFrom={lowest}
-        spotlight={spotlight}
-        companions={side}
-      />
+      <TrolleyIntro>
+        <HomeBanner
+          routeCount={trips.length}
+          startsFrom={lowest}
+          spotlight={spotlight}
+          companions={side}
+          fill
+        />
+      </TrolleyIntro>
 
       <Frame className="py-16">
         <div className="flex items-end justify-between gap-6">
