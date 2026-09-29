@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import type { Post } from "@/lib/types";
 
 const stitches = [0, 1, 2, 3, 4, 5, 6];
+const coverEdge = Array.from({ length: 11 }, (_, layer) => layer);
 
 export function JournalShelf({ posts }: { posts: Post[] }) {
   const root = useRef<HTMLDivElement>(null);
@@ -37,6 +38,9 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
       if (left) left.style.width = `${shift * pageWidth}px`;
       const sheet = left?.querySelector<HTMLElement>("[data-sheet]");
       if (sheet) sheet.style.opacity = opened ? "1" : "0";
+      node.querySelectorAll<HTMLElement>("[data-shadow]").forEach((shadow) => {
+        shadow.style.opacity = opened ? "1" : "0";
+      });
       if (spine) {
         spine.style.width = opened ? "0px" : "40px";
         spine.style.opacity = opened ? "0" : "1";
@@ -46,6 +50,14 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
         const local = index === 0 ? coverTurn : Math.min(1, Math.max(0, cursor - index));
         const turned = local >= 0.995;
         leaf.style.visibility = turned ? "hidden" : "visible";
+        if (index === 0) {
+          leaf.style.right = "";
+          leaf.style.width = "";
+          const fade = local <= 0.01 || local >= 0.99 ? 0 : 1;
+          leaf.querySelectorAll<HTMLElement>("[data-edge]").forEach((edge) => {
+            edge.style.opacity = String(fade);
+          });
+        }
         leaf.style.transform = `rotateY(${local * -180}deg)`;
         leaf.style.zIndex = local > 0.5 ? String(index) : String(100 + leaves.length - index);
         leaf.style.pointerEvents = !turned && index === Math.min(leaves.length - 1, Math.round(cursor)) ? "auto" : "none";
@@ -76,11 +88,23 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
     <div ref={root} className="relative mt-10" style={{ height: `${turns * 200 + 80}vh` }}>
       <div className="sticky top-[calc(var(--site-header-height,7.5rem)+1rem)]">
         <div data-book className="mx-auto flex h-[min(62vh,560px)] items-stretch justify-center">
-          <div data-left className="relative h-full overflow-hidden" style={{ width: 0 }}>
-            <div data-sheet className="h-full rounded-l-[28px] bg-[#f7f1e6] shadow-[6px_8px_18px_-12px_rgba(23,20,15,0.45)]" style={{ opacity: 0 }} />
+          <div data-left className="relative h-full" style={{ width: 0 }}>
+            <div className="pointer-events-none absolute inset-0" style={{ clipPath: "inset(calc(100% - 42px) 0px -14px -8px)" }}>
+              <span
+                data-shadow
+                aria-hidden
+                className="absolute inset-0 rounded-l-[28px] bg-[#f7f1e6]"
+                style={{ opacity: 0, filter: "drop-shadow(0 5px 2px rgba(154, 148, 140, 0.9))" }}
+              />
+            </div>
+            <div className="relative h-full overflow-hidden">
+              <div data-sheet className="relative h-full rounded-l-[28px] bg-[#f7f1e6]" style={{ opacity: 0 }}>
+                <span className="pointer-events-none absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-[#6a655f]/80 to-transparent" />
+              </div>
+            </div>
           </div>
           <div className="flex h-full shrink-0">
-            <div data-spine className="relative h-full w-10 shrink-0 overflow-hidden bg-[#163028] shadow-[inset_-8px_0_12px_rgba(0,0,0,0.4)]">
+            <div data-spine className="relative h-full w-10 shrink-0 overflow-hidden bg-[#163028]">
               <span className="absolute inset-x-0 top-0 h-2 bg-[#d4652f]" />
               <span className="absolute inset-x-0 bottom-0 h-2 bg-[#d4652f]" />
               <span className="absolute top-6 bottom-6 left-1/2 w-px -translate-x-1/2 bg-[#c4a36a]/80" />
@@ -99,12 +123,31 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
               </span>
             </div>
             <div data-right className="relative h-full w-[min(420px,calc((100vw-6rem)/2))] [perspective:1800px] [transform-style:preserve-3d]">
+            <div className="pointer-events-none absolute inset-0 z-0" style={{ clipPath: "inset(calc(100% - 42px) -8px -14px 0px)" }}>
+              <span
+                data-shadow
+                aria-hidden
+                className="absolute inset-0 bg-[#fbf8f3]"
+                style={{ opacity: 0, borderRadius: "0 28px 28px 0", filter: "drop-shadow(0 5px 2px rgba(154, 148, 140, 0.9))" }}
+              />
+            </div>
             <article data-leaf className="absolute inset-0 origin-left [transform-style:preserve-3d]">
-              <div data-face="front" className="absolute inset-0 overflow-hidden [backface-visibility:hidden]" style={{ borderRadius: "0 28px 28px 0" }}>
+              <div data-face="front" className="absolute inset-0 overflow-hidden [backface-visibility:hidden]" style={{ borderRadius: "0 28px 28px 0", transform: "translateZ(10px)" }}>
                 <CoverFace side="right" />
               </div>
-              <span aria-hidden className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                <span className="block h-full rounded-l-[28px] bg-[#efe6d8] shadow-[6px_8px_18px_-12px_rgba(23,20,15,0.45)]" />
+              <span aria-hidden className="absolute inset-0 [backface-visibility:hidden]" style={{ transform: "rotateY(180deg)" }}>
+                <span className="relative block h-full rounded-l-[28px] bg-[#efe6d8]">
+                  <span className="pointer-events-none absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-[#6a655f]/70 to-transparent" />
+                </span>
+              </span>
+              <span data-edge aria-hidden className="pointer-events-none absolute inset-0 [transform-style:preserve-3d]" style={{ opacity: 0 }}>
+                {coverEdge.map((layer) => (
+                  <span
+                    key={layer}
+                    className="absolute inset-0 box-border border-r-[10px] border-y-0 border-l-0"
+                    style={{ borderColor: "#1b3a33", borderRadius: "0 28px 28px 0", transform: `translateZ(${layer}px)` }}
+                  />
+                ))}
               </span>
             </article>
             {posts.map((post) => (
@@ -113,7 +156,9 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
                   <StoryFace post={post} side="right" />
                 </Link>
                 <span aria-hidden className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                  <span className="block h-full rounded-l-[28px] bg-[#efe6d8] shadow-[6px_8px_18px_-12px_rgba(23,20,15,0.45)]" />
+                  <span className="relative block h-full rounded-l-[28px] bg-[#efe6d8]">
+                  <span className="pointer-events-none absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-[#6a655f]/70 to-transparent" />
+                </span>
                 </span>
               </article>
             ))}
@@ -130,8 +175,9 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
 
 function CoverFace({ side }: { side: "left" | "right" }) {
   return (
-    <div className={`relative h-full overflow-hidden bg-pine text-cream shadow-[6px_8px_18px_-12px_rgba(23,20,15,0.65)] ${side === "left" ? "rounded-none" : ""}`}>
+    <div className={`relative h-full overflow-hidden bg-pine text-cream ${side === "left" ? "rounded-none" : ""}`}>
       <div className={`absolute border border-[#e7c99a]/35 ${side === "right" ? "inset-y-4 right-4 left-0 rounded-r-[18px] border-l-0" : "inset-y-4 inset-x-4 border-x"}`} />
+      <span className="pointer-events-none absolute inset-y-0 left-0 w-5 bg-gradient-to-r from-black/25 to-transparent" />
       <div className="flex h-full flex-col items-center justify-center px-6 text-center">
         <p className="font-header text-[11px] font-semibold uppercase tracking-[0.22em] text-[#f0c7b0]">Pack my bags</p>
         <h2 className="mt-4 font-serif text-4xl leading-none tracking-tight sm:text-5xl">Stories from the desk</h2>
@@ -143,8 +189,8 @@ function CoverFace({ side }: { side: "left" | "right" }) {
 
 function StoryFace({ post, side }: { post: Post; side: "left" | "right" }) {
   return (
-    <div className={`relative flex h-full flex-col overflow-hidden bg-[#fbf8f3] shadow-[6px_8px_18px_-12px_rgba(23,20,15,0.55)] ${side === "left" ? "rounded-none" : ""}`}>
-      <span className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-ink/10 to-transparent" />
+    <div className={`relative flex h-full flex-col overflow-hidden bg-[#fbf8f3] ${side === "left" ? "rounded-none" : ""}`}>
+      <span className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5 bg-gradient-to-r from-[#6a655f]/80 to-transparent" />
       <span className="relative block h-[46%] overflow-hidden">
         <span aria-hidden className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url("${post.image}")` }} />
       </span>

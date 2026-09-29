@@ -68,7 +68,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                     key={link.href}
                     href={link.href}
                     aria-current={current ? "page" : undefined}
-                    className={`rounded-full px-3.5 py-2 text-[13px] font-medium tracking-tight transition ${overBanner ? (current ? "bg-white/20 text-cream" : "text-cream/85 hover:bg-white/10 hover:text-cream") : current ? "bg-ink text-cream" : "text-ink/70 hover:bg-sand hover:text-ink"}`}
+                    className={`rounded-full px-3.5 py-2 text-[13px] font-medium tracking-tight transition ${overBanner ? (current ? "bg-white/20 text-cream" : "text-cream/85 hover:bg-white/10 hover:text-cream") : current ? "bg-pine text-cream" : "text-ink/70 hover:bg-sand hover:text-ink"}`}
                   >
                     {link.label}
                   </Link>
@@ -102,7 +102,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                     key={link.href}
                     href={link.href}
                     aria-current={current ? "page" : undefined}
-                    className={`block rounded-2xl px-3 py-3 text-sm font-medium ${overBanner ? (current ? "bg-white/20 text-cream" : "hover:bg-white/10") : current ? "bg-ink text-cream" : "hover:bg-sand"}`}
+                    className={`block rounded-2xl px-3 py-3 text-sm font-medium ${overBanner ? (current ? "bg-white/20 text-cream" : "hover:bg-white/10") : current ? "bg-pine text-cream" : "hover:bg-sand"}`}
                     onClick={() => setOpen(false)}
                   >
                     {link.label}

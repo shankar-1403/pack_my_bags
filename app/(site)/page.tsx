@@ -6,6 +6,7 @@ import { Frame } from "@/components/frame";
 import { HomeBanner } from "@/components/home-banner";
 import { JournalStrip } from "@/components/journal-strip";
 import { PlacesGrid } from "@/components/places-grid";
+import { RoadNotes } from "@/components/road-notes";
 import { getFaqs, getPosts, getReviews, publishedTrips } from "@/lib/content";
 
 const reasons = [
@@ -87,22 +88,10 @@ export default function HomePage() {
         <PlacesGrid places={destinations} />
       </Frame>
 
-      <Frame className="grid gap-8 pb-8 lg:grid-cols-[0.7fr_1.3fr]">
-        <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-clay">From the road</p>
-          <h2 className="mt-2 font-serif text-4xl tracking-tight">Notes sent after the drop.</h2>
-        </div>
-        <div className="grid gap-4">
-          {reviews.map((review) => (
-            <blockquote key={review.id} className="rounded-[28px] border border-line bg-cream p-6">
-              <p className="text-sm leading-7 text-ink/80">“{review.quote}”</p>
-              <footer className="mt-4 text-sm">
-                <span className="font-medium">{review.name}</span>
-                <span className="text-mist"> · {review.trip}</span>
-              </footer>
-            </blockquote>
-          ))}
-        </div>
+      <Frame className="pb-8">
+        <p className="text-xs uppercase tracking-[0.22em] text-clay">From the road</p>
+        <h2 className="mt-2 max-w-xl font-serif text-4xl tracking-tight">Notes sent after the drop.</h2>
+        <RoadNotes reviews={reviews} />
       </Frame>
 
       <Frame className="py-16">

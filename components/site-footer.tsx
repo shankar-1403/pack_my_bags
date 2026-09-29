@@ -44,7 +44,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
       <div className="border-t border-white/10">
         <Frame className="flex flex-col gap-2 py-5 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} Pack my bags. Group trips with fixed dates and captains who stay with you.</p>
-          <p>New Delhi</p>
+          <p>Mumbai</p>
         </Frame>
       </div>
     </footer>
