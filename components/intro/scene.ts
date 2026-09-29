@@ -18,7 +18,7 @@ const LEG_LANE = -0.22;
 const THIGH = 0.44;
 const SHIN = 0.42;
 const ANKLE = 0.08;
-const STRIDE = 1.4;
+const STRIDE = 1.0;
 const WALK_FROM = -4.2;
 
 // Glass wall behind the pillars: one wide window per place, a pillar between each.
@@ -30,12 +30,15 @@ const FIRST_PILLAR = -7.85;
 const FACADE_GLIDE = 2 * WINDOW + WALK_FROM + 0.25;
 // Each view is rendered as if it stood this far outside the glass, so it shifts with real parallax.
 const VIEW_DEPTH = 3;
-const VIEW_SIZE = new THREE.Vector2(WINDOW + 3.2, 2.4);
+// The camera looks at the wall from its right, so rays through a window land mostly left of it:
+// the picture is widened and shifted left so every visible ray stays on the photo.
+const VIEW_SIZE = new THREE.Vector2(WINDOW + 4, 2.4);
+const VIEW_SHIFT = -1.5;
 const VIEW_CENTRE_Y = 0.8;
 const photo = (id: string) =>
   `/_next/image?url=${encodeURIComponent(`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=2400&q=80`)}&w=2048&q=75`;
 const VIEWS = [
-  { src: photo("1432405972618-c60b0225b8f9"), lift: 0.22 }, // Meghalaya forest
+  { src: photo("1432405972618-c60b0225b8f9"), lift: 0.06 }, // Meghalaya forest
   { src: photo("1624664929067-5bc278a7c57e"), lift: 0.12 }, // Thar dunes
   { src: photo("1659651117607-d2b397cf100f"), lift: 0.1 }, // Almaty skyline
 ];
@@ -50,6 +53,7 @@ function outsideView() {
       crop: { value: new THREE.Vector4(0, 0, 1, 1) },
       depth: { value: VIEW_DEPTH },
       size: { value: VIEW_SIZE },
+      shift: { value: VIEW_SHIFT },
       centreY: { value: VIEW_CENTRE_Y },
       haze: { value: new THREE.Color("#f3ebdf") },
       ready: { value: 0 },
@@ -69,6 +73,7 @@ function outsideView() {
       uniform vec4 crop;
       uniform float depth;
       uniform vec2 size;
+      uniform float shift;
       uniform float centreY;
       uniform vec3 haze;
       uniform float ready;
@@ -78,10 +83,11 @@ function outsideView() {
         vec3 ray = vWorld - cameraPosition;
         float t = (vOrigin.z - depth - cameraPosition.z) / ray.z;
         vec3 hit = cameraPosition + ray * t;
-        vec2 local = vec2((hit.x - vOrigin.x) / size.x + 0.5, (hit.y - centreY) / size.y + 0.5);
-        vec3 color = texture2D(map, clamp(crop.xy + local * crop.zw, 0.0, 1.0)).rgb;
+        vec2 local = vec2((hit.x - vOrigin.x - shift) / size.x + 0.5, (hit.y - centreY) / size.y + 0.5);
+        vec3 color = texture2D(map, crop.xy + local * crop.zw).rgb;
         float outside = max(max(-local.x, local.x - 1.0), max(-local.y, local.y - 1.0));
-        color = mix(color, haze, clamp(outside * 5.0, 0.0, 1.0));
+        color = mix(color, haze, smoothstep(0.15, 0.6, outside));
+        color *= 1.06;
         float horizon = 1.0 - smoothstep(0.0, 0.6, local.y);
         color = mix(color, haze, 0.06 + 0.12 * horizon);
         gl_FragColor = vec4(mix(haze, color, ready), 1.0);
@@ -185,6 +191,7 @@ function makeMaterials(screen: THREE.Texture, lapDepth: number) {
     ink: new THREE.MeshPhysicalMaterial({ color: "#16211e", roughness: 0.25, clearcoat: 0.8 }),
     gum: new THREE.MeshStandardMaterial({ color: "#b98a5c", roughness: 0.8 }),
     lace: new THREE.MeshStandardMaterial({ color: "#e9e3d7", roughness: 0.85 }),
+    stitch: new THREE.MeshStandardMaterial({ color: "#d9d1c3", roughness: 0.8 }),
     laptop: new THREE.MeshStandardMaterial({ color: "#d6cec1", metalness: 0.85, roughness: 0.32 }),
     deck: new THREE.MeshStandardMaterial({ map: T.keyboardTexture(LAP_W, lapDepth), metalness: 0.5, roughness: 0.45 }),
     bezel: new THREE.MeshStandardMaterial({ color: "#0c0d0e", roughness: 0.25 }),
@@ -207,6 +214,103 @@ function makeMaterials(screen: THREE.Texture, lapDepth: number) {
 }
 
 type Mats = ReturnType<typeof makeMaterials>;
+
+// A leather sneaker around one footprint: u runs heel (-1) to toe (+1), relative to the ankle joint.
+const SHOE_CENTRE = 0.065;
+const SHOE_HALF = 0.135;
+const SOLE_TOP = -ANKLE + 0.0245;
+const shoeX = (u: number) => SHOE_CENTRE + u * SHOE_HALF;
+// Superellipse tapers: a blunt, roomy toe that slopes down, and an upright heel counter.
+const taper = (u: number, n: number) => Math.pow(Math.max(0, 1 - Math.abs(u) ** n), 1 / n);
+const shoeRing = (u: number) => taper(u, u < 0 ? 3.2 : 2.6);
+const shoeRise = (u: number) => taper(u, u < 0 ? 6 : 2.2);
+const shoeWidth = (u: number) => 0.036 + 0.014 * Math.exp(-(((u - 0.25) / 0.55) ** 2));
+const shoeHeight = (u: number) => 0.032 + 0.042 * Math.exp(-(((u + 0.45) / 0.5) ** 2));
+
+/** Point on the upper at heel-to-toe position u and cross-section angle (0 = top, ±π/2 = sides). */
+function shoeSurface(u: number, angle: number, lift = 0) {
+  return new THREE.Vector3(
+    shoeX(u),
+    SOLE_TOP + Math.cos(angle) * shoeRise(u) * shoeHeight(u) + lift,
+    Math.sin(angle) * shoeRing(u) * shoeWidth(u) * (1 + lift * 8),
+  );
+}
+
+function sneakerUpper() {
+  const geometry = new THREE.SphereGeometry(1, 72, 44);
+  const position = geometry.attributes.position;
+  for (let i = 0; i < position.count; i++) {
+    const u = position.getX(i);
+    const y = position.getY(i);
+    const z = position.getZ(i);
+    const r = Math.hypot(y, z);
+    const cy = r > 1e-6 ? y / r : 0;
+    const cz = r > 1e-6 ? z / r : 0;
+    const rise = cy >= 0 ? cy * shoeRise(u) * shoeHeight(u) : cy * shoeRing(u) * 0.004;
+    position.setXYZ(i, shoeX(u), SOLE_TOP + rise, cz * shoeRing(u) * shoeWidth(u));
+  }
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+/** Footprint outline grown by `margin`, extruded upward with a soft bevel. */
+function sneakerSole(margin: number, depth: number, bevel: number) {
+  const outline = new THREE.Shape();
+  const steps = 64;
+  const x = (u: number) => SHOE_CENTRE + u * (SHOE_HALF + margin);
+  const w = (u: number) => shoeRing(u) * (shoeWidth(u) + margin);
+  outline.moveTo(x(-1), 0);
+  for (let i = 1; i <= steps; i++) outline.lineTo(x(-1 + (2 * i) / steps), w(-1 + (2 * i) / steps));
+  for (let i = steps - 1; i >= 1; i--) outline.lineTo(x(-1 + (2 * i) / steps), -w(-1 + (2 * i) / steps));
+  const geometry = new THREE.ExtrudeGeometry(outline, {
+    depth,
+    bevelEnabled: true,
+    bevelThickness: bevel,
+    bevelSize: bevel * 0.8,
+    bevelSegments: 4,
+    curveSegments: 24,
+  });
+  geometry.rotateX(-Math.PI / 2);
+  return geometry;
+}
+
+function seam(points: THREE.Vector3[], radius: number, material: THREE.Material) {
+  return solid(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), points.length * 6, radius, 8, false), material);
+}
+
+function buildSneaker(m: Mats) {
+  const shoe = new THREE.Group();
+  const outsole = solid(sneakerSole(0.006, 0.003, 0.0025), m.gum);
+  outsole.position.y = -ANKLE + 0.0025;
+  shoe.add(outsole);
+  const midsole = solid(sneakerSole(0.004, 0.01, 0.0035), m.sole);
+  midsole.position.y = -ANKLE + 0.0115;
+  shoe.add(midsole);
+  shoe.add(solid(sneakerUpper(), m.leather));
+
+  const range = (from: number, to: number, count: number) => Array.from({ length: count }, (_, i) => from + ((to - from) * i) / (count - 1));
+  for (const side of [-1, 1]) {
+    shoe.add(seam(range(-0.95, 0.6, 18).map((u) => shoeSurface(u, side * 1.3, 0.0006)), 0.0012, m.stitch));
+    shoe.add(seam(range(-0.34, 0.24, 9).map((u) => shoeSurface(u, side * 0.5, 0.0014)), 0.0026, m.collar));
+  }
+  shoe.add(seam(range(-1.35, 1.35, 12).map((a) => shoeSurface(0.6, a, 0.0006)), 0.0012, m.stitch));
+  for (const u of [-0.28, -0.14, 0, 0.14]) {
+    shoe.add(seam(range(-0.5, 0.5, 6).map((a) => shoeSurface(u, a, 0.0034)), 0.0028, m.lace));
+  }
+
+  // A tongue rising in front of the ankle.
+  const opening = shoeSurface(-0.5, 0);
+  const tongue = solid(new RoundedBoxGeometry(0.012, 0.03, 0.038, 3, 0.005), m.leather);
+  tongue.position.set(opening.x + 0.036, opening.y + 0.004, 0);
+  tongue.rotation.z = -0.5;
+  shoe.add(tongue);
+  const heel = shoeSurface(-0.97, 0);
+  const tab = solid(new RoundedBoxGeometry(0.005, 0.024, 0.02, 2, 0.002), m.tab);
+  tab.position.set(heel.x - 0.004, heel.y - 0.006, 0);
+  tab.rotation.z = 0.18;
+  shoe.add(tab);
+  return shoe;
+}
 
 function buildLegs(m: Mats) {
   const root = new THREE.Group();
@@ -243,42 +347,7 @@ function buildLegs(m: Mats) {
     const ankle = new THREE.Group();
     ankle.position.y = -SHIN;
     knee.add(ankle);
-    // Minimal leather sneaker: gum outsole, cream midsole, low toe box, taller heel counter.
-    const outsole = solid(new RoundedBoxGeometry(0.28, 0.012, 0.102, 2, 0.005), m.gum);
-    outsole.position.set(0.065, -ANKLE + 0.006, 0);
-    ankle.add(outsole);
-    const midsole = solid(new RoundedBoxGeometry(0.276, 0.02, 0.1, 3, 0.008), m.sole);
-    midsole.position.set(0.065, -ANKLE + 0.021, 0);
-    ankle.add(midsole);
-    const toeWrap = new THREE.Group();
-    toeWrap.position.set(0.09, -0.043, 0);
-    toeWrap.scale.set(1, 0.78, 1.08);
-    ankle.add(toeWrap);
-    const toe = solid(new THREE.CapsuleGeometry(0.043, 0.12, 12, 28), m.leather);
-    toe.rotation.z = Math.PI / 2;
-    toeWrap.add(toe);
-    const counter = solid(new RoundedBoxGeometry(0.12, 0.074, 0.094, 5, 0.032), m.leather);
-    counter.position.set(-0.012, -0.025, 0);
-    ankle.add(counter);
-    for (const lz of [-0.019, 0.019]) {
-      const eyelets = solid(new RoundedBoxGeometry(0.075, 0.006, 0.012, 1, 0.002), m.collar);
-      eyelets.position.set(0.075, -0.005, lz);
-      eyelets.rotation.z = -0.28;
-      ankle.add(eyelets);
-    }
-    for (let i = 0; i < 4; i++) {
-      const lace = solid(new THREE.CylinderGeometry(0.0022, 0.0022, 0.04, 8), m.lace);
-      lace.rotation.x = Math.PI / 2;
-      lace.position.set(0.05 + i * 0.017, 0.002 - i * 0.0048, 0);
-      ankle.add(lace);
-    }
-    const collar = solid(new THREE.TorusGeometry(0.037, 0.0075, 10, 32), m.collar);
-    collar.rotation.x = Math.PI / 2;
-    collar.position.set(-0.01, 0.012, 0);
-    ankle.add(collar);
-    const tab = solid(new RoundedBoxGeometry(0.012, 0.036, 0.03, 2, 0.005), m.tab);
-    tab.position.set(-0.074, -0.004, 0);
-    ankle.add(tab);
+    ankle.add(buildSneaker(m));
     return { hip, knee, ankle };
   });
 
@@ -287,29 +356,44 @@ function buildLegs(m: Mats) {
 
 // Heel and toe of the sole relative to the ankle joint.
 const SOLE_POINTS: [number, number][] = [
-  [-0.072, -ANKLE],
-  [0.2, -ANKLE],
+  [-0.08, -ANKLE],
+  [0.21, -ANKLE],
 ];
 
 /** Poses both legs for a gait phase and returns the pelvis height that keeps the lower foot on the floor. */
+const wrapAngle = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
+const bump = (a: number, centre: number, width: number) => Math.exp(-((wrapAngle(a - centre) / width) ** 2));
+
+// Gait phase: heel strike at φ = π/2, toe-off near φ = -1.3, swing in between (hip = 0 mid-swing).
+// Timings follow real walking: heel strike at φ = π/2, push-off at φ ≈ -1, deepest knee bend early in
+// the swing, ankle back to neutral mid-swing so the toe clears the floor.
 function poseLegs(legs: ReturnType<typeof buildLegs>["legs"], phase: number, gait: number) {
   let lowest = Infinity;
+  let rest = Infinity;
   legs.forEach((leg, i) => {
-    const phi = phase + (i ? Math.PI : 0);
-    const hip = 0.42 * Math.sin(phi) * gait;
-    const swing = Math.max(0, Math.cos(phi + Math.PI / 3));
-    const knee = -(0.05 + 1.05 * swing * swing) * gait;
-    const toeDown = -0.5 * Math.max(0, Math.cos(phi + 1.75)) ** 4 * gait;
-    const toeUp = 0.22 * Math.max(0, Math.cos(phi - Math.PI / 2)) ** 4 * gait;
-    const ankle = -(hip + knee) + toeDown + toeUp;
+    const phi = wrapAngle(phase + (i ? Math.PI : 0));
+    const hip = (0.24 * Math.sin(phi) + 0.1) * gait;
+    const knee = -(0.04 + 1.1 * bump(phi, -0.2, 1.15) + 0.22 * bump(phi, 2.0, 0.45) + 0.12 * bump(phi, 2.9, 0.5)) * gait;
+    // Planted: flat on the floor, heel peeling up steeply before push-off. Swinging: trails toe-down,
+    // comes back to neutral, then tips toe-up ready for the next heel strike.
+    const planted = -(hip + knee) + (-0.7 * bump(phi, -1.0, 0.45) + 0.2 * bump(phi, 1.57, 0.3)) * gait;
+    const early = smooth(clamp01((phi + 1.05) / 1.0));
+    const late = smooth(clamp01((phi - 0.6) / 0.8));
+    const swingAnkle = (-0.3 + 0.5 * early) * (1 - late) + (0.2 - hip - knee) * late;
+    const inSwing = smooth(clamp01((phi + 1.05) / 0.25)) * (1 - smooth(clamp01((phi - 1.25) / 0.25))) * gait;
+    const ankle = planted * (1 - inSwing) + swingAnkle * inSwing;
     leg.hip.rotation.z = hip;
     leg.knee.rotation.z = knee;
     leg.ankle.rotation.z = ankle;
     const ankleY = -THIGH * Math.cos(hip) - SHIN * Math.cos(hip + knee);
     const pitch = hip + knee + ankle;
-    for (const [x, y] of SOLE_POINTS) lowest = Math.min(lowest, ankleY + x * Math.sin(pitch) + y * Math.cos(pitch));
+    let footLowest = Infinity;
+    for (const [x, y] of SOLE_POINTS) footLowest = Math.min(footLowest, ankleY + x * Math.sin(pitch) + y * Math.cos(pitch));
+    lowest = Math.min(lowest, footLowest);
+    rest = Math.min(rest, footLowest + inSwing * 0.1);
   });
-  return -lowest;
+  // The body rests on the planted foot (a swinging toe never lifts it), and no foot may sink into the floor.
+  return Math.max(-rest, -lowest);
 }
 
 function buildSuitcase(m: Mats, screenH: number, lapDepth: number) {
@@ -537,6 +621,7 @@ function buildWorld(scene: THREE.Scene, m: Mats, width: number, height: number, 
     loader.load(view.src, (map) => {
       map.colorSpace = THREE.SRGBColorSpace;
       map.anisotropy = 8;
+      map.wrapS = map.wrapT = THREE.MirroredRepeatWrapping;
       const image = map.image as HTMLImageElement;
       const imageAspect = image.width / image.height;
       const viewAspect = VIEW_SIZE.x / VIEW_SIZE.y;

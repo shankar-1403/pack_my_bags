@@ -115,10 +115,6 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       current = target;
       paint(current);
       canvas.dataset.ready = "true";
-      (window as unknown as { __introDebug: unknown }).__introDebug = (p: number) => {
-        current = target = p;
-        paint(p);
-      };
       requestAnimationFrame(() => requestAnimationFrame(capture));
     })();
 

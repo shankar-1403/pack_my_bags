@@ -315,8 +315,8 @@ function StoryFace({ post }: { post: Post }) {
   return (
     <div className="relative flex h-full flex-col" style={{ background: PAPER }}>
       <span className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-[#5c4a36]/20 to-transparent" />
-      <div className="p-4 pb-0">
-        <span className="relative block aspect-[4/3] overflow-hidden rounded-[10px]">
+      <div className="min-h-0 flex-1 p-4 pb-0">
+        <span className="relative block h-full overflow-hidden rounded-[10px]">
           <span
             aria-hidden
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[1200ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]"
@@ -324,7 +324,7 @@ function StoryFace({ post }: { post: Post }) {
           />
         </span>
       </div>
-      <div className="flex flex-1 flex-col px-6 pt-5 pb-6">
+      <div className="flex shrink-0 flex-col px-6 pt-5 pb-6">
         <span className="font-header text-[10px] font-semibold uppercase tracking-[0.2em] text-clay">
           {new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · {post.readMinutes} min read
         </span>
