@@ -179,12 +179,12 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
                   <StoryFace post={post} />
                   <span data-shade aria-hidden className="pointer-events-none absolute inset-0 bg-black" style={{ opacity: 0 }} />
                 </Link>
-                <div aria-hidden className="absolute inset-0 overflow-hidden rounded-l-[18px] [backface-visibility:hidden] [transform:rotateY(180deg)]" style={{ background: PAPER_BACK }}>
-                  <span className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
-                  <span className="absolute bottom-6 left-7 font-header text-[10px] font-semibold uppercase tracking-[0.2em] text-mist/80">
+                <div aria-hidden className="absolute inset-0 overflow-hidden rounded-l-[18px] [container-type:size] [backface-visibility:hidden] [transform:rotateY(180deg)]" style={{ background: PAPER_BACK }}>
+                  <span className="pointer-events-none absolute inset-y-0 right-0 w-[12%] bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
+                  <span className="absolute font-header font-semibold uppercase text-mist/80" style={{ bottom: "7cqh", left: "9cqw", fontSize: "clamp(8px, 2.6cqw, 10px)", letterSpacing: "0.16em" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <p className="absolute inset-x-10 top-1/2 -translate-y-1/2 text-center font-serif text-xl leading-snug text-ink/45 italic">
+                  <p className="absolute top-1/2 line-clamp-6 -translate-y-1/2 text-center font-serif leading-snug text-ink/45 italic" style={{ left: "14%", right: "12%", fontSize: "clamp(12px, 4.6cqh, 20px)" }}>
                     {post.excerpt.split(".")[0]}.
                   </p>
                   <span data-shade className="pointer-events-none absolute inset-0 bg-black" style={{ opacity: 0 }} />
@@ -276,23 +276,29 @@ function CoverEdge() {
 
 function CoverFace() {
   return (
-    <div className="relative h-full text-cream" style={{ background: `radial-gradient(120% 80% at 70% 20%, #1f4238 0%, ${BOARD} 60%, #0f231d 100%)` }}>
-      <span className="absolute inset-y-0 left-0 w-7 bg-gradient-to-r from-black/35 via-black/10 to-transparent" />
-      <span className="absolute inset-y-0 left-7 w-px bg-white/10" />
-      <div className="absolute inset-5 left-10 rounded-[12px] border" style={{ borderColor: `${GILT}55` }} />
-      <div className="absolute inset-[26px] left-[46px] rounded-[9px] border" style={{ borderColor: `${GILT}26` }} />
-      <div className="relative flex h-full flex-col items-center justify-center pl-8 pr-6 text-center">
-        <p className="font-header text-[10px] font-semibold uppercase tracking-[0.32em]" style={{ color: GILT }}>
+    <div className="relative h-full text-cream [container-type:size]" style={{ background: `radial-gradient(120% 80% at 70% 20%, #1f4238 0%, ${BOARD} 60%, #0f231d 100%)` }}>
+      <span className="absolute inset-y-0 left-0 w-[8%] bg-gradient-to-r from-black/35 via-black/10 to-transparent" />
+      <span className="absolute inset-y-0 w-px bg-white/10" style={{ left: "8%" }} />
+      <div className="absolute rounded-[12px] border" style={{ inset: "4.5cqh 4cqw 4.5cqh 10cqw", borderColor: `${GILT}55` }} />
+      <div className="absolute rounded-[9px] border" style={{ inset: "8cqh 7.5cqw 8cqh 13.5cqw", borderColor: `${GILT}26` }} />
+      <div className="relative flex h-full flex-col text-center" style={{ padding: "9cqh 8cqw 7cqh 14cqw" }}>
+        <p className="font-header font-semibold uppercase" style={{ color: GILT, fontSize: "clamp(8px, 2.6cqh, 10px)", letterSpacing: "0.28em" }}>
           Pack my bags
         </p>
-        <span className="mt-5 block h-px w-10" style={{ background: GILT }} />
-        <h2 className="mt-5 font-serif text-4xl leading-[1.02] tracking-tight sm:text-5xl">
-          Stories
-          <br />
-          <span className="italic" style={{ color: "#f0dcb8" }}>from the desk</span>
-        </h2>
-        <p className="mt-5 max-w-[15rem] text-[13px] leading-6 text-cream/65">Notes on packing, pacing, and choosing a first group trip.</p>
-        <p className="absolute bottom-8 font-header text-[9px] uppercase tracking-[0.3em] text-cream/40">Scroll to open</p>
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+          <span className="block h-px w-8" style={{ background: GILT }} />
+          <h2 className="font-serif leading-[1.12] tracking-tight" style={{ marginTop: "4cqh", fontSize: "clamp(20px, 8.2cqh, 48px)" }}>
+            Stories
+            <br />
+            <span className="italic" style={{ color: "#f0dcb8" }}>from the desk</span>
+          </h2>
+          <p className="max-w-[18ch] leading-snug text-cream/65" style={{ marginTop: "3.5cqh", fontSize: "clamp(10px, 3cqh, 13px)" }}>
+            Notes on packing, pacing, and choosing a first group trip.
+          </p>
+        </div>
+        <p className="font-header uppercase text-cream/40" style={{ fontSize: "clamp(7px, 2.1cqh, 9px)", letterSpacing: "0.24em" }}>
+          Scroll to open
+        </p>
       </div>
     </div>
   );
@@ -300,12 +306,12 @@ function CoverFace() {
 
 function Endpaper() {
   return (
-    <div className="relative h-full">
+    <div className="relative h-full [container-type:size]">
       <span className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: `radial-gradient(${BOARD} 1px, transparent 1px)`, backgroundSize: "14px 14px" }} />
-      <span className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
-      <div className="relative flex h-full flex-col items-center justify-center px-10 text-center">
-        <p className="font-header text-[10px] font-semibold uppercase tracking-[0.28em] text-clay">Ex libris</p>
-        <p className="mt-3 font-serif text-2xl italic text-ink/70">The Journal</p>
+      <span className="pointer-events-none absolute inset-y-0 right-0 w-[12%] bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
+      <div className="relative flex h-full flex-col items-center justify-center text-center" style={{ paddingInline: "12cqw" }}>
+        <p className="font-header font-semibold uppercase text-clay" style={{ fontSize: "clamp(8px, 2.4cqh, 10px)", letterSpacing: "0.24em" }}>Ex libris</p>
+        <p className="font-serif italic text-ink/70" style={{ marginTop: "2.5cqh", fontSize: "clamp(16px, 5.5cqh, 24px)" }}>The Journal</p>
       </div>
     </div>
   );
@@ -313,10 +319,10 @@ function Endpaper() {
 
 function StoryFace({ post }: { post: Post }) {
   return (
-    <div className="relative flex h-full flex-col" style={{ background: PAPER }}>
-      <span className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-[#5c4a36]/20 to-transparent" />
-      <div className="min-h-0 flex-1 p-4 pb-0">
-        <span className="relative block h-full overflow-hidden rounded-[10px]">
+    <div className="relative flex h-full flex-col [container-type:size]" style={{ background: PAPER }}>
+      <span className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[10%] bg-gradient-to-r from-[#5c4a36]/20 to-transparent" />
+      <div className="min-h-[30%] flex-1" style={{ padding: "3.5cqw 3.5cqw 0" }}>
+        <span className="relative block h-full overflow-hidden rounded-[8px]">
           <span
             aria-hidden
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[1200ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]"
@@ -324,13 +330,17 @@ function StoryFace({ post }: { post: Post }) {
           />
         </span>
       </div>
-      <div className="flex shrink-0 flex-col px-6 pt-5 pb-6">
-        <span className="font-header text-[10px] font-semibold uppercase tracking-[0.2em] text-clay">
+      <div className="flex shrink-0 flex-col" style={{ padding: "3.2cqh 6cqw 4cqh" }}>
+        <span className="font-header font-semibold uppercase text-clay" style={{ fontSize: "clamp(7px, 2.3cqh, 10px)", letterSpacing: "0.14em" }}>
           {new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · {post.readMinutes} min read
         </span>
-        <h2 className="mt-3 font-serif text-2xl leading-[1.1] tracking-tight text-ink sm:text-[1.75rem]">{post.title}</h2>
-        <p className="mt-3 line-clamp-3 text-[13px] leading-6 text-ink/65">{post.excerpt}</p>
-        <span className="mt-auto inline-flex items-center gap-2 pt-4 font-header text-[10px] font-semibold uppercase tracking-[0.2em] text-ink/70">
+        <h2 className="line-clamp-3 font-serif leading-[1.12] tracking-tight text-ink" style={{ marginTop: "1.6cqh", fontSize: "clamp(14px, 6.4cqh, 28px)" }}>
+          {post.title}
+        </h2>
+        <p className="line-clamp-3 leading-snug text-ink/65" style={{ marginTop: "1.5cqh", fontSize: "clamp(10px, 2.9cqh, 13px)" }}>
+          {post.excerpt}
+        </p>
+        <span className="mt-auto inline-flex items-center gap-[0.4em] font-header font-semibold uppercase text-ink/70" style={{ paddingTop: "2cqh", fontSize: "clamp(8px, 2.2cqh, 10px)", letterSpacing: "0.16em" }}>
           Read story
           <span className="inline-block transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1">→</span>
         </span>

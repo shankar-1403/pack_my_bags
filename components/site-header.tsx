@@ -9,10 +9,10 @@ import { Frame } from "./frame";
 import { Logo } from "./logo";
 
 const links = [
-  { href: "/trips", label: "Upcoming trips" },
-  { href: "/destinations", label: "Destinations" },
-  { href: "/blog", label: "Journal" },
   { href: "/about", label: "About" },
+  { href: "/trips", label: "Upcoming trips" },
+  { href: "/blog", label: "Journal" },
+  { href: "/destinations", label: "Destinations" },
   { href: "/contact", label: "Contact" },
 ];
 
