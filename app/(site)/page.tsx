@@ -61,7 +61,7 @@ export default function HomePage() {
       <Frame className="py-16">
         <div className="flex items-end justify-between gap-6">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-clay">The board</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">The board</p>
             <h2 className="mt-2 font-serif text-4xl tracking-tight sm:text-5xl">Departures with seats open</h2>
           </div>
           <Link href="/trips" className="hidden text-sm text-pine sm:inline">See the full calendar</Link>
@@ -77,7 +77,7 @@ export default function HomePage() {
             </h2>
             {reasons.map((reason, index) => (
               <div key={reason.title} className="border-white/15 lg:border-l lg:px-5">
-                <p className="font-header text-[11px] font-semibold tracking-[0.18em] text-[#f0c7b0]">0{index + 1}</p>
+                <p className="font-header text-[11px] font-semibold tracking-[0.18em] text-[#f94f18]">0{index + 1}</p>
                 <h3 className="mt-2 font-header text-sm font-semibold leading-snug">{reason.title}</h3>
                 <p className="mt-2 line-clamp-3 text-xs leading-5 text-cream/70">{reason.copy}</p>
               </div>
@@ -87,13 +87,13 @@ export default function HomePage() {
       </section>
 
       <Frame className="py-20">
-        <p className="text-xs uppercase tracking-[0.22em] text-clay">Places</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">Places</p>
         <h2 className="mt-2 font-serif text-4xl tracking-tight sm:text-5xl">Where the next groups are going</h2>
         <PlacesGrid places={destinations} />
       </Frame>
 
       <Frame className="pb-8">
-        <p className="text-xs uppercase tracking-[0.22em] text-clay">From the road</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">From the road</p>
         <h2 className="mt-2 max-w-xl font-serif text-4xl tracking-tight">Notes sent after the drop.</h2>
         <RoadNotes reviews={reviews} />
       </Frame>

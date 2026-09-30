@@ -180,7 +180,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
               style={{ top: `calc(${HEADER} + 7vh)` }}
             >
               <div className="[text-shadow:0_0_14px_rgba(243,238,230,0.95),0_0_32px_rgba(243,238,230,0.75)]">
-                <p className="font-header text-[11px] font-semibold uppercase tracking-[0.28em] text-clay">Group trips across India and beyond</p>
+                <p className="font-header text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f94f18]">Group trips across India and beyond</p>
                 <h2 className="mt-5 font-serif text-6xl leading-[0.95] tracking-tight text-ink xl:text-7xl">Pack light.</h2>
                 <p className="mt-4 font-serif text-3xl italic tracking-tight text-pine xl:text-4xl">We’ve planned the rest.</p>
               </div>
@@ -194,7 +194,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
               className="pointer-events-none absolute left-0 right-0 top-1/2 mx-auto w-full max-w-7xl -translate-y-1/2 px-5"
             >
               <div className="max-w-[15rem]">
-                <p className="font-header text-[11px] font-semibold uppercase tracking-[0.28em] text-clay">Inside every departure</p>
+                <p className="font-header text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f94f18]">Inside every departure</p>
                 <ul className="mt-5 space-y-3 font-serif text-2xl leading-tight tracking-tight text-ink">
                   <li>Fixed dates</li>
                   <li>Stays we have slept in</li>

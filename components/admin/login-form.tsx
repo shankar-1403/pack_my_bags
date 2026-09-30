@@ -33,7 +33,7 @@ export function LoginForm({ nextPath, showHint }: { nextPath: string; showHint: 
         <span className="mb-1.5 block text-xs uppercase tracking-[0.16em] text-mist">Password</span>
         <input name="password" type="password" required autoFocus className="w-full rounded-2xl border border-line bg-paper px-4 py-3 text-sm outline-none focus:border-clay" />
       </label>
-      {error ? <p className="text-sm text-clay">{error}</p> : null}
+      {error ? <p className="text-sm text-[#f94f18]">{error}</p> : null}
       <button type="submit" disabled={pending} className="w-full rounded-full bg-ink py-3 text-sm text-cream disabled:opacity-60">
         {pending ? "Checking…" : "Enter the studio"}
       </button>

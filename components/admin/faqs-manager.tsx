@@ -46,7 +46,7 @@ export function FaqsManager({ initial }: { initial: Faq[] }) {
             <p className="mt-2 text-sm leading-6 text-ink/75">{faq.answer}</p>
             <div className="mt-3 flex gap-3 text-sm">
               <button type="button" className="text-pine" onClick={() => { setEditing(faq.id); setDraft(faq); }}>Edit</button>
-              <button type="button" className="text-clay" onClick={() => remove(faq.id)}>Delete</button>
+              <button type="button" className="text-[#f94f18]" onClick={() => remove(faq.id)}>Delete</button>
             </div>
           </li>
         ))}
@@ -55,7 +55,7 @@ export function FaqsManager({ initial }: { initial: Faq[] }) {
         <p className="font-serif text-2xl">{editing ? "Edit question" : "New question"}</p>
         <Field label="Question"><input className={inputClass} value={draft.question} onChange={(event) => setDraft({ ...draft, question: event.target.value })} required /></Field>
         <Field label="Answer"><textarea className={inputClass} rows={5} value={draft.answer} onChange={(event) => setDraft({ ...draft, answer: event.target.value })} required /></Field>
-        {error ? <p className="text-sm text-clay">{error}</p> : null}
+        {error ? <p className="text-sm text-[#f94f18]">{error}</p> : null}
         <button type="submit" className="w-full rounded-full bg-ink py-3 text-sm text-cream">Save</button>
       </form>
     </div>

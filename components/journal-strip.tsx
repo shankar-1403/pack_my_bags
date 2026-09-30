@@ -18,7 +18,7 @@ export function JournalStrip({ posts }: { posts: Post[] }) {
         <span>
           <span className="block font-serif text-4xl leading-[1.02] tracking-tight sm:text-5xl">{feature.title}</span>
           <span className="mt-4 block max-w-md text-sm leading-6 text-cream/70">{feature.excerpt}</span>
-          <span className="mt-6 inline-flex rounded-full bg-cream px-4 py-2 font-header text-sm font-semibold text-ink">
+          <span className="mt-6 inline-flex rounded-full bg-[#f94f18] px-4 py-2 font-header text-sm font-semibold text-white">
             Read story
           </span>
         </span>

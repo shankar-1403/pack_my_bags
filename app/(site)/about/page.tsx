@@ -34,7 +34,7 @@ export default function AboutPage() {
   return (
     <div className="pb-8">
       <Frame className="pt-12">
-        <p className="font-header text-xs font-semibold uppercase tracking-[0.22em] text-clay">The studio · Mumbai</p>
+        <p className="font-header text-xs font-semibold uppercase tracking-[0.22em] text-[#f94f18]">The studio · Mumbai</p>
         <h1 className="mt-3 max-w-4xl font-serif text-5xl leading-[0.95] tracking-tight sm:text-7xl">
           Pack my bags plans the trip so the group can be in it.
         </h1>
@@ -62,11 +62,11 @@ export default function AboutPage() {
       </div>
 
       <Frame className="py-20">
-        <p className="font-header text-xs font-semibold uppercase tracking-[0.22em] text-clay">How the desk works</p>
+        <p className="font-header text-xs font-semibold uppercase tracking-[0.22em] text-[#f94f18]">How the desk works</p>
         <div className="mt-8 border-t border-line">
           {beliefs.map((belief, index) => (
             <div key={belief.title} className="grid gap-3 border-b border-line py-8 sm:grid-cols-[5rem_minmax(0,0.8fr)_minmax(0,1.1fr)] sm:items-baseline sm:gap-8">
-              <p className="font-serif text-3xl text-clay">0{index + 1}</p>
+              <p className="font-serif text-3xl text-[#f94f18]">0{index + 1}</p>
               <h2 className="font-serif text-3xl leading-none tracking-tight sm:text-4xl">{belief.title}</h2>
               <p className="text-sm leading-7 text-ink/75 sm:text-base">{belief.copy}</p>
             </div>
@@ -91,7 +91,7 @@ export default function AboutPage() {
                 {index < steps.length - 1 ? (
                   <span className="absolute top-5 left-10 hidden h-px w-[calc(100%-1rem)] bg-cream/25 md:block" />
                 ) : null}
-                <span className="relative grid h-10 w-10 place-items-center rounded-full bg-[#d4652f] font-header text-sm font-semibold">
+                <span className="relative grid h-10 w-10 place-items-center rounded-full bg-[#f94f18] font-header text-sm font-semibold">
                   {index + 1}
                 </span>
                 <p className="mt-4 text-sm leading-6 text-cream/80">{step}</p>

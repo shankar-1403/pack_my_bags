@@ -158,14 +158,14 @@ export function TripForm({ trip }: { trip: Trip | null }) {
           <input type="checkbox" name="published" defaultChecked={trip?.published ?? true} /> Published
         </label>
       </div>
-      {error ? <p className="text-sm text-clay">{error}</p> : null}
+      {error ? <p className="text-sm text-[#f94f18]">{error}</p> : null}
       {saved ? <p className="text-sm text-pine">Saved.</p> : null}
       <div className="flex flex-wrap gap-3">
         <button type="submit" disabled={saving} className="rounded-full bg-ink px-5 py-3 text-sm text-cream disabled:opacity-60">
           {saving ? "Saving…" : trip ? "Save trip" : "Create trip"}
         </button>
         {trip ? (
-          <button type="button" onClick={onDelete} className="rounded-full border border-line px-5 py-3 text-sm text-clay">
+          <button type="button" onClick={onDelete} className="rounded-full border border-line px-5 py-3 text-sm text-[#f94f18]">
             Delete
           </button>
         ) : null}

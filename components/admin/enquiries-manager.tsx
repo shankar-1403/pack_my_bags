@@ -47,7 +47,7 @@ export function EnquiriesManager({ initial }: { initial: Enquiry[] }) {
             ) : (
               <button type="button" className="text-pine" onClick={() => setStatus(item.id, "new")}>Mark new</button>
             )}
-            <button type="button" className="text-clay" onClick={() => remove(item.id)}>Delete</button>
+            <button type="button" className="text-[#f94f18]" onClick={() => remove(item.id)}>Delete</button>
           </div>
         </li>
       ))}

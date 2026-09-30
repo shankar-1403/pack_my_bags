@@ -40,7 +40,7 @@ function LeadCard({ trip }: { trip: Trip }) {
         ))}
       </div>
       {save > 0 ? (
-        <span className="absolute right-4 top-4 rounded-full bg-clay px-3 py-1 font-header text-xs font-semibold text-white">
+        <span className="absolute right-4 top-4 rounded-full bg-[#f94f18] px-3 py-1 font-header text-xs font-semibold text-white">
           {formatInr(save)} off
         </span>
       ) : null}
@@ -78,7 +78,7 @@ function RailCard({ trip }: { trip: Trip }) {
             <span className="block font-header text-lg font-semibold">{formatInr(trip.price)}</span>
             <span className="block font-header text-[11px] text-mist">{trip.departures[0]}</span>
           </span>
-          <span className="font-header text-xs font-semibold text-clay">View</span>
+          <span className="font-header text-xs font-semibold text-[#f94f18]">View</span>
         </span>
       </span>
     </Link>
@@ -93,7 +93,7 @@ function TileCard({ trip }: { trip: Trip }) {
       <Image src={trip.image} alt={trip.title} fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-cover transition duration-700 group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-pine/85 via-pine/10 to-transparent" />
       {save > 0 ? (
-        <span className="absolute right-3 top-3 rounded-full bg-clay px-2.5 py-1 font-header text-[11px] font-semibold text-white">
+        <span className="absolute right-3 top-3 rounded-full bg-[#f94f18] px-2.5 py-1 font-header text-[11px] font-semibold text-white">
           {formatInr(save)} off
         </span>
       ) : null}

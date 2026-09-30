@@ -15,7 +15,7 @@ export default function DestinationsPage() {
 
   return (
     <Frame className="py-12">
-      <p className="text-xs uppercase tracking-[0.22em] text-clay">Atlas</p>
+      <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">Atlas</p>
       <h1 className="mt-3 font-serif text-5xl tracking-tight sm:text-6xl">Destinations</h1>
       <p className="mt-4 max-w-2xl text-lg leading-8 text-ink/70">
         Each place is a set of dated departures, not an open-ended package. Pick a landscape, then pick a date.

@@ -114,7 +114,7 @@ export function TripExplorer({
       {visible.length === 0 ? (
         <div className="mt-6 rounded-[28px] border border-dashed border-line bg-cream px-6 py-16 text-center">
           <p className="font-serif text-3xl">Nothing on that combination yet.</p>
-          <button type="button" className="mt-4 text-sm text-clay" onClick={() => { setQuery(""); setType(""); setDestination(""); setBudget("any"); }}>
+          <button type="button" className="mt-4 text-sm text-[#f94f18]" onClick={() => { setQuery(""); setType(""); setDestination(""); setBudget("any"); }}>
             Clear filters
           </button>
         </div>

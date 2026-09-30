@@ -76,7 +76,7 @@ export default async function TripPage({ params }: Context) {
             <ol className="mt-6 space-y-5">
               {trip.itinerary.map((day) => (
                 <li key={day.day} className="grid gap-2 border-t border-line pt-5 sm:grid-cols-[88px_1fr]">
-                  <p className="text-xs uppercase tracking-[0.18em] text-clay">Day {day.day}</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-[#f94f18]">Day {day.day}</p>
                   <div>
                     <h3 className="font-serif text-2xl">{day.title}</h3>
                     <p className="mt-2 text-sm leading-7 text-ink/75">{day.description}</p>

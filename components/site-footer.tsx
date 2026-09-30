@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { SiteSettings } from "@/lib/types";
 import { Frame } from "./frame";
-import { Logo } from "./logo";
+import Logo from '../public/logo_white.webp'
 
 export function SiteFooter({ settings }: { settings: SiteSettings }) {
   const year = new Date().getFullYear();
@@ -10,7 +10,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
     <footer className="mt-20 bg-pine font-header text-cream">
       <Frame className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <Logo tone="cream" wordmark="header" />
+          <img src={Logo.src} alt="Logo" className="h-10 md:h-16" />
           <p className="mt-4 max-w-xs text-sm leading-6 text-cream/70">{settings.tagline}</p>
         </div>
         <div>

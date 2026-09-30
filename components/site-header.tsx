@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { Frame } from "./frame";
-import { Logo } from "./logo";
+import Logo from '../public/logo.webp'
+import LogoWhite from '../public/logo_white.webp'
 
 const links = [
   { href: "/", label: "Home" },
@@ -51,15 +52,15 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
   return (
     <header ref={headerRef} className="sticky top-0 z-40 bg-transparent font-header">
       {settings.promo ? (
-        <div className={`px-5 py-2 text-center text-[13px] font-medium tracking-tight ${overBanner ? "bg-transparent text-cream" : "bg-pine text-cream"}`}>
+        <div className={`px-5 py-1 text-center text-[10px] md:text-[13px] font-medium tracking-tight bg-[#f94f18] text-cream`}>
           {settings.promo}
         </div>
       ) : null}
       <Frame className="py-3">
-        <div className={`rounded-[28px] border backdrop-blur-xl ${overBanner ? "border-transparent bg-transparent shadow-none" : "border-white/80 bg-cream/80 shadow-[0_18px_50px_-32px_rgba(23,20,15,0.65)]"}`}>
+        <div className={`rounded-[28px] border backdrop-blur-xl border-white/80 bg-cream/80 shadow-[0_18px_50px_-32px_rgba(23,20,15,0.65)]`}>
           <div className="flex items-center justify-between gap-3 px-3 py-2 sm:px-4">
             <Link href="/" aria-label="Pack my bags home" onClick={() => setOpen(false)}>
-              <Logo tone={overBanner ? "cream" : "ink"} wordmark="header" />
+              <img src={Logo.src} alt="Logo" className="h-10 md:h-16" />
             </Link>
             <nav className="hidden items-center gap-1 md:flex">
               {links.map((link) => {
@@ -69,7 +70,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                     key={link.href}
                     href={link.href}
                     aria-current={current ? "page" : undefined}
-                    className={`rounded-full px-3.5 py-2 text-[13px] font-medium tracking-tight transition ${overBanner ? (current ? "bg-white/20 text-cream" : "text-cream/85 hover:bg-white/10 hover:text-cream") : current ? "bg-pine text-cream" : "text-ink/70 hover:bg-sand hover:text-ink"}`}
+                    className={`rounded-full px-3.5 py-2 text-[13px] font-medium tracking-tight transition ${overBanner ? (current ? "bg-white/20 text-cream" : "text-cream/85 hover:bg-white/10 hover:text-cream") : current ? "bg-pine text-cream" : "text-ink/70 hover:bg-[#f94f18]/10 hover:text-ink"}`}
                   >
                     {link.label}
                   </Link>
@@ -79,7 +80,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
             <div className="flex items-center gap-2">
               <a
                 href={`https://wa.me/${settings.whatsapp}`}
-                className="hidden rounded-full bg-clay px-4 py-2 text-[13px] font-semibold tracking-tight text-white transition hover:bg-[#b85324] sm:inline-flex"
+                className="hidden rounded-full bg-[#f94f18] px-4 py-2 text-[13px] font-semibold tracking-tight text-white transition hover:bg-[#b85324] sm:inline-flex"
               >
                 {settings.phone}
               </a>
@@ -95,7 +96,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
             </div>
           </div>
           {open ? (
-            <nav className={`space-y-1 border-t px-3 py-3 md:hidden ${overBanner ? "border-white/15 text-cream" : "border-line"}`}>
+            <nav className={`space-y-1 border-t mt-2 px-3 py-3 absolute w-full border-white/80 bg-white backdrop-blur-2xl rounded-[28px] md:hidden ${overBanner ? "border-white/15 text-cream" : "border-line"}`}>
               {links.map((link) => {
                 const current = isCurrent(pathname, link.href);
                 return (
@@ -103,14 +104,15 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                     key={link.href}
                     href={link.href}
                     aria-current={current ? "page" : undefined}
-                    className={`block rounded-2xl px-3 py-3 text-sm font-medium ${overBanner ? (current ? "bg-white/20 text-cream" : "hover:bg-white/10") : current ? "bg-pine text-cream" : "hover:bg-sand"}`}
+                    className={`block rounded-2xl px-3 py-3 text-sm font-medium
+                      ${current ? "bg-pine text-cream" : "hover:bg-sand text-ink"}`}
                     onClick={() => setOpen(false)}
                   >
                     {link.label}
                   </Link>
                 );
               })}
-              <a href={`https://wa.me/${settings.whatsapp}`} className={`block rounded-2xl px-3 py-3 text-sm font-medium ${overBanner ? "hover:bg-white/10" : "hover:bg-sand"}`}>
+              <a href={`https://wa.me/${settings.whatsapp}`} className={`block rounded-2xl px-3 py-3 text-sm font-medium hover:bg-pine text-ink`}>
                 WhatsApp {settings.phone}
               </a>
             </nav>

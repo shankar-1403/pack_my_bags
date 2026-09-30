@@ -19,7 +19,7 @@ export function FaqList({ faqs }: { faqs: Faq[] }) {
               onClick={() => setOpen(expanded ? "" : faq.id)}
             >
               <span className="font-serif text-2xl leading-tight">{faq.question}</span>
-              <span className="text-clay">{expanded ? "–" : "+"}</span>
+              <span className="text-[#f94f18]">{expanded ? "–" : "+"}</span>
             </button>
             {expanded ? <p className="max-w-3xl pb-5 text-sm leading-7 text-ink/75">{faq.answer}</p> : null}
           </div>

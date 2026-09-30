@@ -108,8 +108,8 @@ export default async function PostPage({ params }: Context) {
             <p className="font-serif text-[1.7rem] leading-[1.3] tracking-tight text-pretty text-ink sm:text-[2.05rem]">{lede}</p>
 
             <div aria-hidden className="my-12 flex items-center gap-3">
-              <span className="h-px w-10 bg-clay" />
-              <span className="size-1.5 rotate-45 bg-clay" />
+              <span className="h-px w-10 bg-[#f94f18]" />
+              <span className="size-1.5 rotate-45 bg-[#f94f18]" />
               <span className="h-px flex-1 bg-line" />
             </div>
 
@@ -136,7 +136,7 @@ export default async function PostPage({ params }: Context) {
       <Frame className="mt-28">
         <div className="flex flex-wrap items-end justify-between gap-6 border-t border-line pt-12">
           <div>
-            <p className="font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-clay">Turn the page</p>
+            <p className="font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-[#f94f18]">Turn the page</p>
             <h2 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">
               Next in the <span className="italic">journal</span>
             </h2>
@@ -169,7 +169,7 @@ export default async function PostPage({ params }: Context) {
               </div>
               <div className="relative flex flex-col p-8 sm:p-11">
                 <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 hidden w-12 bg-gradient-to-r from-[#5c4a36]/15 to-transparent md:block" />
-                <span className="font-header text-[10px] font-semibold uppercase tracking-[0.22em] text-clay">
+                <span className="font-header text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f94f18]">
                   Story {pad(((index + 1) % posts.length) + 1)} · {next.readMinutes} min read
                 </span>
                 <h3 className="mt-4 font-serif text-3xl leading-[1.08] tracking-tight text-balance sm:text-4xl">{next.title}</h3>
@@ -211,7 +211,7 @@ function Postmark({ iso }: { iso: string }) {
   const date = new Date(iso);
   const day = date.toLocaleDateString("en-IN", { day: "2-digit", month: "short" }).toUpperCase();
   return (
-    <svg viewBox="0 0 120 120" className="size-24 shrink-0 -rotate-12 text-clay/75 sm:size-28" role="img" aria-label={`Filed ${longDate(iso)}`}>
+    <svg viewBox="0 0 120 120" className="size-24 shrink-0 -rotate-12 text-[#f94f18]/75 sm:size-28" role="img" aria-label={`Filed ${longDate(iso)}`}>
       <defs>
         <path id="postmark-ring" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
       </defs>

@@ -11,7 +11,7 @@ export default function ContactPage() {
   return (
     <Frame className="grid gap-12 py-12 lg:grid-cols-2">
       <div>
-        <p className="text-xs uppercase tracking-[0.22em] text-clay">Desk</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">Desk</p>
         <h1 className="mt-3 font-serif text-5xl tracking-tight sm:text-6xl">Tell us the month. We will tell you the trip.</h1>
         <p className="mt-4 text-lg leading-8 text-ink/70">
           Private groups, solo seats, and questions about a date already on the calendar all come through here.

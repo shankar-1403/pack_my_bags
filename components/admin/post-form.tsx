@@ -64,12 +64,12 @@ export function PostForm({ post }: { post: Post | null }) {
       <label className="inline-flex items-center gap-2 text-sm">
         <input type="checkbox" name="published" defaultChecked={post?.published ?? true} /> Published
       </label>
-      {error ? <p className="text-sm text-clay">{error}</p> : null}
+      {error ? <p className="text-sm text-[#f94f18]">{error}</p> : null}
       <div className="flex gap-3">
         <button type="submit" disabled={saving} className="rounded-full bg-ink px-5 py-3 text-sm text-cream disabled:opacity-60">
           {saving ? "Saving…" : "Save story"}
         </button>
-        {post ? <button type="button" onClick={onDelete} className="rounded-full border border-line px-5 py-3 text-sm text-clay">Delete</button> : null}
+        {post ? <button type="button" onClick={onDelete} className="rounded-full border border-line px-5 py-3 text-sm text-[#f94f18]">Delete</button> : null}
       </div>
     </form>
   );

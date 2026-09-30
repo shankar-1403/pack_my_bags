@@ -199,7 +199,7 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
             Cover
           </p>
           <span className="relative h-px w-full overflow-hidden bg-ink/10">
-            <span data-bar className="absolute inset-0 origin-left bg-clay" style={{ transform: "scaleX(0)" }} />
+            <span data-bar className="absolute inset-0 origin-left bg-[#f94f18]" style={{ transform: "scaleX(0)" }} />
           </span>
         </div>
       </div>
@@ -310,7 +310,7 @@ function Endpaper() {
       <span className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: `radial-gradient(${BOARD} 1px, transparent 1px)`, backgroundSize: "14px 14px" }} />
       <span className="pointer-events-none absolute inset-y-0 right-0 w-[12%] bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
       <div className="relative flex h-full flex-col items-center justify-center text-center" style={{ paddingInline: "12cqw" }}>
-        <p className="font-header font-semibold uppercase text-clay" style={{ fontSize: "clamp(8px, 2.4cqh, 10px)", letterSpacing: "0.24em" }}>Ex libris</p>
+        <p className="font-header font-semibold uppercase text-[#f94f18]" style={{ fontSize: "clamp(8px, 2.4cqh, 10px)", letterSpacing: "0.24em" }}>Ex libris</p>
         <p className="font-serif italic text-ink/70" style={{ marginTop: "2.5cqh", fontSize: "clamp(16px, 5.5cqh, 24px)" }}>The Journal</p>
       </div>
     </div>
@@ -331,7 +331,7 @@ function StoryFace({ post }: { post: Post }) {
         </span>
       </div>
       <div className="flex shrink-0 flex-col" style={{ padding: "3.2cqh 6cqw 4cqh" }}>
-        <span className="font-header font-semibold uppercase text-clay" style={{ fontSize: "clamp(7px, 2.3cqh, 10px)", letterSpacing: "0.14em" }}>
+        <span className="font-header font-semibold uppercase text-[#f94f18]" style={{ fontSize: "clamp(7px, 2.3cqh, 10px)", letterSpacing: "0.14em" }}>
           {new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · {post.readMinutes} min read
         </span>
         <h2 className="line-clamp-3 font-serif leading-[1.12] tracking-tight text-ink" style={{ marginTop: "1.6cqh", fontSize: "clamp(14px, 6.4cqh, 28px)" }}>

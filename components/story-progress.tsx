@@ -35,7 +35,7 @@ export function StoryProgress({ targetId, minutes }: { targetId: string; minutes
   return (
     <div className="flex gap-5">
       <span className="relative w-px self-stretch overflow-hidden bg-ink/10">
-        <span ref={bar} className="absolute inset-0 origin-top bg-clay" style={{ transform: "scaleY(0)" }} />
+        <span ref={bar} className="absolute inset-0 origin-top bg-[#f94f18]" style={{ transform: "scaleY(0)" }} />
       </span>
       <div className="py-1">
         <p className="font-header text-[10px] font-semibold uppercase tracking-[0.24em] text-mist">Reading</p>

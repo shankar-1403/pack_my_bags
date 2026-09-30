@@ -27,7 +27,7 @@ export function TripCard({ trip }: { trip: Trip }) {
           ))}
         </div>
         {save > 0 ? (
-          <span className="absolute right-3 top-3 rounded-full bg-clay px-3 py-1 text-xs font-medium text-white">
+          <span className="absolute right-3 top-3 rounded-full bg-[#f94f18] px-3 py-1 text-xs font-medium text-white">
             {formatInr(save)} off
           </span>
         ) : null}
@@ -43,7 +43,7 @@ export function TripCard({ trip }: { trip: Trip }) {
             <p className="font-serif text-3xl leading-none">{formatInr(trip.price)}</p>
             {save > 0 ? <p className="mt-1 text-xs text-mist line-through">{formatInr(trip.originalPrice)}</p> : null}
           </div>
-          <span className="text-sm font-medium text-clay">View trip</span>
+          <span className="text-sm font-medium text-[#f94f18]">View trip</span>
         </div>
       </div>
     </Link>

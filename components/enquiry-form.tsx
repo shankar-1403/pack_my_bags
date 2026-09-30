@@ -60,11 +60,11 @@ export function EnquiryForm({
         placeholder={tripTitle ? `Ask about ${tripTitle}` : "Where do you want to go, and when?"}
         className="w-full rounded-2xl border border-line bg-paper px-4 py-3 text-sm outline-none focus:border-clay"
       />
-      {error ? <p className="text-sm text-clay">{error}</p> : null}
+      {error ? <p className="text-sm text-[#f94f18]">{error}</p> : null}
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full rounded-full bg-clay px-5 py-3 text-sm font-medium text-white transition hover:bg-[#b85324] disabled:opacity-60"
+        className="w-full rounded-full bg-[#f94f18] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#b85324] disabled:opacity-60"
       >
         {status === "sending" ? "Sending…" : "Request a callback"}
       </button>

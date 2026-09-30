@@ -18,7 +18,7 @@ export default async function TripsPage({
 
   return (
     <Frame className="py-12">
-      <p className="text-xs uppercase tracking-[0.22em] text-clay">The calendar</p>
+      <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">The calendar</p>
       <h1 className="mt-3 max-w-3xl font-serif text-5xl leading-[0.95] tracking-tight sm:text-6xl">
         Explore upcoming trips
       </h1>

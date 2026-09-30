@@ -50,7 +50,7 @@ export function ReviewsManager({ initial }: { initial: Review[] }) {
               </div>
               <div className="flex shrink-0 gap-3 text-sm">
                 <button type="button" className="text-pine" onClick={() => { setEditing(review.id); setDraft(review); }}>Edit</button>
-                <button type="button" className="text-clay" onClick={() => remove(review.id)}>Delete</button>
+                <button type="button" className="text-[#f94f18]" onClick={() => remove(review.id)}>Delete</button>
               </div>
             </div>
           </li>
@@ -67,7 +67,7 @@ export function ReviewsManager({ initial }: { initial: Review[] }) {
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={draft.published} onChange={(event) => setDraft({ ...draft, published: event.target.checked })} /> Published
         </label>
-        {error ? <p className="text-sm text-clay">{error}</p> : null}
+        {error ? <p className="text-sm text-[#f94f18]">{error}</p> : null}
         <button type="submit" className="w-full rounded-full bg-ink py-3 text-sm text-cream">Save review</button>
       </form>
     </div>

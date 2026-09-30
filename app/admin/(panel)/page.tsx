@@ -18,7 +18,7 @@ export default function AdminHome() {
 
   return (
     <div>
-      <p className="text-xs uppercase tracking-[0.2em] text-clay">Studio</p>
+      <p className="text-xs uppercase tracking-[0.2em] text-[#f94f18]">Studio</p>
       <h1 className="mt-2 font-serif text-5xl tracking-tight">Overview</h1>
       <p className="mt-3 max-w-xl text-sm leading-6 text-ink/70">
         Edit the calendar, the journal, and the notes on the homepage. Changes are stored in the content files and show up on the public site immediately.

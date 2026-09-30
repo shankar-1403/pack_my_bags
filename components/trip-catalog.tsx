@@ -37,7 +37,7 @@ function TripTile({ trip }: { trip: Trip }) {
           </span>
         ) : null}
         {save > 0 ? (
-          <span className="absolute right-3 top-3 rounded-full bg-clay px-2.5 py-1 font-header text-[10px] font-semibold text-white">
+          <span className="absolute right-3 top-3 rounded-full bg-[#f94f18] px-2.5 py-1 font-header text-[10px] font-semibold text-white">
             {formatInr(save)} off
           </span>
         ) : null}

@@ -33,7 +33,7 @@ export function HomeBanner({
 
         <div className={`relative mx-auto flex min-h-[680px] w-full max-w-7xl flex-col justify-between px-3 py-10 text-cream sm:px-5 sm:py-14 ${fill ? "md:motion-safe:min-h-[calc(100dvh-var(--site-header-height,7.5rem))]" : ""}`}>
           <div className="max-w-xl">
-            <p className="font-header text-[11px] font-semibold uppercase tracking-[0.22em] text-[#f0c7b0]">
+            <p className="font-header text-[11px] font-semibold uppercase tracking-[0.22em] text-[#f94f18]">
               Upcoming group departures
             </p>
             <h1 className="mt-4 font-serif text-[2.75rem] leading-[0.95] tracking-tight sm:text-6xl">
@@ -43,7 +43,7 @@ export function HomeBanner({
               Fixed dates across India and a few places further out. Small groups, handpicked stays, and a captain who is on the trip with you.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/trips" className="rounded-full bg-cream px-5 py-3 font-header text-sm font-semibold text-ink transition hover:bg-white">
+              <Link href="/trips" className="rounded-full bg-[#f94f18] px-5 py-3 font-header text-sm font-semibold text-white transition hover:bg-white">
                 Browse upcoming trips
               </Link>
               <Link href="/contact" className="rounded-full border border-white/35 px-5 py-3 font-header text-sm font-semibold text-cream transition hover:bg-white/10">

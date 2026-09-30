@@ -13,7 +13,7 @@ export default function BlogPage() {
 
   return (
     <Frame className="py-12">
-      <p className="text-xs uppercase tracking-[0.22em] text-clay">Journal</p>
+      <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">Journal</p>
       <h1 className="mt-3 font-serif text-5xl tracking-tight sm:text-6xl">Stories from the desk</h1>
       <JournalShelf posts={posts} />
     </Frame>
