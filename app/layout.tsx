@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     default: "Pack my bags",
     template: "%s · Pack my bags",
   },
+  icons:"/favicon.svg",
   description:
     "Upcoming group trips across India and beyond. Fixed dates, handpicked stays, and captains who travel with you.",
 };
