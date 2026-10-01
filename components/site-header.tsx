@@ -7,7 +7,6 @@ import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { Frame } from "./frame";
 import Logo from '../public/logo.webp'
-import LogoWhite from '../public/logo_white.webp'
 
 const links = [
   { href: "/", label: "Home" },
@@ -15,6 +14,7 @@ const links = [
   { href: "/trips", label: "Upcoming trips" },
   { href: "/blog", label: "Journal" },
   { href: "/destinations", label: "Destinations" },
+  { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
 

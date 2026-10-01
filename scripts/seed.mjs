@@ -601,7 +601,7 @@ const settings = {
   phone: "+91 98765 43210",
   whatsapp: "919876543210",
   email: "hello@packmybags.com",
-  address: "14, Second Floor, Kala Ghoda, Mumbai 400001",
+  address: "Lodha Supremus, 520, Off Mahakali Caves Rd, Chakala Industrial Area (MIDC), Andheri East, Mumbai, Maharashtra 400093.",
   promo: "October departures are open — early seats save up to ₹5,000",
 };
 
