@@ -19,8 +19,8 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Pack my bags",
-    template: "%s · Pack my bags",
+    default: "PackMyBags",
+    template: "%s · PackMyBags",
   },
   icons:"/favicon.svg",
   description:

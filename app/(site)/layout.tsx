@@ -1,3 +1,4 @@
+import { FloatingActions } from "@/components/floating-actions";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getSettings } from "@/lib/content";
@@ -12,6 +13,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <SiteHeader settings={settings} />
       <main className="flex-1">{children}</main>
       <SiteFooter settings={settings} />
+      <FloatingActions whatsapp={settings.whatsapp} />
     </div>
   );
 }

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "a8a65feb-ac04-4a02-9db0-f2a4a0498405",
+    "image": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=2400&q=80",
+    "title": "Two days in the hills",
+    "subtitle": "Leave Friday night, back for Monday.",
+    "link": "/trips?type=weekend",
+    "published": true
+  },
+  {
+    "id": "8710d815-95d5-4bd3-8eb2-72349e547135",
+    "image": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2400&q=80",
+    "title": "Lakes, slow mornings",
+    "subtitle": "Short escapes with the planning already done.",
+    "link": "/trips?type=weekend",
+    "published": true
+  },
+  {
+    "id": "4d9080e6-079c-4f91-afeb-37f67bc8d183",
+    "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=2400&q=80",
+    "title": "Above the clouds by Saturday",
+    "subtitle": "Weekend treks with a captain on the trail.",
+    "link": "/trips?type=weekend",
+    "published": true
+  }
+]

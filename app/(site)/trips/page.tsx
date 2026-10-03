@@ -5,7 +5,7 @@ import { publishedTrips } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Destinations",
-  description: "Browse Pack my bags group departures by destination, style, and budget.",
+  description: "Browse PackMyBags group departures by destination, style, and budget.",
 };
 
 export default async function TripsPage({

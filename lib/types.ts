@@ -105,6 +105,25 @@ export type Review = {
   published: boolean;
 };
 
+/** One slide in the home page's weekend banner. Text and link are optional. */
+export type WeekendBanner = {
+  id: string;
+  image: string;
+  title: string;
+  subtitle: string;
+  link: string;
+  published: boolean;
+};
+
+/** One print on the Gallery page's table. */
+export type GalleryItem = {
+  id: string;
+  image: string;
+  place: string;
+  region: string;
+  published: boolean;
+};
+
 export type Faq = {
   id: string;
   question: string;

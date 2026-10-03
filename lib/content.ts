@@ -5,6 +5,8 @@ import { database, plain, usesDatabase } from "./firebase";
 import type {
   Enquiry,
   Faq,
+  GalleryItem,
+  WeekendBanner,
   Post,
   Review,
   SiteSettings,
@@ -68,6 +70,10 @@ export const getReviews = () => readList<Review>("reviews");
 export const saveReviews = (reviews: Review[]) => writeList("reviews", reviews);
 export const getFaqs = () => readList<Faq>("faqs");
 export const saveFaqs = (faqs: Faq[]) => writeList("faqs", faqs);
+export const getGallery = () => readList<GalleryItem>("gallery");
+export const saveGallery = (items: GalleryItem[]) => writeList("gallery", items);
+export const getWeekend = () => readList<WeekendBanner>("weekend");
+export const saveWeekend = (items: WeekendBanner[]) => writeList("weekend", items);
 export const getEnquiries = () => readList<Enquiry>("enquiries");
 export const saveEnquiries = (enquiries: Enquiry[]) => writeList("enquiries", enquiries);
 
@@ -85,6 +91,14 @@ export async function publishedPosts() {
   return (await getPosts())
     .filter((post) => post.published)
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
+}
+
+export async function publishedGallery() {
+  return (await getGallery()).filter((item) => item.published);
+}
+
+export async function publishedWeekend() {
+  return (await getWeekend()).filter((item) => item.published);
 }
 
 export async function publishedReviews() {

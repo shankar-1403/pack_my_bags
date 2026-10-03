@@ -47,6 +47,7 @@ Everything the Firebase account owner needs. The code is done; nothing below nee
 ├── posts/{postId}          journal stories
 ├── reviews/{reviewId}
 ├── faqs/{faqId}
+├── gallery/{photoId}      prints on the Gallery page
 ├── enquiries/{enquiryId}   form submissions
 ├── site/
 │   └── settings            phone, email, address, promo bar…
@@ -59,6 +60,7 @@ Everything the Firebase account owner needs. The code is done; nothing below nee
 | `posts` | the post's `id` | Journal stories | CMS → Journal |
 | `reviews` | the review's `id` | Traveller reviews | CMS → Reviews |
 | `faqs` | the FAQ's `id` | Site-wide FAQs | CMS → FAQs |
+| `gallery` | the photo's `id` | Gallery page prints | CMS → Gallery |
 | `enquiries` | the enquiry's `id` | Contact / trip form submissions | Website forms; CMS → Enquiries |
 | `site/settings` | fixed | Site settings | CMS → Settings |
 | `users` | the user's **UID** | Who may use the CMS | You, in the console |
@@ -154,6 +156,25 @@ Fields marked *optional* may be missing.
 | `question` | string |
 | `answer` | string |
 | `order` | number |
+
+### `gallery`
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | Same as its key |
+| `image` | string | Photo URL (uploaded to Storage) |
+| `place` | string | Written on the print |
+| `region` | string | Optional |
+| `published` | boolean | Hidden when `false` |
+| `order` | number | Position on the table |
+
+### Photos (Firebase Storage)
+CMS uploads go to the bucket `pack-my-bags-1c85e.firebasestorage.app` under `uploads/YYYY/MM/{uuid}.webp`
+(resized to ≤ 2400 px, WebP). The site saves a download-token link, so Storage rules can stay fully locked:
+```
+rules_version = '2';
+service firebase.storage { match /b/{bucket}/o { match /{allPaths=**} { allow read, write: if false; } } }
+```
 
 ### `enquiries`
 

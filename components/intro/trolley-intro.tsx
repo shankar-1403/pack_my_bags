@@ -142,7 +142,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
   const on = (classes: string) => (fallback ? "" : classes);
 
   return (
-    <section ref={sectionRef} className={`relative ${on("motion-safe:-mt-[var(--site-header-height,7.5rem)]")}`}>
+    <section ref={sectionRef} data-intro-runway className={`relative ${on("motion-safe:-mt-[var(--site-header-height,7.5rem)]")}`}>
       <div
         ref={stageRef}
         className={`relative ${on("motion-safe:sticky motion-safe:top-0 motion-safe:min-h-[100dvh] motion-safe:overflow-hidden")}`}

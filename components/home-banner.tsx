@@ -4,13 +4,11 @@ import { formatInr } from "@/lib/format";
 import type { Trip } from "@/lib/types";
 
 export function HomeBanner({
-  routeCount,
   startsFrom,
   spotlight,
   companions,
   fill = false,
 }: {
-  routeCount: number;
   startsFrom: number;
   spotlight?: Trip;
   companions: Trip[];
@@ -59,8 +57,8 @@ export function HomeBanner({
 
           <div className="mt-12 grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
             <dl className="grid max-w-md grid-cols-3 border-t border-white/20 pt-5">
-              <Stat value={String(routeCount)} label="Open routes" />
-              <Stat value="4.8" label="Traveller rating" />
+              <Stat value="150+" label="Open routes" />
+              <Stat value="4.9" label="Traveller rating" />
               <Stat value={formatInr(startsFrom)} label="Starts from" />
             </dl>
             {companions.length > 0 ? (

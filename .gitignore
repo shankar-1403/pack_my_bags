@@ -43,3 +43,6 @@ next-env.d.ts
 # Firebase service-account keys: never commit
 service-account*.json
 *-firebase-adminsdk-*.json
+
+# Photos uploaded through the CMS on a laptop without the Firebase key
+/public/uploads/

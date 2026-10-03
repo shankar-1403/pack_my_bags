@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Post } from "@/lib/types";
 import { Field, inputClass } from "./fields";
+import { ImageUpload } from "./image-upload";
 
 export function PostForm({ post }: { post: Post | null }) {
+  const [image, setImage] = useState(post?.image ?? "");
   const router = useRouter();
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -55,9 +57,15 @@ export function PostForm({ post }: { post: Post | null }) {
       <Field label="Slug"><input name="slug" defaultValue={post?.slug} className={inputClass} /></Field>
       <Field label="Excerpt"><textarea name="excerpt" rows={2} defaultValue={post?.excerpt} className={inputClass} /></Field>
       <Field label="Body, blank line between paragraphs"><textarea name="body" rows={12} required defaultValue={post?.body} className={inputClass} /></Field>
+      <div>
+        <span className="mb-1.5 block text-xs font-medium uppercase tracking-[0.16em] text-mist">Cover photo</span>
+        <div className="max-w-md">
+          <ImageUpload value={image} onChange={setImage} label="Upload the story photo" required />
+        </div>
+        <input type="hidden" name="image" value={image} />
+      </div>
       <div className="grid gap-4 md:grid-cols-2">
-        <Field label="Image URL"><input name="image" required defaultValue={post?.image} className={inputClass} /></Field>
-        <Field label="Author"><input name="author" defaultValue={post?.author ?? "Pack my bags desk"} className={inputClass} /></Field>
+        <Field label="Author"><input name="author" defaultValue={post?.author ?? "PackMyBags desk"} className={inputClass} /></Field>
         <Field label="Published date"><input name="publishedAt" type="date" defaultValue={post?.publishedAt?.slice(0, 10)} className={inputClass} /></Field>
         <Field label="Read minutes"><input name="readMinutes" type="number" min={1} defaultValue={post?.readMinutes ?? 5} className={inputClass} /></Field>
       </div>

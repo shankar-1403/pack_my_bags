@@ -11,7 +11,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
     <footer className="mt-20 bg-pine font-header text-cream">
       <Frame className="grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:py-14 lg:grid-cols-4">
         <div className="col-span-2 lg:col-span-1">
-          <Image src={Logo} alt="Pack my bags" className="h-10 w-auto md:h-14" />
+          <Image src={Logo} alt="PackMyBags" className="h-10 w-auto md:h-14" />
           <p className="mt-4 max-w-xs text-sm leading-6 text-cream/70">{settings.tagline}</p>
         </div>
         <div>
@@ -28,7 +28,6 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
             <li><Link href="/about" className="inline-flex min-h-10 items-center hover:text-white">About</Link></li>
             <li><Link href="/blog" className="inline-flex min-h-10 items-center hover:text-white">Journal</Link></li>
             <li><Link href="/contact" className="inline-flex min-h-10 items-center hover:text-white">Contact</Link></li>
-            <li><Link href="/admin" className="inline-flex min-h-10 items-center hover:text-white">Studio</Link></li>
           </ul>
         </div>
         <div className="col-span-2 lg:col-span-1">
@@ -43,7 +42,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
       </Frame>
       <div className="border-t border-white/10">
         <Frame className="flex flex-col gap-2 py-5 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {year} Pack my bags. Group trips with fixed dates and captains who stay with you.</p>
+          <p>© {year} PackMyBags. Group trips with fixed dates and captains who stay with you.</p>
           <p>Mumbai</p>
         </Frame>
       </div>

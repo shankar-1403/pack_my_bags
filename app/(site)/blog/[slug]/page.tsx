@@ -68,7 +68,7 @@ export default async function PostPage({ params }: Context) {
                 <span aria-hidden className="pointer-events-none absolute inset-3 rounded-[16px] border" style={{ borderColor: `${GILT}4d` }} />
                 <span aria-hidden className="pointer-events-none absolute inset-[18px] rounded-[12px] border" style={{ borderColor: `${GILT}1f` }} />
                 <p className="relative font-header text-[11px] font-semibold uppercase tracking-[0.32em]" style={{ color: GILT }}>
-                  Pack my bags · Journal
+                  PackMyBags · Journal
                 </p>
                 <h1 className="relative mt-5 font-serif text-[2.4rem] leading-[1.02] tracking-tight text-balance sm:text-5xl lg:text-[3.35rem]">
                   {post.title}

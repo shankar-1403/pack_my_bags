@@ -6,7 +6,7 @@ import { publishedPosts } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Journal",
-  description: "Notes from Pack my bags on packing, pacing, and choosing a first group trip.",
+  description: "Notes from PackMyBags on packing, pacing, and choosing a first group trip.",
 };
 
 export default async function BlogPage() {

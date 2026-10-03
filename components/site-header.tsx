@@ -47,8 +47,8 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
       <Frame className="py-3 short:py-1.5">
         <div className={`rounded-[28px] border backdrop-blur-xl border-white/80 bg-cream/80 shadow-[0_18px_50px_-32px_rgba(23,20,15,0.65)]`}>
           <div className="flex items-center justify-between gap-3 px-3 py-2 sm:px-4 short:py-1">
-            <Link href="/" aria-label="Pack my bags home" className="flex min-h-11 shrink-0 items-center" onClick={() => setOpen(false)}>
-              <Image src={Logo} alt="Pack my bags" priority className="h-9 w-auto sm:h-11 lg:h-14 xl:h-16 short:h-8 short:sm:h-9 short:lg:h-11" />
+            <Link href="/" aria-label="PackMyBags home" className="flex min-h-11 shrink-0 items-center" onClick={() => setOpen(false)}>
+              <Image src={Logo} alt="PackMyBags" priority className="h-9 w-auto sm:h-11 lg:h-14 xl:h-16 short:h-8 short:sm:h-9 short:lg:h-11" />
             </Link>
             <nav className="hidden items-center gap-0.5 lg:flex xl:gap-1">
               {links.filter((link) => link.href !== "/contact").map((link) => {
@@ -101,9 +101,6 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
                   </Link>
                 );
               })}
-              <a href={`https://wa.me/${settings.whatsapp}`} className={`block rounded-2xl px-3 py-3 text-sm font-medium hover:bg-pine text-ink`}>
-                WhatsApp {settings.phone}
-              </a>
             </nav>
           ) : null}
         </div>

@@ -284,7 +284,7 @@ function CoverFace() {
       <div className="absolute rounded-[9px] border" style={{ inset: "8cqh 7.5cqw 8cqh 13.5cqw", borderColor: `${GILT}26` }} />
       <div className="relative flex h-full flex-col text-center" style={{ padding: "9cqh 8cqw 7cqh 14cqw" }}>
         <p className="font-header font-semibold uppercase" style={{ color: GILT, fontSize: "clamp(10px, 2.6cqh, 11px)", letterSpacing: "0.28em" }}>
-          Pack my bags
+          PackMyBags
         </p>
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
           <span className="block h-px w-8" style={{ background: GILT }} />

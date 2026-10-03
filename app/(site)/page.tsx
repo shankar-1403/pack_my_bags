@@ -6,9 +6,9 @@ import { Frame } from "@/components/frame";
 import { HomeBanner } from "@/components/home-banner";
 import { TrolleyIntro } from "@/components/intro/trolley-intro";
 import { JournalStrip } from "@/components/journal-strip";
-import { PlacesGrid } from "@/components/places-grid";
 import { RoadNotes } from "@/components/road-notes";
-import { getFaqs, getPosts, getReviews, publishedTrips } from "@/lib/content";
+import { WeekendBanner } from "@/components/weekend-banner";
+import { getFaqs, getPosts, getReviews, publishedTrips, publishedWeekend } from "@/lib/content";
 
 const reasons = [
   {
@@ -39,18 +39,12 @@ export default async function HomePage() {
   const faqs = (await getFaqs()).slice(0, 4);
   const lowest = trips.reduce((min, trip) => Math.min(min, trip.price), trips[0]?.price ?? 0);
 
-  const destinations = [...trips.reduce((map, trip) => {
-    const current = map.get(trip.destination);
-    if (current) current.count += 1;
-    else map.set(trip.destination, { name: trip.destination, region: trip.region, image: trip.image, count: 1 });
-    return map;
-  }, new Map<string, { name: string; region: string; image: string; count: number }>()).values()].slice(0, 6);
+  const weekend = await publishedWeekend();
 
   return (
     <div>
       <TrolleyIntro>
         <HomeBanner
-          routeCount={trips.length}
           startsFrom={lowest}
           spotlight={spotlight}
           companions={side}
@@ -86,11 +80,18 @@ export default async function HomePage() {
         </Frame>
       </section>
 
-      <Frame className="py-20">
-        <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">Places</p>
-        <h2 className="mt-2 font-serif text-4xl tracking-tight sm:text-5xl">Where the next groups are going</h2>
-        <PlacesGrid places={destinations} />
-      </Frame>
+      {weekend.length ? (
+        <Frame className="py-20">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">Weekends</p>
+              <h2 className="mt-2 font-serif text-4xl tracking-tight sm:text-5xl">Escapes for the weekend</h2>
+            </div>
+            <Link href="/trips?type=weekend" className="inline-flex min-h-10 items-center whitespace-nowrap text-sm text-pine">All weekend trips</Link>
+          </div>
+          <WeekendBanner slides={weekend} />
+        </Frame>
+      ) : null}
 
       <Frame className="pb-8">
         <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">From the road</p>

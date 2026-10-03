@@ -10,7 +10,7 @@ export function Logo({ tone = "ink", wordmark = "serif" }: { tone?: "ink" | "cre
         <path d="M7 23c7-1 9-10 18-13" fill="none" stroke={tone === "cream" ? "#1b3a33" : "#f3eee6"} strokeWidth="1.7" />
         <circle cx="23.5" cy="10" r="2.1" fill={dot} stroke={stroke} strokeWidth="0" />
       </svg>
-      <span className={`${wordmark === "header" ? "font-header font-semibold tracking-[-0.04em]" : "font-serif tracking-tight"} text-xl leading-none sm:text-2xl`}>Pack my bags</span>
+      <span className={`${wordmark === "header" ? "font-header font-semibold tracking-[-0.04em]" : "font-serif tracking-tight"} text-xl leading-none sm:text-2xl`}>PackMyBags</span>
     </span>
   );
 }

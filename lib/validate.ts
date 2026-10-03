@@ -55,7 +55,7 @@ export function cleanTrip(input: Partial<Trip>, id: string, trips: Trip[]): Trip
   const destination = text(input.destination);
   if (!destination) throw new Error("Destination is required.");
   const image = text(input.image);
-  if (!image) throw new Error("A cover image URL is required.");
+  if (!image) throw new Error("Upload a cover photo.");
   const types = list(input.types).filter((type): type is TripType => tripTypes.has(type));
   const days = Math.max(1, Number(input.days) || 1);
   const nights = Math.max(0, Number(input.nights) || 0);
@@ -142,7 +142,7 @@ export function cleanPost(input: Partial<Post>, id: string, posts: Post[]): Post
   const body = text(input.body);
   if (!body) throw new Error("The story needs a body.");
   const image = text(input.image);
-  if (!image) throw new Error("An image URL is required.");
+  if (!image) throw new Error("Upload a photo for the story.");
   const publishedAt = text(input.publishedAt) || new Date().toISOString().slice(0, 10);
 
   return {
@@ -152,7 +152,7 @@ export function cleanPost(input: Partial<Post>, id: string, posts: Post[]): Post
     excerpt: text(input.excerpt),
     body,
     image,
-    author: text(input.author, "Pack my bags desk"),
+    author: text(input.author, "PackMyBags desk"),
     publishedAt,
     readMinutes: Math.max(1, Number(input.readMinutes) || 4),
     published: input.published !== false,
@@ -176,7 +176,7 @@ export function cleanFaq(input: Partial<Faq>, id: string): Faq {
 }
 
 export function cleanSettings(input: Partial<SiteSettings>): SiteSettings {
-  const name = text(input.name, "Pack my bags");
+  const name = text(input.name, "PackMyBags");
   const email = text(input.email);
   if (!email.includes("@")) throw new Error("A valid email is required.");
   return {

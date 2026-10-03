@@ -103,3 +103,54 @@ body {
     filter: none;
   }
 }
+
+/* Home: the weekend banner's progress bar fills over each slide. */
+@keyframes weekend-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Ticket notches: real cut-outs (not painted circles), so shadows and edges follow the shape.
+   Each half of a ticket loses a quarter circle at the two corners where it meets the other half. */
+.notch-top,
+.notch-bottom,
+.notch-left,
+.notch-right {
+  --notch: 16px;
+}
+.notch-top {
+  mask:
+    radial-gradient(var(--notch) at 0 0, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(var(--notch) at 100% 0, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+.notch-bottom {
+  mask:
+    radial-gradient(var(--notch) at 0 100%, #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(var(--notch) at 100% 100%, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+.notch-left {
+  mask:
+    radial-gradient(var(--notch) at 0 0, #0000 98%, #000) top / 100% 51% no-repeat,
+    radial-gradient(var(--notch) at 0 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+}
+.notch-right {
+  mask:
+    radial-gradient(var(--notch) at 100% 0, #0000 98%, #000) top / 100% 51% no-repeat,
+    radial-gradient(var(--notch) at 100% 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+}
+@media (min-width: 768px) {
+  .md\:notch-left {
+    mask:
+      radial-gradient(var(--notch) at 0 0, #0000 98%, #000) top / 100% 51% no-repeat,
+      radial-gradient(var(--notch) at 0 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+  }
+  .md\:notch-right {
+    mask:
+      radial-gradient(var(--notch) at 100% 0, #0000 98%, #000) top / 100% 51% no-repeat,
+      radial-gradient(var(--notch) at 100% 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+  }
+}

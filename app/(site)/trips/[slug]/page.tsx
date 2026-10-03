@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookingPanel } from "@/components/booking-panel";
+import { FaqList } from "@/components/faq-list";
 import { Frame } from "@/components/frame";
 import { TripCard } from "@/components/trip-card";
 import { publishedTrips } from "@/lib/content";
@@ -153,16 +154,8 @@ export default async function TripPage({ params }: Context) {
           {trip.faqs?.length ? (
             <section className="mt-12">
               <h2 className="font-serif text-3xl">Questions about this trip</h2>
-              <div className="mt-4 divide-y divide-line border-y border-line">
-                {trip.faqs.map((faq) => (
-                  <details key={faq.question} className="group py-4">
-                    <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between gap-4 font-serif text-xl">
-                      {faq.question}
-                      <span aria-hidden className="text-[#f94f18] transition group-open:rotate-45">+</span>
-                    </summary>
-                    <p className="mt-2 whitespace-pre-line text-sm leading-7 text-ink/75 sm:text-base">{faq.answer}</p>
-                  </details>
-                ))}
+              <div className="mt-4">
+                <FaqList faqs={trip.faqs} firstOpen={false} />
               </div>
             </section>
           ) : null}

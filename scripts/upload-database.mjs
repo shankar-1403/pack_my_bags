@@ -21,7 +21,7 @@ const keepEnquiries = process.argv.includes("--keep-enquiries");
 
 await db.ref("site/settings").set(read("settings.json"));
 console.log("site/settings");
-for (const name of ["trips", "posts", "reviews", "faqs", "enquiries"]) {
+for (const name of ["trips", "posts", "reviews", "faqs", "gallery", "weekend", "enquiries"]) {
   if (name === "enquiries" && keepEnquiries) continue;
   const items = read(`${name}.json`);
   const value = Object.fromEntries(items.map((item, order) => [item.id, { ...item, order }]));

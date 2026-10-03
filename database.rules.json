@@ -32,6 +32,20 @@
         "order"
       ]
     },
+    "gallery": {
+      ".read": false,
+      ".write": false,
+      ".indexOn": [
+        "order"
+      ]
+    },
+    "weekend": {
+      ".read": false,
+      ".write": false,
+      ".indexOn": [
+        "order"
+      ]
+    },
     "enquiries": {
       ".read": false,
       ".write": false,

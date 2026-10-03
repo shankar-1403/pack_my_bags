@@ -13,6 +13,7 @@ import {
 } from "@/lib/format";
 import type { Departure, ItineraryDay, Trip, TripFaq, TripType } from "@/lib/types";
 import { Field, inputClass } from "./fields";
+import { ImageUpload, MultiUpload } from "./image-upload";
 
 type Draft = Omit<Trip, "id" | "slots" | "faqs" | "thingsToCarry"> & {
   slots: Departure[];
@@ -154,7 +155,7 @@ export function TripForm({ trip }: { trip: Trip | null }) {
   const seoDescription = draft.seoDescription || draft.summary;
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} className="grid gap-8 pb-28 lg:grid-cols-[180px_minmax(0,1fr)]">
+    <form ref={formRef} onSubmit={onSubmit} className="grid grid-cols-[minmax(0,1fr)] gap-8 pb-28 lg:grid-cols-[180px_minmax(0,1fr)]">
       <nav aria-label="Sections" className="hidden lg:block">
         <ul className="sticky top-6 space-y-1 text-sm">
           {sections.map(([id, label]) => (
@@ -165,7 +166,7 @@ export function TripForm({ trip }: { trip: Trip | null }) {
         </ul>
       </nav>
 
-      <div className="grid gap-6">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
         <Section id="basics" title="Basics" hint="What the trip is called and where it goes.">
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Title">
@@ -365,9 +366,10 @@ export function TripForm({ trip }: { trip: Trip | null }) {
                   <Mini label="Stay">
                     <input value={day.stay ?? ""} onChange={(e) => update({ ...day, stay: e.target.value || undefined })} placeholder="Homestay, Kaza" className={smallInput} />
                   </Mini>
-                  <Mini label="Photo URL">
-                    <input value={day.image ?? ""} onChange={(e) => update({ ...day, image: e.target.value || undefined })} className={smallInput} />
-                  </Mini>
+                  <div>
+                    <span className="mb-1 block text-[11px] font-medium uppercase tracking-[0.14em] text-mist">Photo</span>
+                    <ImageUpload value={day.image ?? ""} onChange={(url) => update({ ...day, image: url || undefined })} aspect="aspect-[16/9]" compact />
+                  </div>
                 </div>
               </div>
             )}
@@ -409,33 +411,38 @@ export function TripForm({ trip }: { trip: Trip | null }) {
           </div>
         </Section>
 
-        <Section id="media" title="Photos" hint="Paste image links (https). The first is the cover.">
-          <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_200px]">
-            <div className="grid gap-4">
-              <Field label="Cover image URL">
-                <input required type="url" value={draft.image} onChange={(e) => set("image", e.target.value)} className={inputClass} />
-              </Field>
-              <Field label="Cover image description (for screen readers)">
+        <Section id="media" title="Photos" hint="Upload photos from your computer or phone. They are resized and compressed for the web automatically.">
+          <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div>
+              <p className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-mist">Cover photo</p>
+              <ImageUpload value={draft.image} onChange={(url) => set("image", url)} label="Upload the cover photo" required />
+            </div>
+            <div className="self-end">
+              <Field label="Cover photo description (for screen readers)">
                 <input value={draft.imageAlt ?? ""} onChange={(e) => set("imageAlt", e.target.value)} placeholder="Snow on the road to Kaza" className={inputClass} />
               </Field>
             </div>
-            <Preview src={draft.image} />
           </div>
-          <div className="mt-6">
-            <p className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-mist">Gallery</p>
-            <Repeater<string>
-              items={draft.gallery}
-              onChange={(gallery) => set("gallery", gallery)}
-              make={() => ""}
-              addLabel="Add photo"
-              empty="No gallery photos — the cover is used."
-              render={(src, update) => (
-                <div className="grid items-center gap-3 sm:grid-cols-[minmax(0,1fr)_96px]">
-                  <input type="url" value={src} onChange={(e) => update(e.target.value)} placeholder="https://…" className={smallInput} />
-                  <Preview src={src} small />
-                </div>
-              )}
-            />
+          <div className="mt-8">
+            <p className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-mist">Gallery · {draft.gallery.length} photo{draft.gallery.length === 1 ? "" : "s"}</p>
+            {draft.gallery.length ? (
+              <ul className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {draft.gallery.map((src, index) => (
+                  <li key={`${src}-${index}`} className="relative">
+                    <ImageUpload value={src} onChange={(url) => set("gallery", url ? draft.gallery.map((g, i) => (i === index ? url : g)) : draft.gallery.filter((_, i) => i !== index))} />
+                    <div className="absolute left-2 top-2 flex gap-1">
+                      <IconButton label="Move left" onClick={() => index > 0 && set("gallery", swap(draft.gallery, index, index - 1))} disabled={index === 0}>
+                        <span className="grid size-7 place-items-center rounded-full bg-white/90 shadow">←</span>
+                      </IconButton>
+                      <IconButton label="Move right" onClick={() => index < draft.gallery.length - 1 && set("gallery", swap(draft.gallery, index, index + 1))} disabled={index === draft.gallery.length - 1}>
+                        <span className="grid size-7 place-items-center rounded-full bg-white/90 shadow">→</span>
+                      </IconButton>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <MultiUpload onAdd={(urls) => set("gallery", [...draft.gallery, ...urls])} label="Add gallery photos" />
           </div>
         </Section>
 
@@ -447,13 +454,16 @@ export function TripForm({ trip }: { trip: Trip | null }) {
             <Field label={`Search description · ${seoDescription.length}/160`}>
               <textarea rows={2} value={draft.seoDescription ?? ""} onChange={(e) => set("seoDescription", e.target.value)} placeholder={draft.summary} className={inputClass} />
             </Field>
-            <Field label="Share image URL">
-              <input type="url" value={draft.ogImage ?? ""} onChange={(e) => set("ogImage", e.target.value)} placeholder={draft.image} className={inputClass} />
-            </Field>
+            <div>
+              <p className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-mist">Share image (optional — the cover is used if empty)</p>
+              <div className="max-w-sm">
+                <ImageUpload value={draft.ogImage ?? ""} onChange={(url) => set("ogImage", url || undefined)} aspect="aspect-[1200/630]" label="Upload a share image" />
+              </div>
+            </div>
           </div>
           <div className="mt-4 rounded-2xl border border-line bg-white p-4">
             <p className="text-xs text-[#1a0dab]/70">packmybags.in › trips › {draft.slug || slugify(draft.title)}</p>
-            <p className="mt-1 truncate text-lg text-[#1a0dab]">{seoTitle || "Trip title"} · Pack my bags</p>
+            <p className="mt-1 truncate text-lg text-[#1a0dab]">{seoTitle || "Trip title"} · PackMyBags</p>
             <p className="mt-1 line-clamp-2 text-sm text-ink/70">{seoDescription || "The trip summary appears here."}</p>
           </div>
         </Section>
@@ -493,7 +503,7 @@ export function TripForm({ trip }: { trip: Trip | null }) {
 
 function Section({ id, title, hint, children }: { id: string; title: string; hint?: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-6 rounded-[28px] border border-line bg-white/60 p-5 sm:p-6">
+    <section id={id} className="scroll-mt-32 md:scroll-mt-6 rounded-[28px] border border-line bg-white/60 p-5 sm:p-6">
       <h2 className="font-serif text-2xl tracking-tight">{title}</h2>
       {hint ? <p className="mt-1 text-sm text-mist">{hint}</p> : null}
       <div className="mt-5">{children}</div>
@@ -611,18 +621,6 @@ function ListEditor({ label, items, onChange, placeholder }: { label: string; it
   );
 }
 
-function Preview({ src, small }: { src: string; small?: boolean }) {
-  const [brokenSrc, setBrokenSrc] = useState("");
-  const ok = /^https?:\/\//.test(src) && brokenSrc !== src;
-  return (
-    <div className={`relative overflow-hidden rounded-2xl bg-sand ${small ? "aspect-[4/3] w-24" : "aspect-[4/3] w-full"}`}>
-      {ok ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="" onError={() => setBrokenSrc(src)} className="absolute inset-0 size-full object-cover" />
-      ) : (
-        <span className="absolute inset-0 grid place-items-center px-2 text-center text-xs text-mist">{src ? "Can't load this link" : "No image"}</span>
-      )}
-    </div>
-  );
-}
+const swap = <T,>(list: T[], a: number, b: number) => list.map((item, i) => (i === a ? list[b] : i === b ? list[a] : item));
+
 

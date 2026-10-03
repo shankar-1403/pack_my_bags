@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, Target } from "lucide-react";
+import { ArrowUpRight, Eye, Target } from "lucide-react";
 import { Frame } from "@/components/frame";
-import { getSettings } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -31,9 +30,7 @@ const tripKinds = ["Pilgrimage", "Honeymoon", "Family Trips", "Escapes", "Domest
 
 const eyebrow = "font-header text-xs font-semibold uppercase tracking-[0.24em] text-[#f94f18]";
 
-export default async function AboutPage() {
-  const settings = await getSettings();
-
+export default function AboutPage() {
   return (
     <div className="pb-8">
       {/* Hero: the promise, and the route it takes. */}
@@ -169,28 +166,58 @@ export default async function AboutPage() {
         </Frame>
       </section>
 
-      {/* Call to plan */}
-      <Frame className="py-20 text-center sm:py-28">
-        <p className={eyebrow}>Let&apos;s plan it</p>
-        <h2 className="mx-auto mt-4 max-w-3xl font-serif text-5xl leading-[0.98] tracking-tight [text-wrap:balance] sm:text-6xl">
-          Tell us where you want to go.
-        </h2>
-        <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-ink/75">
-          Share your dates and ideas and we will come back with a plan that fits. No pressure, no jargon.
-        </p>
-        <Link
-          href="/contact"
-          className="mt-8 inline-flex min-h-12 items-center rounded-full bg-[#f94f18] px-7 font-header text-base font-semibold text-white transition hover:bg-[#b85324]"
-        >
-          Plan my trip
-        </Link>
-        <div className="mx-auto mt-10 max-w-xl border-t border-line pt-6 text-sm leading-7 text-ink/70 sm:text-base">
-          <p>
-            <a href={`tel:${settings.phone.replace(/\s/g, "")}`} className="hover:text-ink">{settings.phone}</a>
-            <span aria-hidden className="mx-2 text-mist">·</span>
-            <a href={`mailto:${settings.email}`} className="hover:text-ink">{settings.email}</a>
-          </p>
-          <p className="mt-1">{settings.address}</p>
+      {/* Call to plan: the page closes on your ticket — the main pass and its tear-off stub. */}
+      <Frame className="py-20 sm:py-28">
+        <div className="relative grid [filter:drop-shadow(0_30px_36px_rgba(23,20,15,0.18))] md:grid-cols-[minmax(0,1fr)_minmax(0,320px)]">
+          <div className="notch-bottom md:notch-right relative overflow-hidden rounded-t-[32px] bg-pine px-7 py-12 text-cream sm:px-12 sm:py-16 md:rounded-bl-[32px] md:rounded-tr-none lg:px-16 lg:py-20">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-[0.12]"
+              style={{ backgroundImage: "radial-gradient(#fbf8f3 1px, transparent 1px)", backgroundSize: "16px 16px" }}
+            />
+            <svg aria-hidden viewBox="0 0 400 160" fill="none" className="pointer-events-none absolute -right-10 top-8 hidden w-[26rem] text-[#f94f18] opacity-60 lg:block">
+              <path d="M10 140 C 120 140, 180 30, 390 20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 8" strokeLinecap="round" />
+            </svg>
+            <div className="relative">
+              <p className={eyebrow}>Let&apos;s plan it</p>
+              <h2 className="mt-5 max-w-xl font-serif text-5xl leading-[0.98] tracking-tight [text-wrap:balance] sm:text-6xl lg:text-7xl">
+                Tell us where you want to go.
+              </h2>
+              <p className="mt-6 max-w-lg text-lg leading-8 text-cream/80">
+                Share your dates and ideas and we will come back with a plan that fits. No pressure, no jargon.
+              </p>
+              <Link
+                href="/contact"
+                className="group mt-9 inline-flex min-h-12 items-center gap-3 rounded-full bg-[#f94f18] py-1.5 pl-7 pr-1.5 font-header text-base font-semibold text-white transition hover:bg-[#ff6a35]"
+              >
+                Plan my trip
+                <span className="grid size-9 place-items-center rounded-full bg-white/15 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
+                  <ArrowUpRight aria-hidden className="size-4" strokeWidth={2} />
+                </span>
+              </Link>
+            </div>
+          </div>
+
+          <aside aria-hidden className="notch-top md:notch-left relative flex flex-col justify-between gap-8 overflow-hidden rounded-b-[32px] bg-[#f94f18] px-7 py-10 text-white sm:px-10 md:rounded-bl-none md:rounded-tr-[32px] md:py-14">
+            <Perforation notches={false} />
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-1">
+              <div>
+                <p className="font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70">From</p>
+                <p className="mt-1 font-serif text-3xl leading-none">Your dates</p>
+              </div>
+              <div>
+                <p className="font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70">To</p>
+                <p className="mt-1 font-serif text-3xl italic leading-none">Your ideas</p>
+              </div>
+            </div>
+            <div>
+              <Barcode />
+              <p className="mt-3 flex justify-between font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-white/80">
+                <span>Admit one</span>
+                <span>PackMyBags</span>
+              </p>
+            </div>
+          </aside>
         </div>
       </Frame>
     </div>
@@ -312,12 +339,29 @@ const PLANE =
   "M12 0c0-1.3-1.6-2.2-3.2-2.2H3.4L-3.2-11h-3.3l3.9 8.8h-5.2l-2.7-3.4h-2.2L-10.9 0l-1.6 5.6h2.2l2.7-3.4h5.2L-6.5 11h3.3l6.6-8.8h5.4C10.4 2.2 12 1.3 12 0Z";
 
 /** The boarding-pass tear along the Vision half's inner edge: a dashed rule with a notch punched at each end. */
-function Perforation() {
+function Perforation({ notches = true }: { notches?: boolean }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
       <span className="absolute inset-x-6 top-0 border-t-2 border-dashed border-paper/80 md:inset-x-auto md:inset-y-6 md:left-0 md:border-l-2 md:border-t-0" />
-      <span className="absolute left-0 top-0 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-paper" />
-      <span className="absolute right-0 top-0 size-8 translate-x-1/2 -translate-y-1/2 rounded-full bg-paper md:bottom-0 md:left-0 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-1/2" />
+      {notches ? <span className="absolute left-0 top-0 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-paper" /> : null}
+      {notches ? <span className="absolute right-0 top-0 size-8 translate-x-1/2 -translate-y-1/2 rounded-full bg-paper md:bottom-0 md:left-0 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-1/2" /> : null}
     </div>
+  );
+}
+
+/** A ticket barcode: fixed bar widths, so it renders the same every time. */
+const BARS = [3, 1, 2, 1, 4, 1, 1, 3, 2, 1, 1, 2, 4, 1, 2, 1, 3, 1, 1, 2, 1, 4, 2, 1, 1, 3, 1, 2, 2, 1, 3, 1, 1, 4, 1, 2];
+
+const BAR_RECTS = BARS.reduce<{ x: number; w: number }[]>((rects, w, i) => {
+  const x = BARS.slice(0, i).reduce((sum, n) => sum + n, 0);
+  return i % 2 === 0 ? [...rects, { x, w }] : rects;
+}, []);
+const BAR_WIDTH = BARS.reduce((sum, n) => sum + n, 0);
+
+function Barcode() {
+  return (
+    <svg viewBox={`0 0 ${BAR_WIDTH} 44`} preserveAspectRatio="none" className="h-14 w-full fill-white/90">
+      {BAR_RECTS.map(({ x, w }) => <rect key={x} x={x} y="0" width={w} height="44" />)}
+    </svg>
   );
 }
