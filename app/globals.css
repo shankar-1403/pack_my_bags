@@ -154,3 +154,38 @@ body {
       radial-gradient(var(--notch) at 100% 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
   }
 }
+
+/* Legal pages: comfortable reading rhythm for paragraphs and lists. */
+.legal-body > * + * {
+  margin-top: 1rem;
+}
+.legal-body ul {
+  list-style: none;
+  padding: 0;
+}
+.legal-body ul > li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+.legal-body ul > li + li {
+  margin-top: 0.5rem;
+}
+.legal-body ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.8em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: #f94f18;
+}
+.legal-body strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.legal-body a {
+  color: var(--color-pine);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

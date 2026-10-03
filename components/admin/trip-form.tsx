@@ -14,6 +14,8 @@ import {
 import type { Departure, ItineraryDay, Trip, TripFaq, TripType } from "@/lib/types";
 import { Field, inputClass } from "./fields";
 import { ImageUpload, MultiUpload } from "./image-upload";
+import { TripDocumentImport } from "./trip-document-import";
+import type { TripImport } from "@/lib/trip-document";
 
 type Draft = Omit<Trip, "id" | "slots" | "faqs" | "thingsToCarry"> & {
   slots: Departure[];
@@ -60,6 +62,7 @@ function toDraft(trip: Trip | null): Draft {
 }
 
 const sections = [
+  ["import", "From a document"],
   ["basics", "Basics"],
   ["pricing", "Pricing"],
   ["departures", "Departures"],
@@ -86,6 +89,23 @@ export function TripForm({ trip }: { trip: Trip | null }) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) => setDraft((d) => ({ ...d, [key]: value }));
+
+  // Fill from a document: "empty" only touches fields still blank (or at their starting value);
+  // "replace" overwrites every field the document has. Photos are never touched.
+  function applyImport(data: TripImport, mode: "empty" | "replace") {
+    const isEmpty = (value: unknown, initial: unknown) =>
+      value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0) || JSON.stringify(value) === JSON.stringify(initial);
+    const current = draft as unknown as Record<string, unknown>;
+    const start = blank as unknown as Record<string, unknown>;
+    const changes: Record<string, unknown> = {};
+    for (const [field, value] of Object.entries(data)) {
+      if (value === undefined) continue;
+      if (mode === "replace" ? JSON.stringify(current[field]) !== JSON.stringify(value) : isEmpty(current[field], start[field])) changes[field] = value;
+    }
+    setDraft((d) => ({ ...d, ...(changes as Partial<Draft>) }));
+    // Count as the review list does: group size and ages are one field each, though they fill two boxes.
+    return new Set(Object.keys(changes).map((field) => field.replace(/(Min|Max)$/, ""))).size;
+  }
 
   // Warn before leaving with unsaved changes; Ctrl/Cmd+S saves.
   useEffect(() => {
@@ -167,6 +187,8 @@ export function TripForm({ trip }: { trip: Trip | null }) {
       </nav>
 
       <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
+        <TripDocumentImport tripId={trip?.id} onApply={applyImport} />
+
         <Section id="basics" title="Basics" hint="What the trip is called and where it goes.">
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Title">

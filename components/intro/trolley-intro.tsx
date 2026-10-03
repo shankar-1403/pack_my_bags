@@ -21,6 +21,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const coverRef = useRef<HTMLDivElement>(null);
+  const runwayRef = useRef<HTMLDivElement>(null);
   const [fallback, setFallback] = useState(false);
 
   useEffect(() => {
@@ -37,6 +38,11 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
     }));
     const root = document.documentElement;
     root.dataset.intro = "on";
+
+    // The film plays once per visit: every landing (a refresh included) starts it from the top.
+    const restoration = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: "instant" });
     window.dispatchEvent(new Event("scroll"));
 
     let scene: IntroScene | null = null;
@@ -45,11 +51,14 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
     let target = 0;
     let current = 0;
     let resizeTimer = 0;
+    let done = false;
 
+    // Scroll only ever moves the film forward; scrolling back up does not rewind it.
     const measure = () => {
+      if (done) return;
       const rect = section.getBoundingClientRect();
       const span = Math.max(1, rect.height - stage.offsetHeight);
-      target = clamp01(-rect.top / span);
+      target = Math.max(target, clamp01(-rect.top / span));
     };
 
     // Portrait framing keeps the traveller's shoulders just clear of the site header.
@@ -67,16 +76,42 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       hero.inert = p < 0.98;
     };
 
+    // Once the film has played to the end, its scroll runway folds away without moving anything on screen,
+    // and the page carries on from the hero as an ordinary page.
+    const finish = () => {
+      if (done) return;
+      done = true;
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      window.clearTimeout(resizeTimer);
+      hero.inert = false;
+      // Keep the hero exactly where it is on screen. The browser's own scroll anchoring is paused so it
+      // cannot correct the jump a second time.
+      const before = stage.getBoundingClientRect().top;
+      root.style.overflowAnchor = "none";
+      if (runwayRef.current) runwayRef.current.style.display = "none";
+      stage.style.position = "relative";
+      const stageTop = stage.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: Math.max(0, stageTop - before), behavior: "instant" });
+      requestAnimationFrame(() => (root.style.overflowAnchor = ""));
+      cover.style.display = "none";
+      scene?.dispose();
+      scene = null;
+      delete root.dataset.intro;
+      window.dispatchEvent(new Event("scroll"));
+    };
+
     const tick = () => {
       const diff = target - current;
       current = Math.abs(diff) < 0.0004 ? target : current + diff * 0.1;
       paint(current);
       frame = current === target ? 0 : requestAnimationFrame(tick);
+      if (!frame && current >= 1) finish();
     };
 
     const onScroll = () => {
       measure();
-      if (!frame) frame = requestAnimationFrame(tick);
+      if (!frame && !done) frame = requestAnimationFrame(tick);
     };
 
     const capture = async () => {
@@ -93,13 +128,13 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       paint(current);
     };
 
-    const onResize = () => {
-      if (!scene) return;
+    function onResize() {
+      if (!scene || done) return;
       scene.resize(cover.clientWidth, cover.clientHeight, headerHeight());
       onScroll();
       window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(capture, 300);
-    };
+    }
 
     (async () => {
       try {
@@ -134,6 +169,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       if (frame) cancelAnimationFrame(frame);
       scene?.dispose();
       hero.inert = false;
+      history.scrollRestoration = restoration;
       delete root.dataset.intro;
       window.dispatchEvent(new Event("scroll"));
     };
@@ -235,7 +271,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
           </div>
         )}
       </div>
-      {fallback ? null : <div aria-hidden className="hidden motion-safe:block" style={{ height: `${RUNWAY_VH}vh` }} />}
+      {fallback ? null : <div ref={runwayRef} aria-hidden className="hidden motion-safe:block" style={{ height: `${RUNWAY_VH}vh` }} />}
     </section>
   );
 }
