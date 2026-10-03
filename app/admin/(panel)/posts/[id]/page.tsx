@@ -4,7 +4,7 @@ import { getPosts } from "@/lib/content";
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const post = getPosts().find((item) => item.id === id);
+  const post = (await getPosts()).find((item) => item.id === id);
   if (!post) notFound();
 
   return (

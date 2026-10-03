@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { CMS_COOKIE, cmsToken } from "./lib/cms-token";
+import { CMS_COOKIE, readSession } from "./lib/cms-token";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -8,7 +8,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (request.cookies.get(CMS_COOKIE)?.value === cmsToken()) {
+  if (readSession(request.cookies.get(CMS_COOKIE)?.value)) {
     return NextResponse.next();
   }
 

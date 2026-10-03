@@ -31,9 +31,9 @@ function TripTile({ trip }: { trip: Trip }) {
           className="object-cover transition duration-700 group-hover:scale-105"
         />
         <span className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-pine/70 to-transparent" />
-        {style ? (
-          <span className="absolute left-3 top-3 rounded-full bg-cream/90 px-2.5 py-1 font-header text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">
-            {style}
+        {trip.badge || style ? (
+          <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 font-header text-[11px] font-semibold uppercase tracking-[0.14em] ${trip.badge ? "bg-[#f94f18] text-white" : "bg-cream/90 text-ink"}`}>
+            {trip.badge || style}
           </span>
         ) : null}
         {save > 0 ? (

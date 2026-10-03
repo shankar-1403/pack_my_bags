@@ -8,7 +8,7 @@ export async function PUT(request: Request) {
   if (denied) return denied;
   try {
     const settings = cleanSettings(await request.json());
-    saveSettings(settings);
+    await saveSettings(settings);
     return NextResponse.json({ settings });
   } catch (error) {
     return fail(error);

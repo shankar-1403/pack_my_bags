@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/content";
 
-export default function AdminPostsPage() {
-  const posts = getPosts();
+export default async function AdminPostsPage() {
+  const posts = await getPosts();
 
   return (
     <div>

@@ -5,8 +5,8 @@ import { getSettings } from "@/lib/content";
 
 export const metadata: Metadata = { title: "Contact" };
 
-export default function ContactPage() {
-  const settings = getSettings();
+export default async function ContactPage() {
+  const settings = await getSettings();
 
   return (
     <Frame className="grid gap-12 py-12 lg:grid-cols-2">

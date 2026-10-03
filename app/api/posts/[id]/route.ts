@@ -10,12 +10,12 @@ export async function PUT(request: Request, context: Context) {
   if (denied) return denied;
   try {
     const { id } = await context.params;
-    const posts = getPosts();
+    const posts = await getPosts();
     if (!posts.some((post) => post.id === id)) {
       return NextResponse.json({ error: "Story not found." }, { status: 404 });
     }
     const item = cleanPost(await request.json(), id, posts);
-    savePosts(posts.map((post) => (post.id === id ? item : post)));
+    await savePosts(posts.map((post) => (post.id === id ? item : post)));
     return NextResponse.json({ item });
   } catch (error) {
     return fail(error);
@@ -26,6 +26,6 @@ export async function DELETE(_request: Request, context: Context) {
   const denied = await denyIfGuest();
   if (denied) return denied;
   const { id } = await context.params;
-  savePosts(getPosts().filter((post) => post.id !== id));
+  await savePosts((await getPosts()).filter((post) => post.id !== id));
   return NextResponse.json({ ok: true });
 }

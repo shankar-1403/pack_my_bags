@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { getEnquiries, getFaqs, getPosts, getReviews, getTrips } from "@/lib/content";
 
-export default function AdminHome() {
-  const trips = getTrips();
-  const posts = getPosts();
-  const reviews = getReviews();
-  const faqs = getFaqs();
-  const enquiries = getEnquiries();
+export default async function AdminHome() {
+  const trips = await getTrips();
+  const posts = await getPosts();
+  const reviews = await getReviews();
+  const faqs = await getFaqs();
+  const enquiries = await getEnquiries();
   const fresh = enquiries.filter((item) => item.status === "new");
 
   const stats = [

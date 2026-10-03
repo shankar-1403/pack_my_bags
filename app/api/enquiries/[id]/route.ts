@@ -11,8 +11,8 @@ export async function PATCH(request: Request, context: Context) {
   const { id } = await context.params;
   const body = await request.json();
   const status: Enquiry["status"] = body.status === "contacted" ? "contacted" : "new";
-  const items = getEnquiries().map((item) => (item.id === id ? { ...item, status } : item));
-  saveEnquiries(items);
+  const items = (await getEnquiries()).map((item) => (item.id === id ? { ...item, status } : item));
+  await saveEnquiries(items);
   return NextResponse.json({ items });
 }
 
@@ -20,7 +20,7 @@ export async function DELETE(_request: Request, context: Context) {
   const denied = await denyIfGuest();
   if (denied) return denied;
   const { id } = await context.params;
-  const items = getEnquiries().filter((item) => item.id !== id);
-  saveEnquiries(items);
+  const items = (await getEnquiries()).filter((item) => item.id !== id);
+  await saveEnquiries(items);
   return NextResponse.json({ items });
 }

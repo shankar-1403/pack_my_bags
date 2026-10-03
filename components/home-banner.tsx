@@ -44,7 +44,7 @@ export function HomeBanner({
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/trips" className="rounded-full bg-[#f94f18] px-5 py-3 font-header text-sm font-semibold text-white transition hover:bg-white">
-                Browse upcoming trips
+                Browse destinations
               </Link>
               <Link href="/contact" className="rounded-full border border-white/35 px-5 py-3 font-header text-sm font-semibold text-cream transition hover:bg-white/10">
                 Plan a private date

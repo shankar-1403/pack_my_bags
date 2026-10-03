@@ -1,5 +1,7 @@
+import "server-only";
 import fs from "fs";
 import path from "path";
+import { database, plain, usesDatabase } from "./firebase";
 import type {
   Enquiry,
   Faq,
@@ -21,64 +23,70 @@ function writeFile(name: string, data: unknown) {
   fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`);
 }
 
-export function getSettings() {
-  return readFile<SiteSettings>("settings.json");
+// In the Realtime Database each list is a node keyed by item id (`/trips/{id}`), and `order` keeps the list's
+// order. Settings live at `/site/settings`. The database drops empty lists, so they are restored on read.
+type Item = { id: string };
+const LISTS: Record<string, string[]> = {
+  trips: ["gallery", "types", "highlights", "inclusions", "exclusions", "itinerary", "departures"],
+};
+
+async function readList<T extends Item>(name: string): Promise<T[]> {
+  if (!usesDatabase()) return readFile<T[]>(`${name}.json`);
+  const value = ((await database().ref(name).get()).val() ?? {}) as Record<string, T & { order?: number }>;
+  return Object.values(value)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map(({ order: _order, ...item }) => {
+      void _order;
+      for (const key of LISTS[name] ?? []) (item as Record<string, unknown>)[key] ??= [];
+      return item as unknown as T;
+    });
 }
 
-export function saveSettings(settings: SiteSettings) {
-  writeFile("settings.json", settings);
+async function writeList<T extends Item>(name: string, items: T[]) {
+  if (!usesDatabase()) return writeFile(`${name}.json`, items);
+  const value = Object.fromEntries(items.map((item, order) => [item.id, { ...item, order }]));
+  await database().ref(name).set(plain(value));
 }
 
-export function getTrips() {
-  return readFile<Trip[]>("trips.json");
+export async function getSettings(): Promise<SiteSettings> {
+  if (!usesDatabase()) return readFile<SiteSettings>("settings.json");
+  const value = (await database().ref("site/settings").get()).val() as SiteSettings | null;
+  // Before the first upload, fall back to the settings shipped with the code.
+  return value ?? readFile<SiteSettings>("settings.json");
 }
 
-export function saveTrips(trips: Trip[]) {
-  writeFile("trips.json", trips);
+export async function saveSettings(settings: SiteSettings) {
+  if (!usesDatabase()) return writeFile("settings.json", settings);
+  await database().ref("site/settings").set(plain(settings));
 }
 
-export function getPosts() {
-  return readFile<Post[]>("posts.json");
+export const getTrips = () => readList<Trip>("trips");
+export const saveTrips = (trips: Trip[]) => writeList("trips", trips);
+export const getPosts = () => readList<Post>("posts");
+export const savePosts = (posts: Post[]) => writeList("posts", posts);
+export const getReviews = () => readList<Review>("reviews");
+export const saveReviews = (reviews: Review[]) => writeList("reviews", reviews);
+export const getFaqs = () => readList<Faq>("faqs");
+export const saveFaqs = (faqs: Faq[]) => writeList("faqs", faqs);
+export const getEnquiries = () => readList<Enquiry>("enquiries");
+export const saveEnquiries = (enquiries: Enquiry[]) => writeList("enquiries", enquiries);
+
+/** A new enquiry: one write, newest first, without rewriting the whole list. */
+export async function addEnquiry(enquiry: Enquiry) {
+  if (!usesDatabase()) return writeFile("enquiries.json", [enquiry, ...readFile<Enquiry[]>("enquiries.json")]);
+  await database().ref(`enquiries/${enquiry.id}`).set(plain({ ...enquiry, order: -Date.now() }));
 }
 
-export function savePosts(posts: Post[]) {
-  writeFile("posts.json", posts);
+export async function publishedTrips() {
+  return (await getTrips()).filter((trip) => trip.published);
 }
 
-export function getReviews() {
-  return readFile<Review[]>("reviews.json");
-}
-
-export function saveReviews(reviews: Review[]) {
-  writeFile("reviews.json", reviews);
-}
-
-export function getFaqs() {
-  return readFile<Faq[]>("faqs.json");
-}
-
-export function saveFaqs(faqs: Faq[]) {
-  writeFile("faqs.json", faqs);
-}
-
-export function getEnquiries() {
-  return readFile<Enquiry[]>("enquiries.json");
-}
-
-export function saveEnquiries(enquiries: Enquiry[]) {
-  writeFile("enquiries.json", enquiries);
-}
-
-export function publishedTrips() {
-  return getTrips().filter((trip) => trip.published);
-}
-
-export function publishedPosts() {
-  return getPosts()
+export async function publishedPosts() {
+  return (await getPosts())
     .filter((post) => post.published)
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
 }
 
-export function publishedReviews() {
-  return getReviews().filter((review) => review.published);
+export async function publishedReviews() {
+  return (await getReviews()).filter((review) => review.published);
 }

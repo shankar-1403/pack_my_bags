@@ -13,7 +13,7 @@ const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 export async function generateMetadata({ params }: Context): Promise<Metadata> {
   const { slug } = await params;
-  const post = publishedPosts().find((item) => item.slug === slug);
+  const post = (await publishedPosts()).find((item) => item.slug === slug);
   return { title: post?.title ?? "Journal", description: post?.excerpt };
 }
 
@@ -22,7 +22,7 @@ const longDate = (iso: string) => new Date(iso).toLocaleDateString("en-IN", { da
 
 export default async function PostPage({ params }: Context) {
   const { slug } = await params;
-  const posts = publishedPosts();
+  const posts = await publishedPosts();
   const index = posts.findIndex((item) => item.slug === slug);
   if (index < 0) notFound();
 

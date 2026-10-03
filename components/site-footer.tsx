@@ -17,10 +17,9 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/45">Trips</p>
           <ul className="mt-3 text-sm text-cream/85">
-            <li><Link href="/trips" className="inline-flex min-h-10 items-center hover:text-white">Upcoming trips</Link></li>
+            <li><Link href="/trips" className="inline-flex min-h-10 items-center hover:text-white">Destinations</Link></li>
             <li><Link href="/trips?type=domestic" className="inline-flex min-h-10 items-center hover:text-white">Domestic</Link></li>
             <li><Link href="/trips?type=international" className="inline-flex min-h-10 items-center hover:text-white">International</Link></li>
-            <li><Link href="/destinations" className="inline-flex min-h-10 items-center hover:text-white">Destinations</Link></li>
           </ul>
         </div>
         <div>

@@ -9,9 +9,9 @@ export const metadata: Metadata = { title: "Gallery" };
 // Marker-pen captions on the white border, as written by hand on the back of a trip.
 const hand = Caveat({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-hand" });
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
   // Every destination first, then further trips to the same places, each with its own photo.
-  const trips = publishedTrips();
+  const trips = await publishedTrips();
   const firsts = trips.filter((trip, i) => trips.findIndex((other) => other.destination === trip.destination) === i);
   const photos = new Set(firsts.map((trip) => trip.image));
   const extras = trips.filter((trip) => !firsts.includes(trip) && !photos.has(trip.image) && photos.add(trip.image));

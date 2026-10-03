@@ -70,3 +70,36 @@ body {
     transform: translateY(280%);
   }
 }
+
+/* About: the flight path is drawn behind the plane, and each stop lights up as it passes. */
+@keyframes route-trail {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes route-stop {
+  from {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes route-label {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}

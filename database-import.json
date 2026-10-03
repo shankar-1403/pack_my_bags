@@ -1,0 +1,1313 @@
+{
+  "site": {
+    "settings": {
+      "name": "Pack my bags",
+      "tagline": "Group journeys, composed with care.",
+      "phone": "+91 89601 60190",
+      "whatsapp": "918960160190",
+      "email": "info@packmybags.in",
+      "address": "Lodha Supremus, 520, Off Mahakali Caves Rd, Chakala Industrial Area (MIDC), Andheri East, Mumbai, Maharashtra 400093.",
+      "promo": "October departures are open \u2014 early seats save up to \u20b95,000"
+    }
+  },
+  "trips": {
+    "winter-spiti": {
+      "id": "winter-spiti",
+      "slug": "winter-spiti-circuit",
+      "title": "Winter Spiti Circuit",
+      "destination": "Spiti Valley",
+      "region": "Himachal Pradesh",
+      "summary": "A slow winter crossing of high villages, frozen rivers, and monastery kitchens that still cook on wood.",
+      "description": "Winter Spiti is quiet in the way cities never are. The circuit rolls from Shimla toward Kaza while the valley turns bone-white, with time built in for altitude, chai, and the long light on Key Monastery. Groups stay small so the vehicle can stop when the landscape asks for it.",
+      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 7,
+      "nights": 6,
+      "price": 24499,
+      "originalPrice": 26499,
+      "types": [
+        "domestic",
+        "group"
+      ],
+      "highlights": [
+        "Key and Kibber villages",
+        "Chicham bridge at golden hour",
+        "Homestay dinner in Kaza",
+        "Acclimatisation built into the route"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags"
+      ],
+      "exclusions": [
+        "Flights unless listed",
+        "Lunches and snacks",
+        "Personal shopping",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Shimla arrival",
+          "description": "Meet the group, settle into the first night, and walk Mall Road before the climb begins."
+        },
+        {
+          "day": 2,
+          "title": "Toward Sangla",
+          "description": "A day of apple country turning into pine, with a slow evening by the river."
+        },
+        {
+          "day": 3,
+          "title": "Kalpa lookout",
+          "description": "Kinnaur Kailash if the sky is clear, then an early night before the higher road."
+        },
+        {
+          "day": 4,
+          "title": "Nako and Tabo",
+          "description": "The first real altitude day. Short walks, long views, and a monastery courtyard."
+        },
+        {
+          "day": 5,
+          "title": "Kaza",
+          "description": "The Spiti capital. Cafe time, a local market loop, and a briefing for the villages."
+        },
+        {
+          "day": 6,
+          "title": "Key, Kibber, Chicham",
+          "description": "The classic high circuit, paced so nobody is chasing a checklist."
+        },
+        {
+          "day": 7,
+          "title": "Drop toward the plains",
+          "description": "A long scenic return with a shared last meal before the city resumes."
+        }
+      ],
+      "departures": [
+        "10 Oct 2026",
+        "17 Oct 2026",
+        "24 Oct 2026"
+      ],
+      "featured": true,
+      "published": true,
+      "order": 0
+    },
+    "meghalaya-bridges": {
+      "id": "meghalaya-bridges",
+      "slug": "meghalaya-living-bridges",
+      "title": "Meghalaya Living Bridges",
+      "destination": "Meghalaya",
+      "region": "Northeast India",
+      "summary": "Root bridges, rain-bright cliffs, and a road trip that treats the clouds as part of the plan.",
+      "description": "This is Meghalaya at walking speed: living root bridges, a canyon swim if the water allows, and evenings in Shillong that smell like pine and bakeries. The route is built for people who want the northeast without a rushed photo stop every hour.",
+      "image": "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 6,
+      "nights": 5,
+      "price": 22999,
+      "originalPrice": 24999,
+      "types": [
+        "domestic",
+        "group"
+      ],
+      "highlights": [
+        "Double-decker root bridge walk",
+        "Dawki river if conditions hold",
+        "Shillong cafe evening",
+        "Local guide in the Khasi hills"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags"
+      ],
+      "exclusions": [
+        "Flights unless listed",
+        "Lunches and snacks",
+        "Personal shopping",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Guwahati to Shillong",
+          "description": "Airport pickup, a winding climb, and a first night in the hill city."
+        },
+        {
+          "day": 2,
+          "title": "Cherrapunji",
+          "description": "Waterfalls, viewpoints, and a walk that earns the view."
+        },
+        {
+          "day": 3,
+          "title": "Root bridges",
+          "description": "A guided hike to the living bridges, with time to sit rather than sprint."
+        },
+        {
+          "day": 4,
+          "title": "Dawki and Mawlynnong",
+          "description": "Clear water and a village walk, weather permitting."
+        },
+        {
+          "day": 5,
+          "title": "Shillong slow day",
+          "description": "Ward's Lake, a market, and an unhurried dinner."
+        },
+        {
+          "day": 6,
+          "title": "Departure",
+          "description": "Drop to Guwahati with a buffer for afternoon flights."
+        }
+      ],
+      "departures": [
+        "2 Oct 2026",
+        "10 Oct 2026",
+        "17 Oct 2026"
+      ],
+      "featured": true,
+      "published": true,
+      "order": 1
+    },
+    "ladakh-turtuk": {
+      "id": "ladakh-turtuk",
+      "slug": "ladakh-with-turtuk",
+      "title": "Ladakh with Turtuk",
+      "destination": "Ladakh",
+      "region": "Jammu and Kashmir",
+      "summary": "Pangong, Nubra, and the apricot village of Turtuk, with rest days that respect the altitude.",
+      "description": "A Leh-based loop for first-timers who still want the far road to Turtuk. Mornings start late on purpose. The trip captain watches the group, not the clock, and the stays are chosen for heat, blankets, and a quiet courtyard.",
+      "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 7,
+      "nights": 6,
+      "price": 22999,
+      "originalPrice": 25999,
+      "types": [
+        "domestic",
+        "group"
+      ],
+      "highlights": [
+        "Turtuk village walk",
+        "Nubra sand and monasteries",
+        "Pangong overnight",
+        "Leh acclimatisation day"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags",
+        "Inner line permits"
+      ],
+      "exclusions": [
+        "Flights unless listed",
+        "Lunches and snacks",
+        "Personal shopping",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrive Leh",
+          "description": "Rest. A short market walk only if everyone feels ready."
+        },
+        {
+          "day": 2,
+          "title": "Leh monasteries",
+          "description": "Thiksey or Hemis, then an early night."
+        },
+        {
+          "day": 3,
+          "title": "Nubra via Khardung",
+          "description": "Cross the pass, reach the valley, sleep low and warm."
+        },
+        {
+          "day": 4,
+          "title": "Turtuk",
+          "description": "The northernmost village loop, apricot trees, and the Shyok."
+        },
+        {
+          "day": 5,
+          "title": "Toward Pangong",
+          "description": "A long, beautiful transfer with photo stops that are actually stops."
+        },
+        {
+          "day": 6,
+          "title": "Pangong morning",
+          "description": "Still water, then the return toward Leh."
+        },
+        {
+          "day": 7,
+          "title": "Fly out",
+          "description": "Breakfast and airport drop."
+        }
+      ],
+      "departures": [
+        "1 Oct 2026",
+        "8 Oct 2026"
+      ],
+      "featured": true,
+      "published": true,
+      "order": 2
+    },
+    "kedarnath-dawn": {
+      "id": "kedarnath-dawn",
+      "slug": "kedarnath-dawn-walk",
+      "title": "Kedarnath Dawn Walk",
+      "destination": "Kedarnath",
+      "region": "Uttarakhand",
+      "summary": "A paced pilgrimage with pony-free walking days, warm stays, and no midnight rush to the temple.",
+      "description": "Kedarnath deserves an unhurried approach. This departure walks the trail in daylight, sleeps well below the shrine the night before, and reaches the temple when the mountains are still quiet. It suits pilgrims and first-time Himalayan walkers equally.",
+      "image": "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 4,
+      "nights": 3,
+      "price": 18499,
+      "originalPrice": 20499,
+      "types": [
+        "domestic",
+        "spiritual",
+        "group"
+      ],
+      "highlights": [
+        "Daylight trek to the shrine",
+        "Guptkashi stay",
+        "Temple darshan without the night rush",
+        "Support vehicle on road sections"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags"
+      ],
+      "exclusions": [
+        "Flights unless listed",
+        "Lunches and snacks",
+        "Personal shopping",
+        "Travel insurance",
+        "Pony or palanquin hire"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Haridwar to Guptkashi",
+          "description": "Pickup, the drive into the Mandakini valley, and a briefing."
+        },
+        {
+          "day": 2,
+          "title": "Sonprayag and walk",
+          "description": "Road to the trailhead, then a steady walk toward the stay below Kedarnath."
+        },
+        {
+          "day": 3,
+          "title": "Kedarnath",
+          "description": "Dawn approach, darshan, and a careful descent."
+        },
+        {
+          "day": 4,
+          "title": "Return",
+          "description": "Drive out with an evening drop."
+        }
+      ],
+      "departures": [
+        "21 Oct 2026"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 3
+    },
+    "kerala-backwaters": {
+      "id": "kerala-backwaters",
+      "slug": "kerala-backwaters-drift",
+      "title": "Kerala Backwaters Drift",
+      "destination": "Kerala",
+      "region": "South India",
+      "summary": "Tea hills, a houseboat night, and a beach evening that does not try to schedule the sunset.",
+      "description": "A south India week for people who want the classic Kerala sequence done with better pacing: Munnar\u2019s tea, a wildlife morning, one real houseboat night, and Varkala at the end so the trip exhales.",
+      "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 7,
+      "nights": 6,
+      "price": 28999,
+      "originalPrice": 31999,
+      "types": [
+        "domestic",
+        "group"
+      ],
+      "highlights": [
+        "Munnar tea walk",
+        "Houseboat night on the backwaters",
+        "Varkala cliff evening",
+        "Small group, max 16"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags",
+        "One houseboat night"
+      ],
+      "exclusions": [
+        "Flights unless listed",
+        "Lunches and snacks",
+        "Personal shopping",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Cochin arrival",
+          "description": "Fort Kochi walk and a seafood dinner."
+        },
+        {
+          "day": 2,
+          "title": "Munnar",
+          "description": "Climb into the tea country."
+        },
+        {
+          "day": 3,
+          "title": "Tea and Eravikulam",
+          "description": "A plantation walk and a national park visit if permits allow."
+        },
+        {
+          "day": 4,
+          "title": "Thekkady",
+          "description": "Spice gardens and an optional boat ride."
+        },
+        {
+          "day": 5,
+          "title": "Alleppey houseboat",
+          "description": "Board by noon and drift until dusk."
+        },
+        {
+          "day": 6,
+          "title": "Varkala",
+          "description": "Cliff, swim, and a free evening."
+        },
+        {
+          "day": 7,
+          "title": "Departure",
+          "description": "Drop to Trivandrum airport."
+        }
+      ],
+      "departures": [
+        "4 Oct 2026",
+        "18 Oct 2026",
+        "8 Nov 2026"
+      ],
+      "featured": true,
+      "published": true,
+      "order": 4
+    },
+    "vietnam-north": {
+      "id": "vietnam-north",
+      "slug": "vietnam-north-to-central",
+      "title": "Vietnam, North to Central",
+      "destination": "Vietnam",
+      "region": "Southeast Asia",
+      "summary": "Hanoi\u2019s old quarter, a Ha Long cruise night, and Hoi An\u2019s lantern streets on one continuous route.",
+      "description": "This is the Vietnam week we run when someone says they want the country, not a single city. Street food is guided, not left to chance, and the cruise night is a real overnight rather than a two-hour boat loop.",
+      "image": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 8,
+      "nights": 7,
+      "price": 51999,
+      "originalPrice": 56999,
+      "types": [
+        "international",
+        "group"
+      ],
+      "highlights": [
+        "Old Quarter food walk",
+        "Overnight on Ha Long Bay",
+        "Hoi An lantern evening",
+        "Flights between regions included"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags",
+        "Internal flights",
+        "Ha Long cruise night"
+      ],
+      "exclusions": [
+        "International flights",
+        "Some lunches",
+        "Visa fees",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Land in Hanoi",
+          "description": "Old quarter orientation and a welcome dinner."
+        },
+        {
+          "day": 2,
+          "title": "Hanoi",
+          "description": "Temple, train street from a safe distance, and coffee."
+        },
+        {
+          "day": 3,
+          "title": "Ha Long",
+          "description": "Cruise boarding and kayaking where the water allows."
+        },
+        {
+          "day": 4,
+          "title": "Cruise morning",
+          "description": "Tai Chi on deck, then back toward the city."
+        },
+        {
+          "day": 5,
+          "title": "Fly central",
+          "description": "Hoi An by evening."
+        },
+        {
+          "day": 6,
+          "title": "Hoi An",
+          "description": "Ancient town, tailors if you want them, lanterns after dark."
+        },
+        {
+          "day": 7,
+          "title": "Countryside",
+          "description": "Basket boats or a farming village, then a free afternoon."
+        },
+        {
+          "day": 8,
+          "title": "Departure",
+          "description": "Airport drop."
+        }
+      ],
+      "departures": [
+        "3 Oct 2026",
+        "16 Oct 2026",
+        "7 Nov 2026"
+      ],
+      "featured": true,
+      "published": true,
+      "order": 5
+    },
+    "bali-gili": {
+      "id": "bali-gili",
+      "slug": "bali-and-gili-slow-week",
+      "title": "Bali and Gili Slow Week",
+      "destination": "Bali",
+      "region": "Indonesia",
+      "summary": "Rice terraces, a temple sunrise, and two unhurried nights on the Gili islands.",
+      "description": "A tropical week with the rush edited out. Ubud comes first, the island crossing is handled for you, and the Gili nights are for swimming and doing very little on purpose.",
+      "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 8,
+      "nights": 7,
+      "price": 51999,
+      "originalPrice": 56999,
+      "types": [
+        "international",
+        "group"
+      ],
+      "highlights": [
+        "Ubud rice terrace walk",
+        "Temple sunrise",
+        "Gili island stay",
+        "Airport transfers included"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags",
+        "Fast boat to the Gilis"
+      ],
+      "exclusions": [
+        "International flights",
+        "Lunches",
+        "Scooter hire",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrive Bali",
+          "description": "Transfer to Ubud and a welcome dinner."
+        },
+        {
+          "day": 2,
+          "title": "Ubud",
+          "description": "Terraces, a craft village, and a free evening."
+        },
+        {
+          "day": 3,
+          "title": "Sunrise and water",
+          "description": "Temple sunrise, then a waterfall or ridge walk."
+        },
+        {
+          "day": 4,
+          "title": "Cross to Gili",
+          "description": "Fast boat and a swim before sunset."
+        },
+        {
+          "day": 5,
+          "title": "Gili free day",
+          "description": "Snorkel, hammock, or nothing."
+        },
+        {
+          "day": 6,
+          "title": "Gili morning",
+          "description": "One last swim, then back to Bali."
+        },
+        {
+          "day": 7,
+          "title": "Seminyak",
+          "description": "Beach club or a quiet dinner, your call."
+        },
+        {
+          "day": 8,
+          "title": "Fly home",
+          "description": "Airport drop with a sensible buffer."
+        }
+      ],
+      "departures": [
+        "3 Oct 2026",
+        "24 Oct 2026",
+        "7 Nov 2026"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 6
+    },
+    "thailand-moon": {
+      "id": "thailand-moon",
+      "slug": "thailand-full-moon-departure",
+      "title": "Thailand Full Moon Departure",
+      "destination": "Thailand",
+      "region": "Southeast Asia",
+      "summary": "Bangkok streets, island water, and a full moon night that still has a captain nearby.",
+      "description": "Built for a younger group that wants the islands and the night, with daytime plans that recover you properly. Stays are central, boats are pre-booked, and the full moon evening is optional rather than mandatory.",
+      "image": "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 7,
+      "nights": 6,
+      "price": 41999,
+      "originalPrice": 46999,
+      "types": [
+        "international",
+        "group"
+      ],
+      "highlights": [
+        "Bangkok night market",
+        "Island hop by longtail",
+        "Full moon evening, opt in",
+        "Flights from India on request"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags",
+        "Island transfers"
+      ],
+      "exclusions": [
+        "International flights",
+        "Full moon event tickets",
+        "Lunches",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Bangkok",
+          "description": "Arrival and a night-market walk."
+        },
+        {
+          "day": 2,
+          "title": "City day",
+          "description": "Temples in the morning, free afternoon."
+        },
+        {
+          "day": 3,
+          "title": "Fly or rail south",
+          "description": "Reach the islands."
+        },
+        {
+          "day": 4,
+          "title": "Longtail day",
+          "description": "A slow boat circuit and a beach lunch."
+        },
+        {
+          "day": 5,
+          "title": "Free island day",
+          "description": "Swim, scooters optional, sunset together."
+        },
+        {
+          "day": 6,
+          "title": "Full moon night",
+          "description": "Join the party or take the quiet beach. Both are fine."
+        },
+        {
+          "day": 7,
+          "title": "Departure",
+          "description": "Transfer out."
+        }
+      ],
+      "departures": [
+        "25 Oct 2026",
+        "22 Nov 2026",
+        "22 Dec 2026"
+      ],
+      "featured": true,
+      "published": true,
+      "order": 7
+    },
+    "bhutan-road": {
+      "id": "bhutan-road",
+      "slug": "bhutan-festival-road",
+      "title": "Bhutan Festival Road",
+      "destination": "Bhutan",
+      "region": "Eastern Himalaya",
+      "summary": "Dzongs, prayer flags, and a valley-to-valley drive timed around a local festival.",
+      "description": "Bhutan asks for a slower vehicle and a guide who knows which courtyard is actually open. This road links Paro, Thimphu, and Punakha, with a festival morning folded in when the calendar allows.",
+      "image": "https://images.unsplash.com/photo-1553856622-d1b352e9a211?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1553856622-d1b352e9a211?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 7,
+      "nights": 6,
+      "price": 35999,
+      "originalPrice": 37999,
+      "types": [
+        "international",
+        "spiritual",
+        "group"
+      ],
+      "highlights": [
+        "Tiger\u2019s Nest hike",
+        "Punakha valley",
+        "Festival morning when scheduled",
+        "Licensed local guide"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags",
+        "Bhutan sustainable development fee guidance",
+        "Local guide"
+      ],
+      "exclusions": [
+        "International flights",
+        "SDF if not bundled on your date",
+        "Lunch",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Paro arrival",
+          "description": "Meet the guide and rest in the valley."
+        },
+        {
+          "day": 2,
+          "title": "Thimphu",
+          "description": "A short city day: memorial, crafts, and a cafe."
+        },
+        {
+          "day": 3,
+          "title": "Punakha",
+          "description": "Cross the pass and reach the river valley."
+        },
+        {
+          "day": 4,
+          "title": "Dzong and fields",
+          "description": "Punakha Dzong and a village walk."
+        },
+        {
+          "day": 5,
+          "title": "Return toward Paro",
+          "description": "Scenic drive with a stop in a market town."
+        },
+        {
+          "day": 6,
+          "title": "Tiger\u2019s Nest",
+          "description": "The hike, paced with tea breaks."
+        },
+        {
+          "day": 7,
+          "title": "Fly out",
+          "description": "Airport drop."
+        }
+      ],
+      "departures": [
+        "2 Oct 2026",
+        "24 Oct 2026",
+        "21 Nov 2026"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 8
+    },
+    "kashmir-meadows": {
+      "id": "kashmir-meadows",
+      "slug": "kashmir-meadow-week",
+      "title": "Kashmir Meadow Week",
+      "destination": "Kashmir",
+      "region": "Jammu and Kashmir",
+      "summary": "Houseboats, pine ridges, and a meadow day that ends before the cold sets in.",
+      "description": "A six-day Kashmir departure designed around comfort and clear briefings. Srinagar\u2019s water, Pahalgam or Gulmarg depending on snow, and enough unscheduled time that the valley can be quiet.",
+      "image": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 6,
+      "nights": 5,
+      "price": 24499,
+      "originalPrice": 26999,
+      "types": [
+        "domestic",
+        "group"
+      ],
+      "highlights": [
+        "Dal houseboat night",
+        "Meadow day trip",
+        "Shikara at dusk",
+        "Local host in Srinagar"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags",
+        "Shikara ride"
+      ],
+      "exclusions": [
+        "Flights unless listed",
+        "Lunches and snacks",
+        "Personal shopping",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Srinagar",
+          "description": "Arrival and a houseboat or heritage stay."
+        },
+        {
+          "day": 2,
+          "title": "Lakes and gardens",
+          "description": "A slow city day on the water."
+        },
+        {
+          "day": 3,
+          "title": "Toward the meadows",
+          "description": "Drive into the hills."
+        },
+        {
+          "day": 4,
+          "title": "Meadow day",
+          "description": "A guided walk and a long lunch."
+        },
+        {
+          "day": 5,
+          "title": "Return to Srinagar",
+          "description": "Market time and a farewell dinner."
+        },
+        {
+          "day": 6,
+          "title": "Departure",
+          "description": "Airport drop."
+        }
+      ],
+      "departures": [
+        "24 Oct 2026"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 9
+    },
+    "spiti-wheels": {
+      "id": "spiti-wheels",
+      "slug": "spiti-on-two-wheels",
+      "title": "Spiti on Two Wheels",
+      "destination": "Spiti Valley",
+      "region": "Himachal Pradesh",
+      "summary": "A supported bike loop for riders who already know how to hold a line on gravel.",
+      "description": "Not a learn-to-ride trip. You bring a valid licence and some mountain miles; we bring the backup vehicle, mechanic window, stays, and a route that does not gamble on a closed pass without a plan B.",
+      "image": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 8,
+      "nights": 7,
+      "price": 26999,
+      "originalPrice": 31999,
+      "types": [
+        "domestic",
+        "bike",
+        "group"
+      ],
+      "highlights": [
+        "Supported Royal Enfield ride",
+        "Backup vehicle all the way",
+        "Mechanic check each morning",
+        "Rider briefing before every pass"
+      ],
+      "inclusions": [
+        "Bike hire",
+        "Fuel for the planned route",
+        "Stay",
+        "Backup vehicle",
+        "Trip captain"
+      ],
+      "exclusions": [
+        "Damage deposit",
+        "Flights to the start city",
+        "Personal riding gear",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Shimla meet",
+          "description": "Bike allotment, paperwork, and a shakedown loop."
+        },
+        {
+          "day": 2,
+          "title": "Sangla",
+          "description": "First real riding day."
+        },
+        {
+          "day": 3,
+          "title": "Kalpa",
+          "description": "Shorter miles, longer views."
+        },
+        {
+          "day": 4,
+          "title": "Nako",
+          "description": "Altitude and a careful evening."
+        },
+        {
+          "day": 5,
+          "title": "Kaza",
+          "description": "The high road into Spiti."
+        },
+        {
+          "day": 6,
+          "title": "Villages",
+          "description": "Key and Kibber as a riding loop, not a race."
+        },
+        {
+          "day": 7,
+          "title": "Return miles",
+          "description": "Start down toward Kinnaur."
+        },
+        {
+          "day": 8,
+          "title": "Drop",
+          "description": "Bikes back, shared debrief, departures."
+        }
+      ],
+      "departures": [
+        "Dates on request"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 10
+    },
+    "chopta-trek": {
+      "id": "chopta-trek",
+      "slug": "chopta-chandrashila-trek",
+      "title": "Chopta Chandrashila Trek",
+      "destination": "Chopta",
+      "region": "Uttarakhand",
+      "summary": "A long weekend above the treeline, with Tungnath on the way and a summit push at first light.",
+      "description": "Three days is enough if the group is fit and the weather holds. We leave Delhi by overnight bus, walk to Tungnath, and attempt Chandrashila before the clouds stack up. Evenings are in a meadow camp or a simple lodge, depending on the date.",
+      "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 3,
+      "nights": 2,
+      "price": 7999,
+      "originalPrice": 8499,
+      "types": [
+        "domestic",
+        "weekend",
+        "group"
+      ],
+      "highlights": [
+        "Tungnath temple",
+        "Chandrashila summit attempt",
+        "Meadow camp",
+        "Overnight ex-Delhi departure"
+      ],
+      "inclusions": [
+        "Transport from Delhi",
+        "Stay",
+        "All trek meals",
+        "Trek leader"
+      ],
+      "exclusions": [
+        "Personal gear",
+        "Insurance",
+        "Anything off the trail"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Delhi to Chopta",
+          "description": "Overnight departure and a morning arrival in the meadows."
+        },
+        {
+          "day": 2,
+          "title": "Tungnath and summit",
+          "description": "The climb, a long summit window, and a descent to camp."
+        },
+        {
+          "day": 3,
+          "title": "Return",
+          "description": "Buffer for the drive back to Delhi."
+        }
+      ],
+      "departures": [
+        "8 Oct 2026",
+        "6 Nov 2026"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 11
+    },
+    "udaipur-abu": {
+      "id": "udaipur-abu",
+      "slug": "udaipur-and-mount-abu",
+      "title": "Udaipur and Mount Abu",
+      "destination": "Udaipur",
+      "region": "Rajasthan",
+      "summary": "Lakes, a hill station, and four days that feel like a long exhale from the city.",
+      "description": "A short Rajasthan departure for people who want palaces without a ten-day circuit. Udaipur gets the evenings. Mount Abu gets the cool air and the Dilwara marble. The pace is deliberately light.",
+      "image": "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 4,
+      "nights": 3,
+      "price": 14999,
+      "originalPrice": 16999,
+      "types": [
+        "domestic",
+        "weekend",
+        "group"
+      ],
+      "highlights": [
+        "Lake Pichola boat",
+        "City palace",
+        "Mount Abu sunset",
+        "Dilwara temples"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags"
+      ],
+      "exclusions": [
+        "Flights unless listed",
+        "Lunches and snacks",
+        "Personal shopping",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrive Udaipur",
+          "description": "Old city walk and a lakeside dinner."
+        },
+        {
+          "day": 2,
+          "title": "Palaces",
+          "description": "City Palace and a boat if the lake is open."
+        },
+        {
+          "day": 3,
+          "title": "Mount Abu",
+          "description": "Drive up, sunset point, a cool night."
+        },
+        {
+          "day": 4,
+          "title": "Dilwara and drop",
+          "description": "Morning temples, then departures."
+        }
+      ],
+      "departures": [
+        "11 Oct 2026",
+        "15 Nov 2026"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 12
+    },
+    "almaty-alpine": {
+      "id": "almaty-alpine",
+      "slug": "almaty-alpine-escape",
+      "title": "Almaty Alpine Escape",
+      "destination": "Almaty",
+      "region": "Kazakhstan",
+      "summary": "A city of apples and opera, then a day in mountains that feel unexpectedly close.",
+      "description": "Almaty is the easy international week: a walkable city, a mountain day at Big Almaty Lake or Shymbulak depending on season, and food that surprises people who expected only the mountains.",
+      "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "days": 6,
+      "nights": 5,
+      "price": 54999,
+      "originalPrice": 59999,
+      "types": [
+        "international",
+        "group"
+      ],
+      "highlights": [
+        "Big Almaty Lake day",
+        "Green Bazaar walk",
+        "Medeu or Shymbulak",
+        "Central stays"
+      ],
+      "inclusions": [
+        "Handpicked stays, twin share",
+        "Breakfast and dinner on travel days",
+        "Surface transport in the trip vehicle",
+        "Trip captain from arrival to drop",
+        "Permits arranged by Pack my bags",
+        "Mountain day transport"
+      ],
+      "exclusions": [
+        "International flights",
+        "Kazakhstan entry formalities",
+        "Lunches",
+        "Travel insurance"
+      ],
+      "itinerary": [
+        {
+          "day": 1,
+          "title": "Arrive Almaty",
+          "description": "Transfer and a short city orientation."
+        },
+        {
+          "day": 2,
+          "title": "City",
+          "description": "Panfilov, the bazaar, and a long lunch."
+        },
+        {
+          "day": 3,
+          "title": "Mountains",
+          "description": "The alpine day, weather deciding the exact road."
+        },
+        {
+          "day": 4,
+          "title": "Second city day",
+          "description": "Museums or a free afternoon."
+        },
+        {
+          "day": 5,
+          "title": "Farewell",
+          "description": "A last walk and dinner."
+        },
+        {
+          "day": 6,
+          "title": "Fly out",
+          "description": "Airport drop."
+        }
+      ],
+      "departures": [
+        "1 Oct 2026",
+        "16 Oct 2026",
+        "6 Nov 2026"
+      ],
+      "featured": false,
+      "published": true,
+      "order": 13
+    }
+  },
+  "posts": {
+    "pack-for-spiti": {
+      "id": "pack-for-spiti",
+      "slug": "what-to-pack-for-a-winter-spiti-departure",
+      "title": "What to pack for a winter Spiti departure",
+      "excerpt": "Layers, a decent headlamp, and the things people always forget once the bus leaves Shimla.",
+      "body": "Winter Spiti is cold in a dry, precise way. You do not need expedition gear. You need a system you can add and remove while the vehicle climbs.\n\nStart with a warm base layer, a fleece, and a wind shell. The shell matters more than a heavy jacket during the day, because the sun is strong and the wind is stronger. Evenings want the heavy layer, a wool cap, and gloves you can still use a phone with.\n\nPack socks you trust, a small pharmacy, and copies of your ID. Lip balm is not a luxury above Tabo. If you bring one extra thing, make it a power bank \u2014 outlets in homestays are shared, and the group chat is how we confirm the next morning's start.",
+      "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+      "author": "Pack my bags desk",
+      "publishedAt": "2026-03-12",
+      "readMinutes": 5,
+      "published": true,
+      "order": 0
+    },
+    "first-group-trip": {
+      "id": "first-group-trip",
+      "slug": "how-to-choose-your-first-group-trip",
+      "title": "How to choose your first group trip",
+      "excerpt": "Duration, altitude, and the kind of evening you actually want after a long day.",
+      "body": "The right first group trip is the one you will finish glad, not the one with the most dramatic photograph.\n\nIf you have never slept above 3,000 metres, start with Meghalaya, Kerala, or a long-weekend trek that comes back down each night. Ladakh and winter Spiti are wonderful, and they are also a poor place to discover that you hate early mornings and shared bathrooms at the same time.\n\nRead the itinerary for rest, not just sights. A good departure has at least one unscheduled evening. Ask who the captain is, how big the group gets, and whether the price includes the boring essentials: permits, breakfast, and the vehicle that waits when someone needs ten more minutes.",
+      "image": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80",
+      "author": "Meera Iyer",
+      "publishedAt": "2026-01-20",
+      "readMinutes": 6,
+      "published": true,
+      "order": 1
+    },
+    "kerala-in-october": {
+      "id": "kerala-in-october",
+      "slug": "kerala-in-october",
+      "title": "Kerala in October, without the checklist",
+      "excerpt": "The rains are thinning, the backwaters are full, and the beach is better in the evening than at noon.",
+      "body": "October in Kerala is a shoulder month, which is exactly why we like it. The landscape is green, the houseboats are easier to book, and the midday sun has not turned cruel yet.\n\nPlan the hills before the coast. Munnar in the morning, a houseboat that boards before lunch, and Varkala only once you are ready to stop moving. Carry a light rain jacket anyway. The season does not owe you a dry afternoon.\n\nEat the fish. Skip the shops that meet the bus. And if the group wants a free evening, take it \u2014 Kerala is one of the few circuits that gets better when you remove an activity.",
+      "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=80",
+      "author": "Pack my bags desk",
+      "publishedAt": "2025-11-02",
+      "readMinutes": 4,
+      "published": true,
+      "order": 2
+    },
+    "international-from-india": {
+      "id": "international-from-india",
+      "slug": "international-weeks-that-fit-a-work-calendar",
+      "title": "International weeks that fit a work calendar",
+      "excerpt": "Vietnam, Bali, and Almaty are the departures we recommend when someone has exactly seven days.",
+      "body": "A week is enough if the route refuses to be greedy. That is the whole trick.\n\nVietnam north-to-central works because the internal flight does the hard kilometre. Bali with the Gilis works because the boat is booked and the free day is real. Almaty works because the mountains are an hour from a city you can land in at night and still enjoy the next morning.\n\nWhat does not work is a seven-day plan with four cities and a shopping stop. If a colleague asks for Dubai and a desert and a theme park and a second emirate, tell them to take ten days or pick one mood. Pack my bags\u2019 international calendar is built around one mood per departure.",
+      "image": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1600&q=80",
+      "author": "Arun Deshpande",
+      "publishedAt": "2025-08-18",
+      "readMinutes": 5,
+      "published": true,
+      "order": 3
+    }
+  },
+  "reviews": {
+    "review-anika": {
+      "id": "review-anika",
+      "name": "Anika Rao",
+      "trip": "Kerala Backwaters Drift",
+      "quote": "I joined alone and never had to perform extroversion. The houseboat night was quiet, the captain actually knew the trail of logistics, and Munnar was given a whole morning instead of a selfie stop.",
+      "rating": 5,
+      "published": true,
+      "order": 0
+    },
+    "review-dev": {
+      "id": "review-dev",
+      "name": "Dev Malhotra",
+      "trip": "Winter Spiti Circuit",
+      "quote": "The vehicle was on time, the homestay in Kaza had hot water when it mattered, and nobody pretended the altitude was casual. I would take the same captain again.",
+      "rating": 5,
+      "published": true,
+      "order": 1
+    },
+    "review-farah": {
+      "id": "review-farah",
+      "name": "Farah Qureshi",
+      "trip": "Thailand Full Moon Departure",
+      "quote": "I wanted the island and the night, and I also wanted to know someone was counting heads. Both things were true. The free day was a free day.",
+      "rating": 4,
+      "published": true,
+      "order": 2
+    },
+    "review-kabir": {
+      "id": "review-kabir",
+      "name": "Kabir Sethi",
+      "trip": "Ladakh with Turtuk",
+      "quote": "Leh was handled like a rest day, not a wasted day. Turtuk felt like the point of the trip rather than a brag on the brochure.",
+      "rating": 5,
+      "published": true,
+      "order": 3
+    }
+  },
+  "faqs": {
+    "faq-solo": {
+      "id": "faq-solo",
+      "question": "Can I join a departure on my own?",
+      "answer": "Yes. Most Pack my bags groups are built for solo travellers. You get a twin share unless you pay for a single room, and the captain introduces the group on night one so you are not walking into a silent bus.",
+      "order": 0
+    },
+    "faq-women": {
+      "id": "faq-women",
+      "question": "Are there departures that work well for women travelling solo?",
+      "answer": "Yes. Stays are verified by the team, transfers are not left to chance, and you can write to us before booking if you want a date with a higher share of women travellers. We will tell you honestly when a date is not the right fit.",
+      "order": 1
+    },
+    "faq-customise": {
+      "id": "faq-customise",
+      "question": "Can a date be customised for a private group?",
+      "answer": "Private groups of eight or more can shift pace, rooming, and sometimes the route. Write from the trip page with your dates. Weekend treks and festival departures are harder to bend because permits and camps are fixed.",
+      "order": 2
+    },
+    "faq-book": {
+      "id": "faq-book",
+      "question": "How early should I book?",
+      "answer": "Six to eight weeks is comfortable for domestic trips. International dates, bike loops, and festival weeks in Bhutan move faster. A seat is held only after the advance is in.",
+      "order": 3
+    },
+    "faq-included": {
+      "id": "faq-included",
+      "question": "What do the prices usually include?",
+      "answer": "Twin-share stays, breakfast and dinner on travelling days, the trip vehicle, a captain, and permits we are responsible for. Flights, lunch, and insurance are called out on each trip so the number on the card is the number you compare.",
+      "order": 4
+    }
+  },
+  "enquiries": {}
+}

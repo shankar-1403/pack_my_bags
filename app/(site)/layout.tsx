@@ -4,8 +4,8 @@ import { getSettings } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
-  const settings = getSettings();
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSettings();
 
   return (
     <div className="flex min-h-full flex-col">

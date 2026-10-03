@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   description: "Notes from Pack my bags on packing, pacing, and choosing a first group trip.",
 };
 
-export default function BlogPage() {
-  const posts = publishedPosts();
+export default async function BlogPage() {
+  const posts = await publishedPosts();
 
   return (
     <Frame className="py-12">

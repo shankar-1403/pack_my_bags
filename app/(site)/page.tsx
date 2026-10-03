@@ -29,14 +29,14 @@ const reasons = [
   },
 ];
 
-export default function HomePage() {
-  const trips = publishedTrips();
+export default async function HomePage() {
+  const trips = await publishedTrips();
   const featured = trips.filter((trip) => trip.featured).slice(0, 3);
   const spotlight = featured[0] ?? trips[0];
   const side = featured.slice(1);
-  const posts = getPosts().filter((post) => post.published).slice(0, 3);
-  const reviews = getReviews().filter((review) => review.published).slice(0, 3);
-  const faqs = getFaqs().slice(0, 4);
+  const posts = (await getPosts()).filter((post) => post.published).slice(0, 3);
+  const reviews = (await getReviews()).filter((review) => review.published).slice(0, 3);
+  const faqs = (await getFaqs()).slice(0, 4);
   const lowest = trips.reduce((min, trip) => Math.min(min, trip.price), trips[0]?.price ?? 0);
 
   const destinations = [...trips.reduce((map, trip) => {

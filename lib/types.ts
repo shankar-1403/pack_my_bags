@@ -10,7 +10,26 @@ export type ItineraryDay = {
   day: number;
   title: string;
   description: string;
+  meals?: string;
+  stay?: string;
+  image?: string;
 };
+
+export type Difficulty = "easy" | "moderate" | "challenging" | "strenuous";
+export type DepartureStatus = "open" | "filling" | "sold-out" | "cancelled";
+
+/** One dated batch of a trip. `date`/`endDate` are YYYY-MM-DD; `price` overrides the trip price. */
+export type Departure = {
+  date: string;
+  endDate?: string;
+  seats: number;
+  seatsLeft: number;
+  status: DepartureStatus;
+  price?: number;
+  note?: string;
+};
+
+export type TripFaq = { question: string; answer: string };
 
 export type Trip = {
   id: string;
@@ -31,9 +50,37 @@ export type Trip = {
   inclusions: string[];
   exclusions: string[];
   itinerary: ItineraryDay[];
+  /** Display labels ("10 Oct 2026"), derived from `slots` when the trip has them. */
   departures: string[];
   featured: boolean;
   published: boolean;
+  // Everything below is optional: trips saved before the full editor simply leave it out.
+  slots?: Departure[];
+  tagline?: string;
+  badge?: string;
+  difficulty?: Difficulty;
+  groupMin?: number;
+  groupMax?: number;
+  ageMin?: number;
+  ageMax?: number;
+  startCity?: string;
+  endCity?: string;
+  pickup?: string;
+  bestSeason?: string;
+  maxAltitude?: string;
+  priceNote?: string;
+  bookingAmount?: number;
+  singleSupplement?: number;
+  thingsToCarry?: string[];
+  cancellationPolicy?: string;
+  faqs?: TripFaq[];
+  imageAlt?: string;
+  mapUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
+  sortOrder?: number;
+  updatedAt?: string;
 };
 
 export type Post = {

@@ -8,10 +8,10 @@ export async function POST(request: Request) {
   const denied = await denyIfGuest();
   if (denied) return denied;
   try {
-    const faqs = getFaqs();
+    const faqs = await getFaqs();
     const item = cleanFaq(await request.json(), randomUUID());
     const items = [...faqs, item];
-    saveFaqs(items);
+    await saveFaqs(items);
     return NextResponse.json({ item, items });
   } catch (error) {
     return fail(error);

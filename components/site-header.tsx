@@ -12,9 +12,8 @@ import Logo from "../public/logo.webp";
 const links = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/trips", label: "Upcoming trips" },
+  { href: "/trips", label: "Destinations" },
   { href: "/blog", label: "Journal" },
-  { href: "/destinations", label: "Destinations" },
   { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
@@ -52,7 +51,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
               <Image src={Logo} alt="Pack my bags" priority className="h-9 w-auto sm:h-11 lg:h-14 xl:h-16 short:h-8 short:sm:h-9 short:lg:h-11" />
             </Link>
             <nav className="hidden items-center gap-0.5 lg:flex xl:gap-1">
-              {links.map((link) => {
+              {links.filter((link) => link.href !== "/contact").map((link) => {
                 const current = isCurrent(pathname, link.href);
                 return (
                   <Link
@@ -67,6 +66,13 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
               })}
             </nav>
             <div className="flex shrink-0 items-center gap-2">
+              <Link
+                href="/contact"
+                aria-current={isCurrent(pathname, "/contact") ? "page" : undefined}
+                className="hidden whitespace-nowrap rounded-full bg-[#f94f18] px-4 py-2.5 text-[13px] font-semibold tracking-tight text-white transition hover:bg-[#b85324] lg:inline-flex"
+              >
+                Contact
+              </Link>
               <button
                 type="button"
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink lg:hidden"

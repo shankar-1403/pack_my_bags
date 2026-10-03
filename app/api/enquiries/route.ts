@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
-import { getEnquiries, saveEnquiries } from "@/lib/content";
+import { addEnquiry } from "@/lib/content";
 import { checkEnquiry } from "@/lib/enquiry-rules";
 import { fail } from "@/lib/guard";
 import type { Enquiry } from "@/lib/types";
@@ -30,8 +30,7 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
       status: "new",
     };
-    const items = [item, ...getEnquiries()];
-    saveEnquiries(items);
+    await addEnquiry(item);
     return NextResponse.json({ ok: true });
   } catch (error) {
     return fail(error);
