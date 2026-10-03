@@ -83,6 +83,19 @@ export async function addEnquiry(enquiry: Enquiry) {
   await database().ref(`enquiries/${enquiry.id}`).set(plain({ ...enquiry, order: -Date.now() }));
 }
 
+/** Changes one enquiry's status — a single small write, not the whole list. */
+export async function setEnquiryStatus(id: string, status: Enquiry["status"]) {
+  if (!usesDatabase()) return writeFile("enquiries.json", readFile<Enquiry[]>("enquiries.json").map((item) => (item.id === id ? { ...item, status } : item)));
+  const ref = database().ref(`enquiries/${id}`);
+  if ((await ref.child("id").get()).exists()) await ref.update({ status });
+}
+
+/** Removes one enquiry. */
+export async function deleteEnquiry(id: string) {
+  if (!usesDatabase()) return writeFile("enquiries.json", readFile<Enquiry[]>("enquiries.json").filter((item) => item.id !== id));
+  await database().ref(`enquiries/${id}`).remove();
+}
+
 export async function publishedTrips() {
   return (await getTrips()).filter((trip) => trip.published);
 }

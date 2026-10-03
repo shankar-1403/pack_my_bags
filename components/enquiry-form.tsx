@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X } from "lucide-react";
 import { checkEnquiry, refuses, type EnquiryErrors, type EnquiryFields } from "@/lib/enquiry-rules";
 
 const EMPTY: EnquiryFields = { name: "", email: "", phone: "", message: "" };
@@ -59,7 +60,22 @@ export function EnquiryForm({
 
   if (status === "sent") {
     return (
-      <div className="rounded-[28px] border border-line bg-sand/60 p-6">
+      <div className="relative rounded-[28px] border border-line bg-sand/60 p-6 pr-14" role="status">
+        <button
+          type="button"
+          autoFocus
+          onClick={() => {
+            setForm(EMPTY);
+            setErrors({});
+            setError("");
+            setStatus("idle");
+          }}
+          aria-label="Close and send another enquiry"
+          title="Send another enquiry"
+          className="absolute right-3 top-3 grid size-10 place-items-center rounded-full bg-cream text-ink shadow-sm ring-1 ring-line transition hover:bg-white hover:ring-ink/30"
+        >
+          <X aria-hidden className="size-5" />
+        </button>
         <p className="font-serif text-3xl leading-none">We have it.</p>
         <p className="mt-3 text-sm leading-6 text-ink/75">
           A planner will write back on the email you shared. If the date is filling up, mention that in your reply.
