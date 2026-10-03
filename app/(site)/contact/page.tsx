@@ -19,11 +19,11 @@ export default function ContactPage() {
         <dl className="mt-8 space-y-4 text-sm">
           <div>
             <dt className="text-xs uppercase tracking-[0.16em] text-mist">Phone</dt>
-            <dd className="mt-1"><a href={`tel:${settings.phone.replace(/\s/g, "")}`}>{settings.phone}</a></dd>
+            <dd className="mt-1"><a className="inline-flex min-h-10 items-center" href={`tel:${settings.phone.replace(/\s/g, "")}`}>{settings.phone}</a></dd>
           </div>
           <div>
             <dt className="text-xs uppercase tracking-[0.16em] text-mist">Email</dt>
-            <dd className="mt-1"><a href={`mailto:${settings.email}`}>{settings.email}</a></dd>
+            <dd className="mt-1"><a className="inline-flex min-h-10 items-center break-all" href={`mailto:${settings.email}`}>{settings.email}</a></dd>
           </div>
           <div>
             <dt className="text-xs uppercase tracking-[0.16em] text-mist">Studio</dt>

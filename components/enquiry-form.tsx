@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { checkEnquiry, refuses, type EnquiryErrors, type EnquiryFields } from "@/lib/enquiry-rules";
+
+const EMPTY: EnquiryFields = { name: "", email: "", phone: "", message: "" };
+const field = "w-full rounded-2xl border bg-paper px-4 py-3 text-sm outline-none";
+const look = (bad?: string) => `${field} ${bad ? "border-[#f94f18] focus:border-[#f94f18]" : "border-line focus:border-clay"}`;
 
 export function EnquiryForm({
   tripSlug = "",
@@ -15,17 +20,32 @@ export function EnquiryForm({
 }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
+  const [form, setForm] = useState<EnquiryFields>(EMPTY);
+  const [errors, setErrors] = useState<EnquiryErrors>({});
+
+  function onChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const { name, value } = event.target;
+    if (refuses(name, value)) return;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const found = checkEnquiry(form);
+    const first = (["name", "email", "phone", "message"] as const).find((key) => found[key]);
+    if (first) {
+      setErrors(found);
+      event.currentTarget.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+      return;
+    }
+    setErrors({});
     setStatus("sending");
     setError("");
-    const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
     const response = await fetch("/api/enquiries", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...data, tripSlug, tripTitle, departure }),
+      body: JSON.stringify({ ...form, tripSlug, tripTitle, departure }),
     });
     if (!response.ok) {
       const payload = (await response.json().catch(() => null)) as { error?: string } | null;
@@ -33,7 +53,7 @@ export function EnquiryForm({
       setStatus("error");
       return;
     }
-    form.reset();
+    setForm(EMPTY);
     setStatus("sent");
   }
 
@@ -49,17 +69,31 @@ export function EnquiryForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3">
-      <input name="name" required placeholder="Your name" className="w-full rounded-2xl border border-line bg-paper px-4 py-3 text-sm outline-none focus:border-clay" />
-      <input name="email" type="email" required placeholder="Email" className="w-full rounded-2xl border border-line bg-paper px-4 py-3 text-sm outline-none focus:border-clay" />
-      <input name="phone" placeholder="Phone" className="w-full rounded-2xl border border-line bg-paper px-4 py-3 text-sm outline-none focus:border-clay" />
-      <textarea
-        name="message"
-        required
-        rows={compact ? 4 : 6}
-        placeholder={tripTitle ? `Ask about ${tripTitle}` : "Where do you want to go, and when?"}
-        className="w-full rounded-2xl border border-line bg-paper px-4 py-3 text-sm outline-none focus:border-clay"
-      />
+    <form onSubmit={onSubmit} noValidate className="space-y-3">
+      <div>
+        <input name="name" value={form.name} onChange={onChange} placeholder="Your name" autoComplete="name" aria-invalid={Boolean(errors.name)} className={look(errors.name)} />
+        {errors.name ? <p className="mt-1.5 px-1 text-xs text-[#f94f18]">{errors.name}</p> : null}
+      </div>
+      <div>
+        <input name="email" type="email" value={form.email} onChange={onChange} placeholder="Email" autoComplete="email" aria-invalid={Boolean(errors.email)} className={look(errors.email)} />
+        {errors.email ? <p className="mt-1.5 px-1 text-xs text-[#f94f18]">{errors.email}</p> : null}
+      </div>
+      <div>
+        <input name="phone" type="tel" inputMode="tel" value={form.phone} onChange={onChange} placeholder="Phone" autoComplete="tel" aria-invalid={Boolean(errors.phone)} className={look(errors.phone)} />
+        {errors.phone ? <p className="mt-1.5 px-1 text-xs text-[#f94f18]">{errors.phone}</p> : null}
+      </div>
+      <div>
+        <textarea
+          name="message"
+          value={form.message}
+          onChange={onChange}
+          rows={compact ? 4 : 6}
+          placeholder={tripTitle ? `Ask about ${tripTitle}` : "Where do you want to go, and when?"}
+          aria-invalid={Boolean(errors.message)}
+          className={look(errors.message)}
+        />
+        {errors.message ? <p className="mt-1.5 px-1 text-xs text-[#f94f18]">{errors.message}</p> : null}
+      </div>
       {error ? <p className="text-sm text-[#f94f18]">{error}</p> : null}
       <button
         type="submit"

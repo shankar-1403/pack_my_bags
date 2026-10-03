@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
+import { GRIP_AXIS, GRIP_BAR, handGeometry } from "./hand";
 import * as T from "./textures";
 import { clock, travel, WALK_CLOCK } from "./timeline";
 
@@ -20,6 +21,15 @@ const SHIN = 0.42;
 const ANKLE = 0.08;
 const STRIDE = 1.0;
 const WALK_FROM = -4.2;
+
+// Portrait screens get a taller frame: the shoulders sit just under the site header, the floor at the
+// bottom, and the camera swings further round to the front so walker and case fit across the width.
+// The traveller walks a little wider of the case there, so the right arm reaches out to the handle.
+const PORTRAIT_FOV = 34;
+const PORTRAIT_LANE = -0.3;
+const PORTRAIT_SHOULDERS = 1.47;
+const PORTRAIT_FLOOR = -0.3;
+const PORTRAIT_YAW = 0.47;
 
 // Glass wall behind the pillars: one wide window per place, a pillar between each.
 // A window is about one screen wide, so each frame shows a single place. The wall glides past a
@@ -158,6 +168,29 @@ function makeMaterials(screen: THREE.Texture, lapDepth: number) {
   oxford.repeat.set(5, 5);
   const meshPanel = T.meshPanelTexture();
   meshPanel.repeat.set(7, 7);
+  const wool = T.knitMaps("body");
+  const ribbing = T.knitMaps("band");
+  const knitwear = (maps: ReturnType<typeof T.knitMaps>, depth: number) =>
+    new THREE.MeshPhysicalMaterial({
+      color: "#9a9893",
+      map: maps.color,
+      normalMap: maps.normal,
+      normalScale: new THREE.Vector2(depth, depth),
+      roughness: 0.96,
+      sheen: 0.85,
+      sheenRoughness: 0.55,
+      sheenColor: new THREE.Color("#e4e2dd"),
+    });
+  const skin = (extra: THREE.MeshPhysicalMaterialParameters = {}) =>
+    new THREE.MeshPhysicalMaterial({
+      color: "#8a5e46",
+      roughness: 0.64,
+      specularIntensity: 0.28,
+      sheen: 0.18,
+      sheenRoughness: 0.55,
+      sheenColor: new THREE.Color("#c9806a"),
+      ...extra,
+    });
   const fabric = (color: string, sheenColor: string, extra: THREE.MeshPhysicalMaterialParameters = {}) =>
     new THREE.MeshPhysicalMaterial({ color, roughness: 0.92, sheen: 0.7, sheenRoughness: 0.55, sheenColor: new THREE.Color(sheenColor), ...extra });
 
@@ -174,6 +207,11 @@ function makeMaterials(screen: THREE.Texture, lapDepth: number) {
     trouser: fabric("#3a3631", "#9a8f82", { roughness: 0.88 }),
     hem: fabric("#302c28", "#8a8074"),
     sock: fabric("#c65f2c", "#f2a47c"),
+    sweater: knitwear(wool, 0.9),
+    rib: knitwear(ribbing, 1),
+    skin: skin(),
+    // The sculpted hand carries its own crease shading and nail tint as vertex colours.
+    hand: skin({ vertexColors: true }),
     leather: new THREE.MeshPhysicalMaterial({ color: "#f3efe7", roughness: 0.46, clearcoat: 0.3, clearcoatRoughness: 0.35 }),
     sole: new THREE.MeshStandardMaterial({ color: "#e2d7c2", roughness: 0.75 }),
     collar: new THREE.MeshStandardMaterial({ color: "#e7e0d4", roughness: 0.6 }),
@@ -354,46 +392,392 @@ function buildLegs(m: Mats) {
   return { root, legs };
 }
 
-// Heel and toe of the sole relative to the ankle joint.
-const SOLE_POINTS: [number, number][] = [
-  [-0.08, -ANKLE],
-  [0.21, -ANKLE],
-];
+// Heel and toe of the sole relative to the ankle joint (forward along x).
+const HEEL = 0.08;
+const TOE = 0.21;
 
-/** Poses both legs for a gait phase and returns the pelvis height that keeps the lower foot on the floor. */
 const wrapAngle = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
 const bump = (a: number, centre: number, width: number) => Math.exp(-((wrapAngle(a - centre) / width) ** 2));
+/** Bisection for the root of an increasing function between lo and hi. */
+function root(f: (m: number) => number, lo: number, hi: number) {
+  for (let i = 0; i < 32; i++) {
+    const m = (lo + hi) / 2;
+    if (f(m) > 0) hi = m;
+    else lo = m;
+  }
+  return (lo + hi) / 2;
+}
 
-// Gait phase: heel strike at φ = π/2, toe-off near φ = -1.3, swing in between (hip = 0 mid-swing).
-// Timings follow real walking: heel strike at φ = π/2, push-off at φ ≈ -1, deepest knee bend early in
-// the swing, ankle back to neutral mid-swing so the toe clears the floor.
-function poseLegs(legs: ReturnType<typeof buildLegs>["legs"], phase: number, gait: number) {
-  let lowest = Infinity;
-  let rest = Infinity;
-  legs.forEach((leg, i) => {
-    const phi = wrapAngle(phase + (i ? Math.PI : 0));
-    const hip = (0.24 * Math.sin(phi) + 0.1) * gait;
-    const knee = -(0.04 + 1.1 * bump(phi, -0.2, 1.15) + 0.22 * bump(phi, 2.0, 0.45) + 0.12 * bump(phi, 2.9, 0.5)) * gait;
-    // Planted: flat on the floor, heel peeling up steeply before push-off. Swinging: trails toe-down,
-    // comes back to neutral, then tips toe-up ready for the next heel strike.
-    const planted = -(hip + knee) + (-0.7 * bump(phi, -1.0, 0.45) + 0.2 * bump(phi, 1.57, 0.3)) * gait;
-    const early = smooth(clamp01((phi + 1.05) / 1.0));
-    const late = smooth(clamp01((phi - 0.6) / 0.8));
-    const swingAnkle = (-0.3 + 0.5 * early) * (1 - late) + (0.2 - hip - knee) * late;
-    const inSwing = smooth(clamp01((phi + 1.05) / 0.25)) * (1 - smooth(clamp01((phi - 1.25) / 0.25))) * gait;
-    const ankle = planted * (1 - inSwing) + swingAnkle * inSwing;
-    leg.hip.rotation.z = hip;
-    leg.knee.rotation.z = knee;
-    leg.ankle.rotation.z = ankle;
-    const ankleY = -THIGH * Math.cos(hip) - SHIN * Math.cos(hip + knee);
-    const pitch = hip + knee + ankle;
-    let footLowest = Infinity;
-    for (const [x, y] of SOLE_POINTS) footLowest = Math.min(footLowest, ankleY + x * Math.sin(pitch) + y * Math.cos(pitch));
-    lowest = Math.min(lowest, footLowest);
-    rest = Math.min(rest, footLowest + inSwing * 0.1);
+// Gait phase: heel strike at φ = π/2, mid-stance at φ ≈ -2.71 (leg under the hip), toe-off near
+// φ = -1.05, swing in between. Deepest knee bend early in the swing, a soft knee after heel strike.
+const MID_STANCE = -2.71;
+const HEEL_REACH = 0.02;
+const PELVIS_SMOOTH = 0.3;
+const ANKLE_SMOOTH = 0.05;
+const TAPS = [-2, -1, 0, 1, 2].map((k) => ({ k, w: Math.exp(-((k / 1.5) ** 2) / 2) }));
+
+function legAngles(phi: number, gait: number) {
+  const hip = (0.24 * Math.sin(phi) + 0.1) * gait;
+  const knee = -(0.04 + 1.1 * bump(phi, -0.2, 1.15) + 0.22 * bump(phi, 2.0, 0.45) + 0.12 * bump(phi, 2.9, 0.5)) * gait;
+  const swing = smooth(clamp01((phi + 1.05) / 0.25)) * (1 - smooth(clamp01((phi - 1.25) / 0.25)));
+  return { hip, knee, swing, inSwing: swing * gait };
+}
+
+// Past mid-stance a foot may roll onto its toe, once the other foot is down to take the weight.
+const trailing = (phi: number) => {
+  const t = wrapAngle(phi - MID_STANCE);
+  return smooth(clamp01(t / 0.6)) * (1 - smooth(clamp01((t - 1.9) / 0.4)));
+};
+// Just after heel strike the leading foot lands heel first, so it reaches a little further.
+const heelFirst = (phi: number) => {
+  const t = wrapAngle(phi - Math.PI / 2);
+  return smooth(clamp01((t + 0.5) / 0.3)) * (1 - smooth(clamp01((t - 0.2) / 0.9)));
+};
+
+/** Pelvis height carried by whichever leg bears the weight: the trailing foot never vaults the body. */
+function support(phase: number, gait: number) {
+  const legs = [0, Math.PI].map((offset) => {
+    const phi = wrapAngle(phase + offset);
+    return { phi, ...legAngles(phi, gait) };
   });
-  // The body rests on the planted foot (a swinging toe never lifts it), and no foot may sink into the floor.
-  return Math.max(-rest, -lowest);
+  let sum = 0;
+  let weight = 0;
+  legs.forEach((leg, i) => {
+    const other = legs[1 - i];
+    const ankleY = -THIGH * Math.cos(leg.hip) - SHIN * Math.cos(leg.hip + leg.knee);
+    const height = ANKLE - ankleY + HEEL_REACH * heelFirst(leg.phi) * gait;
+    const w = (1 - leg.swing) * (1 - trailing(leg.phi) * (1 - other.swing)) + 1e-4;
+    sum += w * height;
+    weight += w;
+  });
+  return sum / weight;
+}
+
+/** Smoothed over the stride so the body rises and settles in one soft wave per step. */
+function pelvisHeight(phase: number, gait: number) {
+  let sum = 0;
+  let weight = 0;
+  for (const { k, w } of TAPS) {
+    sum += w * support(phase + (k * PELVIS_SMOOTH) / 1.5, gait);
+    weight += w;
+  }
+  return sum / weight;
+}
+
+/** Joint angles for one leg with the pelvis at height y: planted feet meet the floor exactly. */
+function legPose(phi: number, y: number, gait: number) {
+  const { hip, inSwing } = legAngles(phi, gait);
+  let { knee } = legAngles(phi, gait);
+  const stance = 1 - inSwing;
+  // Swinging: trails toe-down, comes back to neutral, then tips toe-up ready for the next heel strike.
+  const early = smooth(clamp01((phi + 1.05) / 1.0));
+  const late = smooth(clamp01((phi - 0.6) / 0.8));
+  const swingAnkle = (-0.3 + 0.5 * early) * (1 - late) + (0.2 - hip - knee) * late;
+
+  // A planted leg softens its knee rather than push the foot through the floor.
+  const reach = (y - ANKLE - THIGH * Math.cos(hip)) / SHIN;
+  if (reach < 1.2) {
+    const need = -Math.acos(THREE.MathUtils.clamp(reach, -1, 1)) - hip;
+    const soft = (knee + need - Math.sqrt((knee - need) ** 2 + 0.0036)) / 2;
+    knee += (soft - knee) * stance;
+  }
+  const ankleHeight = y - THIGH * Math.cos(hip) - SHIN * Math.cos(hip + knee);
+  const heelAt = (pitch: number) => ankleHeight - HEEL * Math.sin(pitch) - ANKLE * Math.cos(pitch);
+  const toeAt = (pitch: number) => ankleHeight + TOE * Math.sin(pitch) - ANKLE * Math.cos(pitch);
+
+  // A planted foot that is lifted stays in touch: heel down before mid-stance, rolling onto the toe after.
+  let contact = 0;
+  if (ankleHeight > ANKLE) {
+    const t = wrapAngle(phi - MID_STANCE);
+    const onToe = t > 0 ? smooth(clamp01(t / 0.1)) * (1 - smooth(clamp01((t - 1.8) / 1.3))) : 0;
+    const toePitch = onToe > 0 ? root(toeAt, -Math.atan(TOE / ANKLE), 0) : 0;
+    const heelPitch = onToe < 1 ? root((m) => -heelAt(m), 0, 0.75) : 0;
+    contact = toePitch * onToe + heelPitch * (1 - onToe);
+  }
+  let ankle = (contact - hip - knee) * stance + swingAnkle * inSwing;
+  // A swinging heel never brushes the floor, and a lifting toe never digs in as the foot rolls off it.
+  if (inSwing > 0 && hip + knee + ankle > 0 && heelAt(hip + knee + ankle) < 0) {
+    ankle = root((a) => -heelAt(hip + knee + a), -(hip + knee), ankle);
+  }
+  if (inSwing > 0 && hip + knee + ankle < 0 && toeAt(hip + knee + ankle) < 0 && toeAt(contact) >= -1e-6) {
+    ankle = root((a) => toeAt(hip + knee + a), ankle, contact - hip - knee);
+  }
+  return { hip, knee, ankle };
+}
+
+/** Poses both legs for a gait phase and returns the pelvis height. */
+function poseLegs(legs: ReturnType<typeof buildLegs>["legs"], phase: number, gait: number) {
+  const y = pelvisHeight(phase, gait);
+  legs.forEach((leg, i) => {
+    const offset = i ? Math.PI : 0;
+    const pose = legPose(wrapAngle(phase + offset), y, gait);
+    // The ankle is eased over a sliver of the stride so the roll off the toe never snaps.
+    let ankle = 0;
+    let weight = 0;
+    for (const { k, w } of TAPS) {
+      const at = phase + (k * ANKLE_SMOOTH) / 1.5;
+      ankle += w * (k ? legPose(wrapAngle(at + offset), pelvisHeight(at, gait), gait).ankle : pose.ankle);
+      weight += w;
+    }
+    leg.hip.rotation.z = pose.hip;
+    leg.knee.rotation.z = pose.knee;
+    leg.ankle.rotation.z = ankle / weight;
+  });
+  return y;
+}
+
+// Upper body, framed only on portrait screens: a heather-grey rib-knit crew-neck over the trousers,
+// the right hand on the case handle and the left arm swinging with the stride. Built in the pelvis frame (origin
+// between the hips, +x forward, +z to the traveller's right).
+const UPPER_ARM = 0.31;
+const FOREARM = 0.26;
+const SHOULDER = new THREE.Vector3(0.01, 0.44, 0.165);
+// Knit scale: courses per metre up the garment (16 to a texture tile).
+const COURSES = 180 / 16;
+type Row = [y: number, halfWidth: number, halfDepth: number, centreX: number, squareness: number];
+// The body, from just inside the hem band to the neckline.
+const TORSO_ROWS: Row[] = [
+  [-0.03, 0.188, 0.126, 0.004, 2.3],
+  [-0.008, 0.195, 0.132, 0.005, 2.3],
+  [0.014, 0.201, 0.137, 0.005, 2.3],
+  [0.05, 0.2, 0.136, 0.005, 2.4],
+  [0.13, 0.192, 0.128, 0.008, 2.5],
+  [0.23, 0.191, 0.128, 0.01, 2.6],
+  [0.32, 0.194, 0.129, 0.011, 2.8],
+  [0.4, 0.193, 0.127, 0.011, 3.0],
+  [0.44, 0.188, 0.123, 0.012, 3.1],
+  [0.468, 0.175, 0.116, 0.012, 3.0],
+  [0.492, 0.154, 0.104, 0.012, 2.7],
+  [0.512, 0.124, 0.088, 0.01, 2.4],
+  [0.528, 0.095, 0.074, 0.004, 2.1],
+  [0.543, 0.071, 0.062, -0.004, 2.0],
+];
+// Ribbed hem band hugging the hips, its lower edge turned in.
+const HEM_ROWS: Row[] = [
+  [-0.046, 0.19, 0.13, 0.004, 2.3],
+  [-0.06, 0.192, 0.132, 0.004, 2.3],
+  [-0.058, 0.194, 0.134, 0.004, 2.3],
+  [-0.03, 0.195, 0.135, 0.004, 2.3],
+  [-0.004, 0.196, 0.136, 0.004, 2.3],
+];
+// Crew neck: a ribbed band rolled over at the top and back down inside.
+const COLLAR_ROWS: Row[] = [
+  [0.53, 0.09, 0.068, -0.006, 2.1],
+  [0.546, 0.079, 0.064, -0.006, 2.0],
+  [0.558, 0.074, 0.06, -0.006, 2.0],
+  [0.562, 0.069, 0.056, -0.006, 2.0],
+  [0.556, 0.063, 0.051, -0.006, 2.0],
+  [0.54, 0.061, 0.05, -0.006, 2.0],
+];
+
+/** Catmull-Rom through evenly indexed values, sampled at fractional index t. */
+function spline(values: number[], t: number) {
+  const i = Math.min(values.length - 2, Math.floor(t));
+  const f = t - i;
+  const p0 = values[Math.max(0, i - 1)];
+  const p1 = values[i];
+  const p2 = values[i + 1];
+  const p3 = values[Math.min(values.length - 1, i + 2)];
+  return 0.5 * (2 * p1 + (p2 - p0) * f + (2 * p0 - 5 * p1 + 4 * p2 - p3) * f * f + (3 * p1 - p0 - 3 * p2 + p3) * f * f * f);
+}
+
+/**
+ * A knitted tube through horizontal rows (rounded-rectangle cross sections), with the seam at the back.
+ * `wales` is texture tiles round the tube (8 wales each), `fineness` scales the stitch height to match,
+ * and `fold` swells or tucks the cloth at (y, angle).
+ */
+function knitTube(rows: Row[], samples: number, wales: number, fineness: number, fold?: (y: number, a: number) => number) {
+  const around = 64;
+  const columns = [0, 1, 2, 3, 4].map((k) => rows.map((row) => row[k]));
+  const positions: number[] = [];
+  const uvs: number[] = [];
+  const indices: number[] = [];
+  let run = 0;
+  let last: number[] | null = null;
+  for (let j = 0; j <= samples; j++) {
+    const [y, w, d, c, n] = columns.map((values) => spline(values, (j / samples) * (rows.length - 1)));
+    // Distance along the cloth, so courses keep their size where the tube turns back on itself.
+    if (last) run += Math.hypot(y - last[0], w - last[1]);
+    last = [y, w];
+    for (let i = 0; i <= around; i++) {
+      const a = Math.PI + (i / around) * Math.PI * 2;
+      const ca = Math.cos(a);
+      const sa = Math.sin(a);
+      const s = 1 + (fold ? fold(y, a) : 0);
+      positions.push(c + d * s * Math.sign(ca) * Math.abs(ca) ** (2 / n), y, w * s * Math.sign(sa) * Math.abs(sa) ** (2 / n));
+      uvs.push((i / around) * wales, run * COURSES * fineness);
+    }
+  }
+  for (let j = 0; j < samples; j++) {
+    for (let i = 0; i < around; i++) {
+      const a = j * (around + 1) + i;
+      const b = a + around + 1;
+      indices.push(a, b, a + 1, b, b + 1, a + 1);
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+/** How the body of the sweater drapes: bloused over the hem band, hanging folds, creases under the arms. */
+function torsoFolds(y: number, a: number) {
+  const blouse = Math.max(0, 1 - ((y - 0.035) / 0.05) ** 2);
+  const hang = clamp01(1 - (y - 0.02) / 0.3) * clamp01((y + 0.01) / 0.03);
+  const side = Math.abs(Math.sin(a)) ** 4 * Math.max(0, 1 - ((y - 0.39) / 0.05) ** 2);
+  return (
+    0.016 * blouse * Math.sin((2 * Math.PI * y) / 0.042 + 0.9 * Math.sin(3 * a) + 0.4) * (0.7 + 0.3 * Math.sin(5 * a)) +
+    0.011 * hang * Math.sin(11 * a + 1.7 * Math.sin(2 * a) + 0.6) +
+    0.012 * side * Math.sin(70 * (y - 0.08 * Math.cos(a)))
+  );
+}
+
+/**
+ * The sleeve as one skinned tube, hanging from the shoulder joint at the origin. Bones: 0 stays with the
+ * torso (the sleeve head), 1 the upper arm, 2 the forearm, 3 the hand (the cuff edge follows the wrist).
+ */
+function sleeveGeometry() {
+  const around = 40;
+  const wrist = UPPER_ARM + FOREARM;
+  // [y, radius, rib]: sleeve head, upper arm, elbow, roomy forearm gathering into a snug ribbed cuff.
+  const profile: [number, number, number][] = [];
+  for (let i = 0; i <= 6; i++) {
+    const y = 0.034 - (i / 6) * 0.034;
+    profile.push([y, 0.055 * Math.sqrt(Math.max(0.06, 1 - (y / 0.037) ** 2)), 0]);
+  }
+  for (let i = 1; i <= 48; i++) {
+    const s = i / 48;
+    const y = -s * (wrist - 0.05);
+    const r = 0.055 - 0.009 * smooth(clamp01(s / 0.55)) + 0.0025 * Math.exp(-(((y + 0.05) / 0.04) ** 2)) - 0.0012 * smooth(clamp01((s - 0.6) / 0.4));
+    profile.push([y, r, 0]);
+  }
+  const cuffTop = -(wrist - 0.05);
+  profile.push([cuffTop - 0.006, 0.039, 0], [cuffTop - 0.012, 0.0365, 1]);
+  for (let i = 1; i <= 8; i++) profile.push([cuffTop - 0.012 - (i / 8) * 0.062, 0.0365 - 0.0015 * (i / 8), 1]);
+  const end = profile[profile.length - 1][0];
+  profile.push([end - 0.003, 0.0335, 1], [end - 0.001, 0.0305, 1], [end + 0.012, 0.0305, 1]);
+
+  const positions: number[] = [];
+  const uvs: number[] = [];
+  const skinIndex: number[] = [];
+  const skinWeight: number[] = [];
+  let run = 0;
+  profile.forEach(([y, radius, rib], j) => {
+    if (j) run += Math.hypot(y - profile[j - 1][0], radius - profile[j - 1][1]);
+    // Bone weights down the arm: sleeve head with the torso, a soft bend over the elbow, cuff edge with the hand.
+    const head = smooth(clamp01((y + 0.03) / 0.07));
+    const elbow = smooth(clamp01((-y - (UPPER_ARM - 0.04)) / 0.08));
+    const hand = smooth(clamp01((-y - (wrist - 0.004)) / 0.016));
+    const arm = 1 - head;
+    const fore = arm * elbow;
+    skinIndex.push(0, 1, 2, 3);
+    skinWeight.push(head, arm - fore, fore * (1 - hand), fore * hand);
+    for (let i = 0; i <= around; i++) {
+      const a = Math.PI + (i / around) * Math.PI * 2;
+      const inner = Math.max(0, Math.cos(a));
+      let r = radius;
+      if (!rib) {
+        // Creases inside the elbow, loose folds bunching above the cuff, a long soft drape down the arm.
+        r -= 0.0045 * inner * inner * Math.max(0, 1 - ((y + UPPER_ARM) / 0.05) ** 2) * Math.abs(Math.sin((2 * Math.PI * (y + UPPER_ARM)) / 0.034));
+        const bunch = Math.max(0, 1 - ((y - cuffTop - 0.035) / 0.04) ** 2);
+        r += 0.0032 * bunch * Math.sin((2 * Math.PI * y) / 0.034 + 0.9 * Math.sin(a + 0.6));
+        r += 0.0016 * Math.sin(4 * a + 9 * y) * smooth(clamp01(-y / 0.06));
+      }
+      positions.push(Math.cos(a) * r * 1.04, y, Math.sin(a) * r);
+      uvs.push((i / around) * (rib ? 6 : 8), run * COURSES * (rib ? 1 : 2));
+    }
+  });
+
+  const indices: number[][] = [[], []];
+  for (let j = 0; j < profile.length - 1; j++) {
+    for (let i = 0; i < around; i++) {
+      const a = j * (around + 1) + i;
+      const b = a + around + 1;
+      indices[profile[j + 1][2]].push(a, a + 1, b, b, a + 1, b + 1);
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+  geometry.setAttribute("skinIndex", new THREE.Uint16BufferAttribute(profile.flatMap((_, j) => Array.from({ length: around + 1 }, () => skinIndex.slice(j * 4, j * 4 + 4)).flat()), 4));
+  geometry.setAttribute("skinWeight", new THREE.Float32BufferAttribute(profile.flatMap((_, j) => Array.from({ length: around + 1 }, () => skinWeight.slice(j * 4, j * 4 + 4)).flat()), 4));
+  geometry.setIndex([...indices[0], ...indices[1]]);
+  geometry.addGroup(0, indices[0].length, 0);
+  geometry.addGroup(indices[0].length, indices[1].length, 1);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+function buildArm(m: Mats) {
+  const head = new THREE.Bone();
+  const shoulder = new THREE.Bone();
+  const elbow = new THREE.Bone();
+  const wrist = new THREE.Bone();
+  head.add(shoulder);
+  shoulder.add(elbow);
+  elbow.position.y = -UPPER_ARM;
+  elbow.add(wrist);
+  wrist.position.y = -FOREARM;
+  const sleeve = new THREE.SkinnedMesh(sleeveGeometry(), [m.sweater, m.rib]);
+  sleeve.castShadow = true;
+  sleeve.receiveShadow = true;
+  // Bounds come from the rest pose; the posed arm is always in frame when it is shown.
+  sleeve.frustumCulled = false;
+  sleeve.add(head);
+  sleeve.updateMatrixWorld(true);
+  sleeve.bind(new THREE.Skeleton([head, shoulder, elbow, wrist]));
+  return { sleeve, head, shoulder, elbow, wrist, world: new THREE.Quaternion() };
+}
+
+function buildUpperBody(m: Mats) {
+  const torso = new THREE.Group();
+  torso.add(solid(knitTube(TORSO_ROWS, 72, 26, 2, torsoFolds), m.sweater));
+  torso.add(solid(knitTube(HEM_ROWS, 10, 25, 1), m.rib));
+  torso.add(solid(knitTube(COLLAR_ROWS, 12, 6, 1), m.rib));
+  // Only a short neck: on portrait screens everything above it sits behind the site header.
+  const neck = solid(new THREE.CylinderGeometry(0.049, 0.053, 0.07, 24), m.skin);
+  neck.position.set(0.006, 0.575, 0);
+  neck.rotation.z = -0.12;
+  torso.add(neck);
+  return { torso, right: buildArm(m), left: buildArm(m) };
+}
+
+type Arm = ReturnType<typeof buildArm>;
+
+const armX = new THREE.Vector3();
+const armY = new THREE.Vector3();
+const armZ = new THREE.Vector3();
+const armBasis = new THREE.Matrix4();
+
+/**
+ * Two-bone reach: shoulder at `from`, wrist toward `to`, elbow bending toward `pole`. `frame` is the
+ * torso's world rotation, which the sleeve head keeps. Returns the forearm direction.
+ */
+function reach(arm: Arm, from: THREE.Vector3, to: THREE.Vector3, pole: THREE.Vector3, frame: THREE.Quaternion) {
+  const toWrist = to.clone().sub(from);
+  const span = THREE.MathUtils.clamp(toWrist.length(), Math.abs(UPPER_ARM - FOREARM) + 0.01, UPPER_ARM + FOREARM - 0.002);
+  const dir = toWrist.normalize();
+  const along = (UPPER_ARM ** 2 - FOREARM ** 2 + span ** 2) / (2 * span);
+  const out = Math.sqrt(Math.max(0, UPPER_ARM ** 2 - along ** 2));
+  const bend = pole.clone().addScaledVector(dir, -pole.dot(dir)).normalize();
+  const elbow = from.clone().addScaledVector(dir, along).addScaledVector(bend, out);
+  const wrist = from.clone().addScaledVector(dir, span);
+  const upper = elbow.clone().sub(from).normalize();
+  const fore = wrist.sub(elbow).normalize();
+  armY.copy(upper).negate();
+  armZ.crossVectors(upper, fore);
+  if (armZ.lengthSq() < 1e-8) armZ.crossVectors(upper, bend);
+  armZ.normalize();
+  armX.crossVectors(armY, armZ);
+  arm.world.setFromRotationMatrix(armBasis.makeBasis(armX, armY, armZ));
+  arm.head.position.copy(from);
+  arm.head.quaternion.copy(frame);
+  arm.shoulder.quaternion.copy(frame).invert().multiply(arm.world);
+  arm.elbow.rotation.z = Math.atan2(fore.dot(armX), -fore.dot(armY));
+  return fore;
 }
 
 function buildSuitcase(m: Mats, screenH: number, lapDepth: number) {
@@ -678,9 +1062,10 @@ function buildWorld(scene: THREE.Scene, m: Mats, width: number, height: number, 
 
 export type IntroScene = ReturnType<typeof createIntroScene>;
 
-export function createIntroScene(canvas: HTMLCanvasElement, width: number, height: number, onPhoto: () => void) {
+export function createIntroScene(canvas: HTMLCanvasElement, width: number, height: number, inset: number, onPhoto: () => void) {
+  const compact = Math.min(width, height) < 700;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, compact ? 1.5 : 1.6));
   renderer.setSize(width, height, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
@@ -692,6 +1077,7 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
   const haze = new THREE.Color("#eee7db");
   scene.background = haze;
   scene.fog = new THREE.Fog(haze, 5.5, 17);
+  renderer.setClearColor(haze);
   const pmrem = new THREE.PMREMGenerator(renderer);
   const room = new RoomEnvironment();
   scene.environment = pmrem.fromScene(room, 0.04).texture;
@@ -701,7 +1087,7 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
   const camera = new THREE.PerspectiveCamera(FOV, width / height, 0.01, 60);
 
   // The laptop screen matches the viewport's shape so the final frame lines up with the real hero.
-  const screenAspect = Math.min(2, Math.max(1.45, width / height));
+  const screenAspect = height > 0 ? Math.min(2, Math.max(1.45, width / height)) : 1.6;
   const screenH = SCREEN_W / screenAspect;
   const lapDepth = screenH + 0.026;
   const screenCanvas = document.createElement("canvas");
@@ -719,13 +1105,16 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
   const world = buildWorld(scene, m, width * renderer.getPixelRatio(), height * renderer.getPixelRatio(), onPhoto);
   const legs = buildLegs(m);
   scene.add(legs.root);
+  const upper = buildUpperBody(m);
+  legs.root.add(upper.torso);
+  scene.add(upper.right.sleeve, upper.left.sleeve);
   const suitcase = buildSuitcase(m, screenH, lapDepth);
   scene.add(suitcase.root);
 
   scene.add(new THREE.HemisphereLight("#fff3e2", "#d8cbb6", 0.9));
   const sun = new THREE.DirectionalLight("#ffdcb0", 2.8);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.setScalar(compact ? 1024 : 2048);
   sun.shadow.camera.left = -2.4;
   sun.shadow.camera.right = 2.4;
   sun.shadow.camera.top = 2.4;
@@ -755,20 +1144,140 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
   // Aimed high enough that the opened screen sits well below the site header.
   const shotD = { pos: v3(0.47, 0.86, 0.6), tgt: v3(0.45, 0.3, -0.5) };
 
+  let viewW = width;
+  let viewH = height;
+  let topInset = inset;
+  const shoulderAt = new THREE.Vector3();
+  const handAt = new THREE.Quaternion();
+  const foreAt = new THREE.Quaternion();
+  const torsoTurn = new THREE.Quaternion();
+  const gripHand = new THREE.Quaternion();
+  const restHand = new THREE.Quaternion();
+  const gripPoint = new THREE.Vector3(...GRIP_BAR);
+
+  // The hands are sculpted the first time a portrait frame needs them: the grip at once, the relaxed hand
+  // (only seen after letting go of the handle) a moment later, off the critical path.
+  const hands: { grip?: THREE.Mesh; loose?: THREE.Mesh; left?: THREE.Mesh } = {};
+  let disposed = false;
+  function sculptHands() {
+    if (hands.grip) return;
+    hands.grip = solid(handGeometry("grip"), m.hand);
+    upper.right.wrist.add(hands.grip);
+    window.setTimeout(() => {
+      if (disposed) return;
+      const relaxed = handGeometry("loose");
+      hands.loose = solid(relaxed, m.hand);
+      hands.loose.visible = false;
+      upper.right.wrist.add(hands.loose);
+      // The left hand is the same relaxed hand, mirrored.
+      hands.left = solid(relaxed, m.hand);
+      hands.left.scale.z = -1;
+      upper.left.wrist.add(hands.left);
+    }, 400);
+  }
+
+  // The hand closes on the bar along its diagonal (GRIP_AXIS): a frame built on that axis in the hand,
+  // matched each frame to the same frame built on the real bar and the forearm.
+  const gripAxis = v3(...GRIP_AXIS);
+  const handFrame = new THREE.Matrix4()
+    .makeBasis(gripAxis, v3(0, GRIP_AXIS[2], -GRIP_AXIS[1]), new THREE.Vector3(-1, 0, 0))
+    .transpose();
+  const barFrame = new THREE.Matrix4();
+  const barAxis = v3(1, 0, 0);
+
+  /** Hand closed round the bar: the bar lies exactly along the grip's diagonal, the hand follows the forearm. */
+  function barGrip(fore: THREE.Vector3, into: THREE.Quaternion) {
+    armY.copy(fore).negate().addScaledVector(barAxis, fore.dot(barAxis)).normalize();
+    armZ.crossVectors(barAxis, armY);
+    barFrame.makeBasis(barAxis, armY, armZ).multiply(handFrame);
+    return into.setFromRotationMatrix(barFrame);
+  }
+
+  /** Relaxed hand: follows the forearm with the palm toward the thigh, turned a little back. */
+  function relaxedHand(fore: THREE.Vector3, palmZ: number, into: THREE.Quaternion) {
+    armY.copy(fore).negate();
+    armX.set(-0.35, 0, palmZ);
+    armX.addScaledVector(armY, -armX.dot(armY)).normalize();
+    armZ.crossVectors(armX, armY);
+    return into.setFromRotationMatrix(armBasis.makeBasis(armX, armY, armZ));
+  }
+
+  // Right hand holds the handle (and follows it down as it is pushed shut), then lets go and swings.
+  // The left arm swings with the stride. The chest leans in a touch and counter-turns against the hips.
+  function poseUpperBody(p: number, phase: number, gait: number) {
+    const press = Math.sin(Math.PI * seg(p, 0.278, 0.33));
+    upper.torso.rotation.set(0, -0.03 * Math.sin(phase) * gait, -(0.05 * gait + 0.06 * press));
+    legs.root.updateMatrixWorld(true);
+    suitcase.root.updateMatrixWorld(true);
+
+    const release = smooth(seg(p, 0.295, 0.318));
+    upper.torso.getWorldQuaternion(torsoTurn);
+    upper.torso.localToWorld(shoulderAt.copy(SHOULDER));
+    // The handle bar, a hand's width in from its near post (it sinks as the handle is pushed shut).
+    const bar = suitcase.tubes.localToWorld(v3(-0.055, 0.015, 0));
+    const barEnd = suitcase.tubes.localToWorld(v3(-0.135, 0, 0)).x;
+    const swing = -0.32 * Math.sin(phase) * gait;
+    const hanging = shoulderAt.clone().add(v3(0.03 + 0.5 * Math.sin(swing), -0.5 * Math.cos(swing), 0.04));
+    const pole = v3(-0.5, -0.5, 0.75).lerp(v3(-1, -0.2, 0.25), release);
+    // The hand's curl must land on the bar; its turn follows the forearm, so settle the two together.
+    const onBar = bar.clone();
+    let fore = bar.clone().sub(shoulderAt).normalize();
+    for (let i = 0; i < 8; i++) {
+      onBar.copy(bar).sub(gripPoint.clone().applyQuaternion(barGrip(fore, gripHand)));
+      // Letting go, the fingers open and the hand backs straight off the bar, back of the hand first,
+      // keeping pace with the sinking bar so it never slides into the palm; only once it is clear does it
+      // swing down to the side.
+      const off = onBar.clone().addScaledVector(v3(-1, 0, 0).applyQuaternion(gripHand), 0.075 * smooth(clamp01(release / 0.4)));
+      // On the way down it passes back beyond the end of the bar before it drops, not across it.
+      const behind = v3(barEnd - 0.14, off.y + 0.03, off.z);
+      const drop = smooth(clamp01((release - 0.4) / 0.6));
+      const wrist = off.multiplyScalar((1 - drop) ** 2).addScaledVector(behind, 2 * drop * (1 - drop)).addScaledVector(hanging, drop ** 2);
+      fore = reach(upper.right, shoulderAt, wrist, pole, torsoTurn);
+    }
+    handAt.slerpQuaternions(barGrip(fore, gripHand), relaxedHand(fore, -1, restHand), smooth(clamp01((release - 0.4) / 0.6)));
+    foreAt.copy(upper.right.world).multiply(upper.right.elbow.quaternion).invert();
+    upper.right.wrist.quaternion.copy(foreAt.multiply(handAt));
+    // The fingers open the moment the hand starts to let go.
+    if (hands.grip) hands.grip.visible = !hands.loose || release === 0;
+    if (hands.loose) hands.loose.visible = !hands.grip?.visible;
+
+    upper.torso.localToWorld(shoulderAt.copy(SHOULDER).setZ(-SHOULDER.z));
+    // A small swing, settled slightly back, keeps the far hand beside the hip rather than out in front.
+    const leftSwing = 0.12 * Math.sin(phase) * gait - 0.12;
+    const leftWrist = shoulderAt.clone().add(v3(0.5 * Math.sin(leftSwing), -0.5 * Math.cos(leftSwing), -0.04));
+    const leftFore = reach(upper.left, shoulderAt, leftWrist, v3(-1, -0.2, -0.25), torsoTurn);
+    foreAt.copy(upper.left.world).multiply(upper.left.elbow.quaternion).invert();
+    upper.left.wrist.quaternion.copy(foreAt.multiply(relaxedHand(leftFore, 1, handAt)));
+  }
+
   function render(scroll: number) {
     const p = clock(scroll);
+    const portrait = viewW < viewH;
+    camera.fov = portrait ? PORTRAIT_FOV : FOV;
+    camera.aspect = viewW / viewH;
+    camera.updateProjectionMatrix();
+    const halfTan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     const x = legsX(p);
     const speed = Math.abs(legsX(p + 0.002) - legsX(p - 0.002)) / 0.004;
     const gait = smooth(clamp01(speed / 6));
     const phase = ((x - WALK_FROM) / STRIDE) * Math.PI * 2;
-    legs.root.position.set(x, poseLegs(legs.legs, phase, gait), LEG_LANE);
+    legs.root.position.set(x, poseLegs(legs.legs, phase, gait), portrait ? PORTRAIT_LANE : LEG_LANE);
     legs.root.visible = x < 4.5;
 
     const caseX = walkX(p) + CASE_LEAD;
     suitcase.root.position.set(caseX, 0, CASE_LANE);
     suitcase.wheels.forEach((wheel) => (wheel.rotation.z = -(caseX - WALK_FROM - CASE_LEAD) / 0.027));
     suitcase.root.rotation.x = p < 0.3 ? 0.007 * Math.sin(phase * 2) * gait : 0;
-    suitcase.tubes.position.y = CASE_H + 0.012 + 0.44 * (1 - inOut(seg(p, 0.28, 0.34)));
+    // In portrait, where the handle is held, it is only part-way up: the bar sits where a relaxed,
+    // slightly forward arm's hand falls, so the wrist stays straight.
+    suitcase.tubes.position.y = CASE_H + 0.012 + (portrait ? 0.2 : 0.44) * (1 - inOut(seg(p, 0.28, 0.34)));
+
+    const showUpper = portrait && legs.root.visible;
+    upper.torso.visible = upper.right.sleeve.visible = upper.left.sleeve.visible = showUpper;
+    if (showUpper) {
+      sculptHands();
+      poseUpperBody(p, phase, gait);
+    }
 
     const t = seg(p, 0.43, 0.53);
     const fall = t < 0.8 ? inCubic(t / 0.8) : 1 - 0.045 * Math.sin(((t - 0.8) / 0.2) * Math.PI) * (1 - (t - 0.8) / 0.2);
@@ -792,36 +1301,54 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
 
     // Camera rig: tracking walk → crane over the case → flat lay → laptop → into the screen.
     const track = THREE.MathUtils.lerp(Math.min(walkX(p), 0) + 0.25, CASE_LEAD, smooth(seg(p, 0.24, 0.4)));
-    // Framed so the whole case clears the header while the hips stay above the top edge.
-    const lead = 0.24 + 0.24 * clamp01((camera.aspect - 1.3) / 0.5);
-    const shotA = { pos: v3(track + 0.7, 0.4, 2.24), tgt: v3(track - lead, 0.33, -0.04) };
+    let shotA;
+    if (portrait) {
+      // Floor to shoulders fills the screen below the header; the header covers the band above.
+      const span = (PORTRAIT_SHOULDERS - PORTRAIT_FLOOR) / (1 - Math.min(0.35, topInset / viewH));
+      const distance = span / 2 / halfTan;
+      const aim = v3(track - 0.07, PORTRAIT_FLOOR + span / 2, -0.1);
+      shotA = { pos: aim.clone().add(v3(distance * Math.sin(PORTRAIT_YAW), 0.18, distance * Math.cos(PORTRAIT_YAW))), tgt: aim };
+    } else {
+      // Framed so the whole case clears the header while the hips stay above the top edge.
+      const lead = camera.aspect < 1.3 ? 0.04 + 0.2 * clamp01((camera.aspect - 1) / 0.3) : 0.24 + 0.24 * clamp01((camera.aspect - 1.3) / 0.5);
+      shotA = { pos: v3(track + 0.7, 0.4, 2.24), tgt: v3(track - lead, 0.33, -0.04) };
+    }
+    // Narrow screens pull each later shot back until its subject fits across (wide screens never need to).
+    const fit = (shot: { pos: THREE.Vector3; tgt: THREE.Vector3 }, half: number) => {
+      const offset = shot.pos.clone().sub(shot.tgt);
+      const need = half / (halfTan * camera.aspect);
+      return need > offset.length() ? { pos: shot.tgt.clone().addScaledVector(offset.normalize(), need), tgt: shot.tgt } : shot;
+    };
+    const b = fit(shotB, 0.42);
+    const c = fit(shotC, 0.32);
+    const d = fit(shotD, 0.2);
     const position = new THREE.Vector3();
     up.set(0, 1, 0);
     if (p < 0.38) {
       position.copy(shotA.pos);
       target.copy(shotA.tgt);
     } else if (p < 0.66) {
-      const c = inOut(seg(p, 0.38, 0.63));
-      position.copy(through([shotA.pos, shotB.pos, shotC.pos], c));
-      target.copy(through([shotA.tgt, shotB.tgt, shotC.tgt], c));
+      const k = inOut(seg(p, 0.38, 0.63));
+      position.copy(through([shotA.pos, b.pos, c.pos], k));
+      target.copy(through([shotA.tgt, b.tgt, c.tgt], k));
       const drift = seg(p, 0.63, 0.66);
       position.x += 0.02 * drift;
     } else if (p < 0.78) {
-      const d = inOut(seg(p, 0.66, 0.78));
-      position.lerpVectors(v3(shotC.pos.x + 0.02, shotC.pos.y, shotC.pos.z), shotD.pos, d);
-      target.lerpVectors(shotC.tgt, shotD.tgt, d);
+      const k = inOut(seg(p, 0.66, 0.78));
+      position.lerpVectors(v3(c.pos.x + 0.02, c.pos.y, c.pos.z), d.pos, k);
+      target.lerpVectors(c.tgt, d.tgt, k);
     } else {
       scene.updateMatrixWorld();
       suitcase.screen.getWorldPosition(screenCenter);
       suitcase.screen.getWorldDirection(screenNormal);
       suitcase.screen.getWorldQuaternion(quaternion);
       screenUp.set(0, 1, 0).applyQuaternion(quaternion);
-      const finalDistance = regionH / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2)));
+      const finalDistance = regionH / (2 * halfTan);
       const approach = screenCenter.clone().addScaledVector(screenNormal, 0.75).addScaledVector(screenUp, 0.06);
       const end = screenCenter.clone().addScaledVector(screenNormal, finalDistance);
       const e = inOut(seg(p, 0.78, 0.965));
-      position.copy(through([shotD.pos, approach, end], e));
-      target.lerpVectors(shotD.tgt, screenCenter, smooth(clamp01(e * 1.5)));
+      position.copy(through([d.pos, approach, end], e));
+      target.lerpVectors(d.tgt, screenCenter, smooth(clamp01(e * 1.5)));
       up.lerp(screenUp, smooth(seg(e, 0.35, 1))).normalize();
     }
     camera.position.copy(position);
@@ -848,14 +1375,16 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
     regionH = shotAspect >= screenAspect ? SCREEN_W / shotAspect : screenH;
   }
 
-  function resize(w: number, h: number) {
+  function resize(w: number, h: number, inset: number) {
+    viewW = w;
+    viewH = h;
+    topInset = inset;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
     world.mirror.getRenderTarget().setSize(Math.round(w * renderer.getPixelRatio() * 0.5), Math.round(h * renderer.getPixelRatio() * 0.5));
   }
 
   function dispose() {
+    disposed = true;
     scene.traverse((object) => {
       if (object instanceof THREE.Mesh) {
         object.geometry.dispose();

@@ -1,42 +1,43 @@
 import Link from "next/link";
 import type { SiteSettings } from "@/lib/types";
 import { Frame } from "./frame";
-import Logo from '../public/logo_white.webp'
+import Image from "next/image";
+import Logo from "../public/logo_white.webp";
 
 export function SiteFooter({ settings }: { settings: SiteSettings }) {
   const year = new Date().getFullYear();
 
   return (
     <footer className="mt-20 bg-pine font-header text-cream">
-      <Frame className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <img src={Logo.src} alt="Logo" className="h-10 md:h-16" />
+      <Frame className="grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:py-14 lg:grid-cols-4">
+        <div className="col-span-2 lg:col-span-1">
+          <Image src={Logo} alt="Pack my bags" className="h-10 w-auto md:h-14" />
           <p className="mt-4 max-w-xs text-sm leading-6 text-cream/70">{settings.tagline}</p>
         </div>
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/45">Trips</p>
-          <ul className="mt-4 space-y-2.5 text-sm text-cream/85">
-            <li><Link href="/trips" className="hover:text-white">Upcoming trips</Link></li>
-            <li><Link href="/trips?type=domestic" className="hover:text-white">Domestic</Link></li>
-            <li><Link href="/trips?type=international" className="hover:text-white">International</Link></li>
-            <li><Link href="/destinations" className="hover:text-white">Destinations</Link></li>
+          <ul className="mt-3 text-sm text-cream/85">
+            <li><Link href="/trips" className="inline-flex min-h-10 items-center hover:text-white">Upcoming trips</Link></li>
+            <li><Link href="/trips?type=domestic" className="inline-flex min-h-10 items-center hover:text-white">Domestic</Link></li>
+            <li><Link href="/trips?type=international" className="inline-flex min-h-10 items-center hover:text-white">International</Link></li>
+            <li><Link href="/destinations" className="inline-flex min-h-10 items-center hover:text-white">Destinations</Link></li>
           </ul>
         </div>
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/45">Company</p>
-          <ul className="mt-4 space-y-2.5 text-sm text-cream/85">
-            <li><Link href="/about" className="hover:text-white">About</Link></li>
-            <li><Link href="/blog" className="hover:text-white">Journal</Link></li>
-            <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-            <li><Link href="/admin" className="hover:text-white">Studio</Link></li>
+          <ul className="mt-3 text-sm text-cream/85">
+            <li><Link href="/about" className="inline-flex min-h-10 items-center hover:text-white">About</Link></li>
+            <li><Link href="/blog" className="inline-flex min-h-10 items-center hover:text-white">Journal</Link></li>
+            <li><Link href="/contact" className="inline-flex min-h-10 items-center hover:text-white">Contact</Link></li>
+            <li><Link href="/admin" className="inline-flex min-h-10 items-center hover:text-white">Studio</Link></li>
           </ul>
         </div>
-        <div>
+        <div className="col-span-2 lg:col-span-1">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/45">Talk to us</p>
-          <ul className="mt-4 space-y-2.5 text-sm text-cream/85">
-            <li><a href={`tel:${settings.phone.replace(/\s/g, "")}`} className="hover:text-white">{settings.phone}</a></li>
-            <li><a href={`mailto:${settings.email}`} className="hover:text-white">{settings.email}</a></li>
-            <li><a href={`https://wa.me/${settings.whatsapp}`} className="hover:text-white">WhatsApp</a></li>
+          <ul className="mt-3 text-sm text-cream/85">
+            <li><a href={`tel:${settings.phone.replace(/\s/g, "")}`} className="inline-flex min-h-10 items-center hover:text-white">{settings.phone}</a></li>
+            <li><a href={`mailto:${settings.email}`} className="inline-flex min-h-10 items-center break-all hover:text-white">{settings.email}</a></li>
+            <li><a href={`https://wa.me/${settings.whatsapp}`} className="inline-flex min-h-10 items-center hover:text-white">WhatsApp</a></li>
           </ul>
           <p className="mt-4 max-w-xs text-sm leading-6 text-cream/55">{settings.address}</p>
         </div>

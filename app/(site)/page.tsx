@@ -64,22 +64,22 @@ export default function HomePage() {
             <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">The board</p>
             <h2 className="mt-2 font-serif text-4xl tracking-tight sm:text-5xl">Departures with seats open</h2>
           </div>
-          <Link href="/trips" className="hidden text-sm text-pine sm:inline">See the full calendar</Link>
+          <Link href="/trips" className="hidden min-h-10 shrink-0 items-center whitespace-nowrap text-sm text-pine sm:inline-flex">See the full calendar</Link>
         </div>
         <DepartureBoard trips={trips.slice(0, 6)} />
       </Frame>
 
       <section className="bg-pine text-cream">
         <Frame className="py-8 sm:py-10">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_repeat(4,minmax(0,1fr))] lg:gap-0">
-            <h2 className="max-w-xs font-serif text-3xl leading-[0.95] tracking-tight sm:text-4xl lg:pr-6">
+          <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2 xl:grid-cols-[minmax(0,0.85fr)_repeat(4,minmax(0,1fr))] xl:gap-0">
+            <h2 className="max-w-xs font-serif text-3xl leading-[0.95] tracking-tight sm:col-span-2 sm:text-4xl xl:col-span-1 xl:pr-6">
               A group trip should feel chosen.
             </h2>
             {reasons.map((reason, index) => (
-              <div key={reason.title} className="border-white/15 lg:border-l lg:px-5">
+              <div key={reason.title} className="border-white/15 xl:border-l xl:px-5">
                 <p className="font-header text-[11px] font-semibold tracking-[0.18em] text-[#f94f18]">0{index + 1}</p>
-                <h3 className="mt-2 font-header text-sm font-semibold leading-snug">{reason.title}</h3>
-                <p className="mt-2 line-clamp-3 text-xs leading-5 text-cream/70">{reason.copy}</p>
+                <h3 className="mt-2 font-header text-base font-semibold leading-snug">{reason.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-cream/70">{reason.copy}</p>
               </div>
             ))}
           </div>
@@ -94,14 +94,14 @@ export default function HomePage() {
 
       <Frame className="pb-8">
         <p className="text-xs uppercase tracking-[0.22em] text-[#f94f18]">From the road</p>
-        <h2 className="mt-2 max-w-xl font-serif text-4xl tracking-tight">Notes sent after the drop.</h2>
+        <h2 className="mt-2 max-w-xl font-serif text-4xl tracking-tight sm:text-5xl">Notes sent after the drop.</h2>
         <RoadNotes reviews={reviews} />
       </Frame>
 
       <Frame className="py-16">
-        <div className="flex items-end justify-between">
-          <h2 className="font-serif text-4xl tracking-tight">Journal</h2>
-          <Link href="/blog" className="font-header text-sm font-medium text-pine">All stories</Link>
+        <div className="flex items-end justify-between gap-6">
+          <h2 className="font-serif text-4xl tracking-tight sm:text-5xl">Journal</h2>
+          <Link href="/blog" className="inline-flex min-h-10 items-center font-header text-sm font-medium text-pine">All stories</Link>
         </div>
         <JournalStrip posts={posts} />
       </Frame>
@@ -109,7 +109,7 @@ export default function HomePage() {
       <Frame className="pb-8">
         <div id="questions" className="grid items-stretch gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(260px,0.8fr)] lg:gap-10">
           <div>
-            <h2 className="font-serif text-4xl tracking-tight">Questions, answered plainly</h2>
+            <h2 className="font-serif text-4xl tracking-tight sm:text-5xl">Questions, answered plainly</h2>
             <div className="mt-6">
               <FaqList faqs={faqs} />
             </div>

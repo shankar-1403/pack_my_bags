@@ -38,7 +38,7 @@ export function StoryProgress({ targetId, minutes }: { targetId: string; minutes
         <span ref={bar} className="absolute inset-0 origin-top bg-[#f94f18]" style={{ transform: "scaleY(0)" }} />
       </span>
       <div className="py-1">
-        <p className="font-header text-[10px] font-semibold uppercase tracking-[0.24em] text-mist">Reading</p>
+        <p className="font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-mist">Reading</p>
         <p className="mt-2 font-serif text-2xl tracking-tight tabular-nums" aria-live="off">
           {left > 0 ? `${left} min left` : <span className="italic">Finished</span>}
         </p>

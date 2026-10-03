@@ -66,7 +66,7 @@ export default async function TripPage({ params }: Context) {
             <h2 className="font-serif text-4xl">Highlights</h2>
             <ul className="mt-5 grid gap-3 sm:grid-cols-2">
               {trip.highlights.map((item) => (
-                <li key={item} className="rounded-3xl border border-line bg-cream px-4 py-4 text-sm leading-6">{item}</li>
+                <li key={item} className="rounded-3xl border border-line bg-cream px-4 py-4 text-sm leading-6 sm:text-base">{item}</li>
               ))}
             </ul>
           </section>
@@ -79,7 +79,7 @@ export default async function TripPage({ params }: Context) {
                   <p className="text-xs uppercase tracking-[0.18em] text-[#f94f18]">Day {day.day}</p>
                   <div>
                     <h3 className="font-serif text-2xl">{day.title}</h3>
-                    <p className="mt-2 text-sm leading-7 text-ink/75">{day.description}</p>
+                    <p className="mt-2 text-sm leading-7 text-ink/75 sm:text-base">{day.description}</p>
                   </div>
                 </li>
               ))}
@@ -89,13 +89,13 @@ export default async function TripPage({ params }: Context) {
           <section className="mt-12 grid gap-8 md:grid-cols-2">
             <div>
               <h2 className="font-serif text-3xl">Included</h2>
-              <ul className="mt-4 space-y-2 text-sm leading-6">
+              <ul className="mt-4 space-y-2 text-sm leading-6 sm:text-base sm:leading-7">
                 {trip.inclusions.map((item) => <li key={item}>· {item}</li>)}
               </ul>
             </div>
             <div>
               <h2 className="font-serif text-3xl">Not included</h2>
-              <ul className="mt-4 space-y-2 text-sm leading-6 text-ink/75">
+              <ul className="mt-4 space-y-2 text-sm leading-6 text-ink/75 sm:text-base sm:leading-7">
                 {trip.exclusions.map((item) => <li key={item}>· {item}</li>)}
               </ul>
             </div>
@@ -110,7 +110,7 @@ export default async function TripPage({ params }: Context) {
           <div className="mt-6 grid gap-5 md:grid-cols-3">
             {related.map((item) => <TripCard key={item.id} trip={item} />)}
           </div>
-          <Link href="/trips" className="mt-6 inline-block text-sm text-pine">Back to all trips</Link>
+          <Link href="/trips" className="mt-6 inline-flex min-h-10 items-center text-sm text-pine">Back to all trips</Link>
         </Frame>
       ) : null}
     </article>

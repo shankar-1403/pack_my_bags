@@ -17,7 +17,7 @@ export function HomeBanner({
   fill?: boolean;
 }) {
   return (
-    <section className={`relative isolate -mt-[var(--site-header-height,7.5rem)] min-h-[760px] w-full overflow-hidden bg-pine pt-[var(--site-header-height,7.5rem)] ${fill ? "md:motion-safe:min-h-[100dvh]" : ""}`}>
+    <section className={`relative isolate -mt-[var(--site-header-height,7.5rem)] min-h-[760px] w-full overflow-hidden bg-pine pt-[var(--site-header-height,7.5rem)] ${fill ? "motion-safe:min-h-[100dvh]" : ""}`}>
         {spotlight ? (
           <Image
             src={spotlight.image}
@@ -31,7 +31,7 @@ export function HomeBanner({
         <div className="absolute inset-0 bg-gradient-to-r from-pine via-pine/80 to-pine/25" />
         <div className="absolute inset-0 bg-gradient-to-t from-pine/80 via-transparent to-pine/55" />
 
-        <div className={`relative mx-auto flex min-h-[680px] w-full max-w-7xl flex-col justify-between px-3 py-10 text-cream sm:px-5 sm:py-14 ${fill ? "md:motion-safe:min-h-[calc(100dvh-var(--site-header-height,7.5rem))]" : ""}`}>
+        <div className={`relative mx-auto flex min-h-[680px] w-full max-w-7xl flex-col justify-between px-3 py-10 text-cream sm:px-5 sm:py-14 ${fill ? "motion-safe:min-h-[calc(100dvh-var(--site-header-height,7.5rem))]" : ""}`}>
           <div className="max-w-xl">
             <p className="font-header text-[11px] font-semibold uppercase tracking-[0.22em] text-[#f94f18]">
               Upcoming group departures
@@ -51,7 +51,7 @@ export function HomeBanner({
               </Link>
             </div>
             {spotlight ? (
-              <Link href={`/trips/${spotlight.slug}`} className="mt-6 inline-flex font-header text-sm font-medium text-cream/90 underline-offset-4 hover:underline">
+              <Link href={`/trips/${spotlight.slug}`} className="mt-6 inline-flex min-h-10 items-center font-header text-sm font-medium text-cream/90 underline-offset-4 hover:underline">
                 Featured now · {spotlight.title}
               </Link>
             ) : null}
@@ -75,7 +75,7 @@ export function HomeBanner({
                       <Image src={trip.image} alt="" fill sizes="56px" className="object-cover" />
                     </span>
                     <span className="min-w-0">
-                      <span className="block font-header text-[10px] font-medium uppercase tracking-[0.16em] text-cream/70">{trip.region}</span>
+                      <span className="block font-header text-[11px] font-medium uppercase tracking-[0.16em] text-cream/70">{trip.region}</span>
                       <span className="mt-0.5 block truncate font-header text-sm font-semibold">{trip.title}</span>
                     </span>
                   </Link>

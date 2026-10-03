@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant short (@media (max-height: 680px));
+
 @theme inline {
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
@@ -56,4 +58,15 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-clay);
   outline-offset: 3px;
+}
+
+/* Gallery: the little line that runs down beside "Scroll to develop". */
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-110%);
+  }
+  65%,
+  100% {
+    transform: translateY(280%);
+  }
 }

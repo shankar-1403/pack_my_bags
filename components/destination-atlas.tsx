@@ -76,11 +76,11 @@ export function DestinationAtlas({ places }: { places: Place[] }) {
               style={{ backgroundImage: `url("${place.image}")` }}
             />
             <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-pine via-pine/45 to-pine/10" />
-            <span className="absolute left-4 top-4 rounded-full bg-cream px-2.5 py-1 font-header text-[10px] font-semibold uppercase tracking-[0.14em] text-pine">
+            <span className="absolute left-4 top-4 rounded-full bg-cream px-2.5 py-1 font-header text-[11px] font-semibold uppercase tracking-[0.14em] text-pine">
               {place.trips.length} {place.trips.length === 1 ? "route" : "routes"}
             </span>
             <span className="absolute inset-x-0 bottom-0 px-5 pb-5">
-              <span className="font-header text-[10px] font-semibold uppercase tracking-[0.16em] text-cream/65">{place.region}</span>
+              <span className="font-header text-[11px] font-semibold uppercase tracking-[0.16em] text-cream/65">{place.region}</span>
               <h2 className="mt-1 font-serif text-4xl leading-none tracking-tight">{place.name}</h2>
               <span className="mt-3 flex flex-col gap-1.5">
                 {place.trips.slice(0, 2).map((title) => (

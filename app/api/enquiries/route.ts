@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { getEnquiries, saveEnquiries } from "@/lib/content";
+import { checkEnquiry } from "@/lib/enquiry-rules";
 import { fail } from "@/lib/guard";
 import type { Enquiry } from "@/lib/types";
 
@@ -14,14 +15,14 @@ export async function POST(request: Request) {
     const name = clip(body.name, 80);
     const email = clip(body.email, 120);
     const message = clip(body.message, 2000);
-    if (!name || !email.includes("@") || !message) {
-      throw new Error("Name, email, and a message are required.");
-    }
+    const phone = clip(body.phone, 30);
+    const problem = Object.values(checkEnquiry({ name, email, phone, message }))[0];
+    if (problem) throw new Error(problem);
     const item: Enquiry = {
       id: randomUUID(),
       name,
       email,
-      phone: clip(body.phone, 30),
+      phone,
       tripSlug: clip(body.tripSlug, 80),
       tripTitle: clip(body.tripTitle, 140),
       departure: clip(body.departure, 80),

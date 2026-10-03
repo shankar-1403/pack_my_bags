@@ -51,6 +51,8 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
     const stories = Math.max(posts.length, 1);
     const last = Math.max(leaves.length - 1, 1);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // Phones read one page at a time: the right-hand page stays centred and turned pages swing off-screen.
+    const singlePage = window.matchMedia("(max-width: 639px)");
 
     let target = 0;
     let current = 0;
@@ -68,7 +70,7 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
     };
 
     const paint = (cursor: number) => {
-      const open = easeInOut(clamp(cursor / 0.85));
+      const open = singlePage.matches ? 0 : easeInOut(clamp(cursor / 0.85));
       if (stage) stage.style.transform = `translate3d(${(open - 1) * 25}%, 0, 0)`;
       if (ground) ground.style.transform = `translateX(${(1 - open) * 25}%) scaleX(${0.46 + 0.46 * open})`;
 
@@ -127,11 +129,10 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
     <div ref={root} className="relative mt-10" style={{ height: `${turns * 160 + 100}vh` }}>
       <div
         data-pin
-        className="sticky flex flex-col items-center justify-center overflow-hidden"
+        className="sticky flex flex-col items-center justify-center overflow-hidden [--page-w:min(420px,calc(100vw_-_3rem),calc((100dvh_-_var(--site-header-height,5rem)_-_11rem)*0.72))] sm:[--page-w:min(420px,calc(50vw_-_1.25rem),calc((100dvh_-_var(--site-header-height,5rem)_-_11rem)*0.72))]"
         style={{
           top: "var(--site-header-height, 5rem)",
           height: "calc(100dvh - var(--site-header-height, 5rem))",
-          ["--page-w" as string]: "min(420px, calc(50vw - 1.25rem), calc((100dvh - var(--site-header-height, 5rem) - 11rem) * 0.72))",
         }}
       >
         <div data-stage className="relative flex will-change-transform" style={{ width: "calc(var(--page-w) * 2)", height: "calc(var(--page-w) / 0.72)" }}>
@@ -181,7 +182,7 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
                 </Link>
                 <div aria-hidden className="absolute inset-0 overflow-hidden rounded-l-[18px] [container-type:size] [backface-visibility:hidden] [transform:rotateY(180deg)]" style={{ background: PAPER_BACK }}>
                   <span className="pointer-events-none absolute inset-y-0 right-0 w-[12%] bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
-                  <span className="absolute font-header font-semibold uppercase text-mist/80" style={{ bottom: "7cqh", left: "9cqw", fontSize: "clamp(8px, 2.6cqw, 10px)", letterSpacing: "0.16em" }}>
+                  <span className="absolute font-header font-semibold uppercase text-mist/80" style={{ bottom: "7cqh", left: "9cqw", fontSize: "clamp(10px, 2.6cqw, 11px)", letterSpacing: "0.16em" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <p className="absolute top-1/2 line-clamp-6 -translate-y-1/2 text-center font-serif leading-snug text-ink/45 italic" style={{ left: "14%", right: "12%", fontSize: "clamp(12px, 4.6cqh, 20px)" }}>
@@ -195,7 +196,7 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
         </div>
 
         <div className="mt-10 flex w-40 flex-col items-center gap-3">
-          <p data-folio className="font-header text-[10px] font-semibold uppercase tracking-[0.24em] text-mist tabular-nums">
+          <p data-folio className="font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-mist tabular-nums">
             Cover
           </p>
           <span className="relative h-px w-full overflow-hidden bg-ink/10">
@@ -282,7 +283,7 @@ function CoverFace() {
       <div className="absolute rounded-[12px] border" style={{ inset: "4.5cqh 4cqw 4.5cqh 10cqw", borderColor: `${GILT}55` }} />
       <div className="absolute rounded-[9px] border" style={{ inset: "8cqh 7.5cqw 8cqh 13.5cqw", borderColor: `${GILT}26` }} />
       <div className="relative flex h-full flex-col text-center" style={{ padding: "9cqh 8cqw 7cqh 14cqw" }}>
-        <p className="font-header font-semibold uppercase" style={{ color: GILT, fontSize: "clamp(8px, 2.6cqh, 10px)", letterSpacing: "0.28em" }}>
+        <p className="font-header font-semibold uppercase" style={{ color: GILT, fontSize: "clamp(10px, 2.6cqh, 11px)", letterSpacing: "0.28em" }}>
           Pack my bags
         </p>
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
@@ -292,11 +293,11 @@ function CoverFace() {
             <br />
             <span className="italic" style={{ color: "#f0dcb8" }}>from the desk</span>
           </h2>
-          <p className="max-w-[18ch] leading-snug text-cream/65" style={{ marginTop: "3.5cqh", fontSize: "clamp(10px, 3cqh, 13px)" }}>
+          <p className="max-w-[18ch] leading-snug text-cream/65" style={{ marginTop: "3.5cqh", fontSize: "clamp(12px, 3cqh, 15px)" }}>
             Notes on packing, pacing, and choosing a first group trip.
           </p>
         </div>
-        <p className="font-header uppercase text-cream/40" style={{ fontSize: "clamp(7px, 2.1cqh, 9px)", letterSpacing: "0.24em" }}>
+        <p className="font-header uppercase text-cream/40" style={{ fontSize: "clamp(10px, 2.1cqh, 11px)", letterSpacing: "0.24em" }}>
           Scroll to open
         </p>
       </div>
@@ -310,7 +311,7 @@ function Endpaper() {
       <span className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: `radial-gradient(${BOARD} 1px, transparent 1px)`, backgroundSize: "14px 14px" }} />
       <span className="pointer-events-none absolute inset-y-0 right-0 w-[12%] bg-gradient-to-l from-[#5c4a36]/20 to-transparent" />
       <div className="relative flex h-full flex-col items-center justify-center text-center" style={{ paddingInline: "12cqw" }}>
-        <p className="font-header font-semibold uppercase text-[#f94f18]" style={{ fontSize: "clamp(8px, 2.4cqh, 10px)", letterSpacing: "0.24em" }}>Ex libris</p>
+        <p className="font-header font-semibold uppercase text-[#f94f18]" style={{ fontSize: "clamp(10px, 2.4cqh, 11px)", letterSpacing: "0.24em" }}>Ex libris</p>
         <p className="font-serif italic text-ink/70" style={{ marginTop: "2.5cqh", fontSize: "clamp(16px, 5.5cqh, 24px)" }}>The Journal</p>
       </div>
     </div>
@@ -331,16 +332,16 @@ function StoryFace({ post }: { post: Post }) {
         </span>
       </div>
       <div className="flex shrink-0 flex-col" style={{ padding: "3.2cqh 6cqw 4cqh" }}>
-        <span className="font-header font-semibold uppercase text-[#f94f18]" style={{ fontSize: "clamp(7px, 2.3cqh, 10px)", letterSpacing: "0.14em" }}>
+        <span className="font-header font-semibold uppercase text-[#f94f18]" style={{ fontSize: "clamp(10px, 2.3cqh, 11px)", letterSpacing: "0.12em" }}>
           {new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · {post.readMinutes} min read
         </span>
         <h2 className="line-clamp-3 font-serif leading-[1.12] tracking-tight text-ink" style={{ marginTop: "1.6cqh", fontSize: "clamp(14px, 6.4cqh, 28px)" }}>
           {post.title}
         </h2>
-        <p className="line-clamp-3 leading-snug text-ink/65" style={{ marginTop: "1.5cqh", fontSize: "clamp(10px, 2.9cqh, 13px)" }}>
+        <p className="line-clamp-3 leading-snug text-ink/65" style={{ marginTop: "1.5cqh", fontSize: "clamp(12px, 2.9cqh, 15px)" }}>
           {post.excerpt}
         </p>
-        <span className="mt-auto inline-flex items-center gap-[0.4em] font-header font-semibold uppercase text-ink/70" style={{ paddingTop: "2cqh", fontSize: "clamp(8px, 2.2cqh, 10px)", letterSpacing: "0.16em" }}>
+        <span className="mt-auto inline-flex items-center gap-[0.4em] font-header font-semibold uppercase text-ink/70" style={{ paddingTop: "2cqh", fontSize: "clamp(10px, 2.2cqh, 11px)", letterSpacing: "0.16em" }}>
           Read story
           <span className="inline-block transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1">→</span>
         </span>

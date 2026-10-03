@@ -113,6 +113,64 @@ export function knitTexture() {
   return texture(canvas, [1, 1]);
 }
 
+/**
+ * Rib-knit wool, one tile = 8 wales × 16 courses: a colour map (heathered fibre, shaded in the purl
+ * recesses) and a normal map from the same stitch heights. "body" is a chunky 2×2 rib, "band" a tight
+ * 1×1 rib for hems, cuffs and collars.
+ */
+export function knitMaps(kind: "body" | "band") {
+  const size = 256;
+  const height = new Float32Array(size * size);
+  const bump = (x: number, centre: number, width: number) => Math.max(0, 1 - ((x - centre) / width) ** 2);
+  for (let py = 0; py < size; py++) {
+    for (let px = 0; px < size; px++) {
+      const u = (px / size) * 8;
+      const v = (py / size) * 16;
+      const wale = Math.floor(u);
+      const f = u - wale;
+      const g = v - Math.floor(v);
+      const knit = kind === "body" ? wale % 4 < 2 : wale % 2 === 0;
+      let h;
+      if (knit) {
+        // Each stitch is a V of two leaning legs; legs of successive courses stack into a raised column.
+        const spread = 0.13 + 0.17 * g;
+        const legs = Math.max(bump(f, 0.5 - spread, 0.24), bump(f, 0.5 + spread, 0.24));
+        h = 0.55 + 0.45 * legs * (0.82 + 0.18 * Math.sin(Math.PI * g));
+      } else {
+        // Purl wales sink between the ribs, crossed by small horizontal bumps.
+        h = 0.12 + 0.12 * (0.5 + 0.5 * Math.cos(2 * Math.PI * v)) * bump(f, 0.5, 0.7);
+      }
+      height[px + py * size] = h;
+    }
+  }
+
+  const colorSheet = sheet(size, size);
+  const normalSheet = sheet(size, size);
+  const color = colorSheet.g.createImageData(size, size);
+  const normal = normalSheet.g.createImageData(size, size);
+  const at = (x: number, y: number) => height[((x + size) % size) + ((y + size) % size) * size];
+  const strength = kind === "body" ? 1.6 : 2.6;
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = (x + y * size) * 4;
+      const h = at(x, y);
+      // Heather: fibres of slightly different shades, an occasional lighter fleck, shade in the recesses.
+      const fibre = 0.9 + Math.random() * 0.1 + (Math.random() < 0.012 ? 0.12 : 0);
+      const shade = Math.min(1, fibre * (0.84 + 0.16 * h)) * 255;
+      color.data.set([shade, shade, shade, 255], i);
+      const dx = (at(x + 1, y) - at(x - 1, y)) * strength;
+      const dy = (at(x, y + 1) - at(x, y - 1)) * strength;
+      const l = Math.hypot(dx, dy, 1);
+      normal.data.set([(-dx / l) * 127.5 + 127.5, (dy / l) * 127.5 + 127.5, (1 / l) * 127.5 + 127.5, 255], i);
+    }
+  }
+  colorSheet.g.putImageData(color, 0, 0);
+  normalSheet.g.putImageData(normal, 0, 0);
+  const normalMap = texture(normalSheet.canvas, [1, 1]);
+  normalMap.colorSpace = THREE.NoColorSpace;
+  return { color: texture(colorSheet.canvas, [1, 1]), normal: normalMap };
+}
+
 export function oxfordTexture() {
   const { canvas, g } = sheet(128, 128);
   g.fillStyle = "#d3dde3";

@@ -72,7 +72,7 @@ export default function AboutPage() {
             </div>
           ))}
         </div>
-        <p className="mt-8 max-w-2xl text-sm leading-7 text-ink/70">
+        <p className="mt-8 max-w-2xl text-sm leading-7 text-ink/70 sm:text-base">
           The public site is edited from the Mumbai studio — trips, stories, reviews, and the questions people actually ask. Nothing on the calendar is a placeholder.
         </p>
       </Frame>
@@ -94,7 +94,7 @@ export default function AboutPage() {
                 <span className="relative grid h-10 w-10 place-items-center rounded-full bg-[#f94f18] font-header text-sm font-semibold">
                   {index + 1}
                 </span>
-                <p className="mt-4 text-sm leading-6 text-cream/80">{step}</p>
+                <p className="mt-4 text-sm leading-6 text-cream/80 sm:text-base sm:leading-7">{step}</p>
               </li>
             ))}
           </ol>

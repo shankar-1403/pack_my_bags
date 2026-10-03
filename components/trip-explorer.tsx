@@ -138,7 +138,7 @@ function FilterChip({
     <button
       type="button"
       onClick={onClick}
-      className={`shrink-0 rounded-full px-4 py-2 text-sm transition ${active ? "bg-ink text-cream" : "bg-paper text-ink hover:bg-sand"}`}
+      className={`min-h-11 shrink-0 rounded-full px-4 py-2 text-sm transition sm:min-h-10 ${active ? "bg-ink text-cream" : "bg-paper text-ink hover:bg-sand"}`}
     >
       {children}
     </button>

@@ -598,9 +598,9 @@ const faqs = [
 const settings = {
   name: "Pack my bags",
   tagline: "Group journeys, composed with care.",
-  phone: "+91 98765 43210",
-  whatsapp: "919876543210",
-  email: "hello@packmybags.com",
+  phone: "+91 89601 60190",
+  whatsapp: "918960160190",
+  email: "info@packmybags.in",
   address: "Lodha Supremus, 520, Off Mahakali Caves Rd, Chakala Industrial Area (MIDC), Andheri East, Mumbai, Maharashtra 400093.",
   promo: "October departures are open — early seats save up to ₹5,000",
 };

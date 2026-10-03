@@ -32,12 +32,12 @@ function TripTile({ trip }: { trip: Trip }) {
         />
         <span className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-pine/70 to-transparent" />
         {style ? (
-          <span className="absolute left-3 top-3 rounded-full bg-cream/90 px-2.5 py-1 font-header text-[10px] font-semibold uppercase tracking-[0.14em] text-ink">
+          <span className="absolute left-3 top-3 rounded-full bg-cream/90 px-2.5 py-1 font-header text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">
             {style}
           </span>
         ) : null}
         {save > 0 ? (
-          <span className="absolute right-3 top-3 rounded-full bg-[#f94f18] px-2.5 py-1 font-header text-[10px] font-semibold text-white">
+          <span className="absolute right-3 top-3 rounded-full bg-[#f94f18] px-2.5 py-1 font-header text-[11px] font-semibold text-white">
             {formatInr(save)} off
           </span>
         ) : null}
@@ -47,7 +47,7 @@ function TripTile({ trip }: { trip: Trip }) {
       </span>
 
       <span className="flex flex-1 flex-col px-3 pb-3 pt-3">
-        <span className="font-header text-[10px] font-semibold uppercase tracking-[0.16em] text-mist">{trip.region}</span>
+        <span className="font-header text-[11px] font-semibold uppercase tracking-[0.16em] text-mist">{trip.region}</span>
         <span className="mt-1 line-clamp-2 min-h-12 font-serif text-[1.65rem] leading-none tracking-tight">{trip.title}</span>
         <span className="mt-2 font-header text-xs text-ink/55">{trip.departures[0]}</span>
         <span className="mt-4 flex items-center justify-between gap-3 rounded-2xl bg-pine px-3.5 py-2.5 text-cream">

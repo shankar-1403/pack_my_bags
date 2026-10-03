@@ -70,7 +70,7 @@ function RailCard({ trip }: { trip: Trip }) {
       </span>
       <span className="flex min-w-0 flex-1 flex-col justify-between p-4">
         <span>
-          <span className="font-header text-[10px] font-semibold uppercase tracking-[0.16em] text-mist">{trip.region}</span>
+          <span className="font-header text-[11px] font-semibold uppercase tracking-[0.16em] text-mist">{trip.region}</span>
           <span className="mt-1 block font-serif text-2xl leading-none tracking-tight">{trip.title}</span>
         </span>
         <span className="mt-3 flex items-end justify-between gap-3">
@@ -98,7 +98,7 @@ function TileCard({ trip }: { trip: Trip }) {
         </span>
       ) : null}
       <span className="absolute inset-x-0 bottom-0 p-4 text-cream">
-        <span className="font-header text-[10px] font-semibold uppercase tracking-[0.16em] text-cream/70">{trip.region}</span>
+        <span className="font-header text-[11px] font-semibold uppercase tracking-[0.16em] text-cream/70">{trip.region}</span>
         <span className="mt-1 block font-serif text-2xl leading-none">{trip.title}</span>
         <span className="mt-2 block font-header text-sm font-semibold">{formatInr(trip.price)}</span>
       </span>

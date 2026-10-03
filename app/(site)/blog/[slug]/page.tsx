@@ -34,7 +34,7 @@ export default async function PostPage({ params }: Context) {
     <article className="pb-28">
       <Frame className="pt-8 sm:pt-10">
         <div className="flex animate-rise items-center justify-between gap-4 font-header text-[11px] font-semibold uppercase tracking-[0.22em] motion-reduce:animate-none">
-          <Link href="/blog" className={`group inline-flex items-center gap-3 text-ink/60 transition-colors duration-500 ${EASE} hover:text-ink`}>
+          <Link href="/blog" className={`group inline-flex min-h-11 items-center gap-3 text-ink/60 transition-colors duration-500 ${EASE} hover:text-ink`}>
             <span className={`flex size-8 items-center justify-center rounded-full ring-1 ring-ink/10 transition-transform duration-500 ${EASE} group-hover:-translate-x-0.5`}>
               <Arrow className="size-3.5 rotate-180" />
             </span>
@@ -67,7 +67,7 @@ export default async function PostPage({ params }: Context) {
               >
                 <span aria-hidden className="pointer-events-none absolute inset-3 rounded-[16px] border" style={{ borderColor: `${GILT}4d` }} />
                 <span aria-hidden className="pointer-events-none absolute inset-[18px] rounded-[12px] border" style={{ borderColor: `${GILT}1f` }} />
-                <p className="relative font-header text-[10px] font-semibold uppercase tracking-[0.32em]" style={{ color: GILT }}>
+                <p className="relative font-header text-[11px] font-semibold uppercase tracking-[0.32em]" style={{ color: GILT }}>
                   Pack my bags · Journal
                 </p>
                 <h1 className="relative mt-5 font-serif text-[2.4rem] leading-[1.02] tracking-tight text-balance sm:text-5xl lg:text-[3.35rem]">
@@ -97,7 +97,7 @@ export default async function PostPage({ params }: Context) {
               <div className="flex items-center gap-3 border-t border-line pt-8">
                 <Monogram name={post.author} tone="ink" />
                 <div>
-                  <p className="font-header text-[10px] font-semibold uppercase tracking-[0.24em] text-mist">Words by</p>
+                  <p className="font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-mist">Words by</p>
                   <p className="mt-1 text-sm text-ink">{post.author}</p>
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default async function PostPage({ params }: Context) {
                 <Monogram name={post.author} tone="ink" size="lg" />
                 <div>
                   <p className="font-serif text-2xl italic tracking-tight">{post.author}</p>
-                  <p className="mt-1 font-header text-[10px] font-semibold uppercase tracking-[0.24em] text-mist">Written for the journal</p>
+                  <p className="mt-1 font-header text-[11px] font-semibold uppercase tracking-[0.24em] text-mist">Written for the journal</p>
                 </div>
               </div>
               <Postmark iso={post.publishedAt} />
@@ -169,7 +169,7 @@ export default async function PostPage({ params }: Context) {
               </div>
               <div className="relative flex flex-col p-8 sm:p-11">
                 <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 hidden w-12 bg-gradient-to-r from-[#5c4a36]/15 to-transparent md:block" />
-                <span className="font-header text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f94f18]">
+                <span className="font-header text-[11px] font-semibold uppercase tracking-[0.22em] text-[#f94f18]">
                   Story {pad(((index + 1) % posts.length) + 1)} · {next.readMinutes} min read
                 </span>
                 <h3 className="mt-4 font-serif text-3xl leading-[1.08] tracking-tight text-balance sm:text-4xl">{next.title}</h3>

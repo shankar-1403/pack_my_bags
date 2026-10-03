@@ -7,10 +7,10 @@ export function JournalStrip({ posts }: { posts: Post[] }) {
   if (!feature) return null;
 
   return (
-    <div className="mt-8 grid gap-4 lg:grid-cols-2 lg:grid-rows-2">
+    <div className="mt-8 grid gap-4 lg:grid-cols-2 lg:grid-rows-[repeat(var(--rows),minmax(0,1fr))]" style={{ "--rows": Math.max(rest.length, 1) } as React.CSSProperties}>
       <Link
         href={`/blog/${feature.slug}`}
-        className="flex min-h-80 flex-col justify-between rounded-[28px] bg-pine p-7 text-cream lg:row-span-2 lg:min-h-0 lg:p-9"
+        className="flex min-h-80 flex-col justify-between rounded-[28px] bg-pine p-7 text-cream lg:row-[span_var(--rows)] lg:min-h-0 lg:p-9"
       >
         <span className="font-header text-[11px] font-semibold uppercase tracking-[0.18em] text-[#f0c7b0]">
           {feature.readMinutes} min read

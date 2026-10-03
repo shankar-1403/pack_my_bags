@@ -20,7 +20,7 @@ export function BookingPanel({ trip }: { trip: Trip }) {
             key={date}
             type="button"
             onClick={() => setDeparture(date)}
-            className={`rounded-full px-3 py-1.5 text-xs ${departure === date ? "bg-ink text-cream" : "bg-paper text-ink"}`}
+            className={`min-h-10 rounded-full px-3.5 py-2 text-sm ${departure === date ? "bg-ink text-cream" : "bg-paper text-ink"}`}
           >
             {date}
           </button>
