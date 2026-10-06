@@ -42,15 +42,12 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
       </Frame>
       <div className="border-t border-white/10">
         <Frame className="flex flex-col gap-2 pb-24 pt-5 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between md:pb-5 md:pr-24">
-          <div className="space-y-1">
-            <p>© {year} PackMyBags. Group trips with fixed dates and captains who stay with you.</p>
-            <p>
-              A division of{" "}
-              <a href="https://pcred.org" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
-                PCRED Venture Pvt. Ltd.
-              </a>
-            </p>
-          </div>
+          <p>
+            © {year} PackMyBags · A division of{" "}
+            <a href="https://pcred.org" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#f94f18] transition-colors hover:text-[#ff7a4a]">
+              PCRED Venture Pvt. Ltd.
+            </a>
+          </p>
           <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-1">
             <Link href="/privacy" className="inline-flex min-h-10 items-center hover:text-white">Privacy Policy</Link>
             <Link href="/terms" className="inline-flex min-h-10 items-center hover:text-white">Terms &amp; Conditions</Link>

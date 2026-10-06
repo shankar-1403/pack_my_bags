@@ -1,10 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { IntroScene } from "./scene";
 import { progress, progressAtTravel, RUNWAY_VH } from "./timeline";
 
 const INTRO_QUERY = "(prefers-reduced-motion: no-preference)";
+// Whether this page load skips the intro (set before paint by the gate script in the root layout, or once
+// the intro has been shown in this visit). Read from the page, so server and client agree at hydration.
+const noop = () => () => {};
+const skipped = () => document.documentElement.hasAttribute("data-intro-skip");
+// Set when the intro unmounts for real (leaving the home page); cancelled by React's dev-mode remount.
+let pendingSkip = 0;
 const FADE_FROM = progress(0.965);
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -23,9 +29,12 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
   const coverRef = useRef<HTMLDivElement>(null);
   const runwayRef = useRef<HTMLDivElement>(null);
   const [fallback, setFallback] = useState(false);
+  const skip = useSyncExternalStore(noop, skipped, () => false);
+  const plain = fallback || skip;
 
   useEffect(() => {
-    if (!window.matchMedia(INTRO_QUERY).matches) return;
+    window.clearTimeout(pendingSkip);
+    if (!window.matchMedia(INTRO_QUERY).matches || skipped()) return;
     const section = sectionRef.current!;
     const stage = stageRef.current!;
     const canvas = canvasRef.current!;
@@ -172,24 +181,27 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       history.scrollRestoration = restoration;
       delete root.dataset.intro;
       window.dispatchEvent(new Event("scroll"));
+      // Coming back to the home page later in this visit shows the hero, not the film again.
+      pendingSkip = window.setTimeout(() => root.setAttribute("data-intro-skip", ""), 0);
     };
   }, []);
 
-  const on = (classes: string) => (fallback ? "" : classes);
+  const on = (classes: string) => (plain ? "" : classes);
 
   return (
     <section ref={sectionRef} data-intro-runway className={`relative ${on("motion-safe:-mt-[var(--site-header-height,7.5rem)]")}`}>
       <div
         ref={stageRef}
+        data-intro-stage
         className={`relative ${on("motion-safe:sticky motion-safe:top-0 motion-safe:min-h-[100dvh] motion-safe:overflow-hidden")}`}
       >
-        <div ref={heroRef} className={on("motion-safe:pt-[var(--site-header-height,7.5rem)]")}>
+        <div ref={heroRef} data-intro-hero className={on("motion-safe:pt-[var(--site-header-height,7.5rem)]")}>
           {children}
         </div>
 
-        {fallback ? null : (
+        {plain ? null : (
           // Sized to the screen, not the hero: on phones the hero runs taller than the viewport.
-          <div ref={coverRef} className="absolute inset-x-0 top-0 hidden h-[100dvh] motion-safe:block">
+          <div ref={coverRef} data-intro-cover className="absolute inset-x-0 top-0 hidden h-[100dvh] motion-safe:block">
             <div aria-hidden className="absolute inset-0 bg-[#eee7db]" />
             <canvas
               ref={canvasRef}
@@ -271,7 +283,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
           </div>
         )}
       </div>
-      {fallback ? null : <div ref={runwayRef} aria-hidden className="hidden motion-safe:block" style={{ height: `${RUNWAY_VH}vh` }} />}
+      {plain ? null : <div ref={runwayRef} data-intro-spacer aria-hidden className="hidden motion-safe:block" style={{ height: `${RUNWAY_VH}vh` }} />}
     </section>
   );
 }

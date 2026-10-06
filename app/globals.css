@@ -189,3 +189,20 @@ body {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* Home intro already seen: lay the hero out plainly from the first paint, before scripts run. */
+html[data-intro-skip] [data-intro-runway] {
+  margin-top: 0 !important;
+}
+html[data-intro-skip] [data-intro-stage] {
+  position: relative !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+html[data-intro-skip] [data-intro-hero] {
+  padding-top: 0 !important;
+}
+html[data-intro-skip] [data-intro-cover],
+html[data-intro-skip] [data-intro-spacer] {
+  display: none !important;
+}

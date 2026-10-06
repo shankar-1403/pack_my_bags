@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Firebase App Hosting runs the standalone server; scripts/copy-standalone.mjs (postbuild) adds public/,
+  // .next/static and content/ to it so images and assets are served.
+  output: "standalone",
   // The old destinations page now lives inside /trips (named "Destinations").
   async redirects() {
     return [
