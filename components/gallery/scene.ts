@@ -60,8 +60,17 @@ function track(keys: [number, number][]) {
   };
 }
 
+/** Photos load straight from their source (Unsplash and Firebase Storage both allow cross-origin reads),
+ *  asking Unsplash for a small copy since a print is only a few hundred pixels wide. */
 function photoUrl(src: string) {
-  return /^https?:/.test(src) ? `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75` : src;
+  if (!/^https?:/.test(src)) return src;
+  if (src.includes("images.unsplash.com")) {
+    const url = new URL(src);
+    url.searchParams.set("w", "640");
+    url.searchParams.set("q", "75");
+    return url.toString();
+  }
+  return src;
 }
 
 /** The face of a print, drawn exactly like the interactive card: white frame, square photo, caption by hand. */
@@ -228,6 +237,7 @@ export function createGalleryScene(canvas: HTMLCanvasElement, options: { prints:
       new Promise<void>((resolve) => {
         if (!print.photo) return resolve();
         const image = new Image();
+        image.crossOrigin = "anonymous";
         image.onload = () => {
           drawPrint(faces[i].face, print.place, font, image);
           faces[i].texture.needsUpdate = true;

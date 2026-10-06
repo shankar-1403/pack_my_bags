@@ -45,8 +45,8 @@ const VIEW_DEPTH = 3;
 const VIEW_SIZE = new THREE.Vector2(WINDOW + 4, 2.4);
 const VIEW_SHIFT = -1.5;
 const VIEW_CENTRE_Y = 0.8;
-const photo = (id: string) =>
-  `/_next/image?url=${encodeURIComponent(`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=2400&q=80`)}&w=2048&q=75`;
+// Straight from Unsplash, which allows cross-origin use, so WebGL can read the pixels.
+const photo = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=2048&q=75`;
 const VIEWS = [
   { src: photo("1432405972618-c60b0225b8f9"), lift: 0.06 }, // Meghalaya forest
   { src: photo("1624664929067-5bc278a7c57e"), lift: 0.12 }, // Thar dunes

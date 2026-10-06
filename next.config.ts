@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // Firebase App Hosting does not serve Next's image optimiser (/_next/image returns 404 there), so images
+    // load straight from their source. CMS uploads are already resized to WebP; Unsplash links carry a size.
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "**" },
     ],

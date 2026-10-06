@@ -246,3 +246,9 @@ the allow-list is `content/admins.json`: `[{ "email": "...", "name": "...", "act
 ### Files involved
 `lib/firebase.ts` (connection), `lib/admins.ts` + `lib/firebase-client.ts` + `app/api/auth/login` (CMS sign-in), `lib/content.ts` (all reads/writes), `lib/types.ts` (the shapes above),
 `database.rules.json`, `scripts/upload-database.mjs`, `content/*.json` (starting data).
+
+## Images on App Hosting
+- App Hosting does not run Next's image optimiser (`/_next/image` returns 404 there), so `next.config.ts`
+  sets `images.unoptimized: true` and photos load straight from Firebase Storage / Unsplash.
+- The 3D intros draw photos into WebGL, which needs cross-origin access. `storage.cors.json` allows GET from
+  any origin on the bucket; it has been applied. To re-apply: `gsutil cors set storage.cors.json gs://pack-my-bags-1c85e.firebasestorage.app`.

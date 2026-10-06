@@ -76,8 +76,30 @@ function paintGradient(ctx: CanvasRenderingContext2D, image: string, box: Box, r
   ctx.fill();
 }
 
-async function paintImage(ctx: CanvasRenderingContext2D, img: HTMLImageElement, box: Box, style: CSSStyleDeclaration, r: number[]) {
-  if (!img.complete || !img.naturalWidth) await img.decode().catch(() => {});
+// Photos from other sites (Unsplash, Firebase Storage) must be loaded with CORS, or drawing them would lock
+// the canvas and WebGL could not use it. Same-origin images are used as they are.
+const corsCopies = new Map<string, Promise<HTMLImageElement | null>>();
+function readable(img: HTMLImageElement): Promise<HTMLImageElement | null> {
+  const src = img.currentSrc || img.src;
+  if (!src || new URL(src, location.href).origin === location.origin || img.crossOrigin) return Promise.resolve(img);
+  let copy = corsCopies.get(src);
+  if (!copy) {
+    copy = new Promise((resolve) => {
+      const clone = new Image();
+      clone.crossOrigin = "anonymous";
+      clone.onload = () => resolve(clone);
+      clone.onerror = () => resolve(null);
+      clone.src = src;
+    });
+    corsCopies.set(src, copy);
+  }
+  return copy;
+}
+
+async function paintImage(ctx: CanvasRenderingContext2D, source: HTMLImageElement, box: Box, style: CSSStyleDeclaration, r: number[]) {
+  if (!source.complete || !source.naturalWidth) await source.decode().catch(() => {});
+  const img = await readable(source);
+  if (!img) return;
   const nw = img.naturalWidth;
   const nh = img.naturalHeight;
   if (!nw || !nh) return;
