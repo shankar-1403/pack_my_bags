@@ -2,23 +2,25 @@
 # See https://firebase.google.com/docs/app-hosting/configure#cloud-run
 runConfig:
   minInstances: 0
-  # maxInstances: 100
-  # concurrency: 80
-  # cpu: 1
-  # memoryMiB: 512
 
 # Environment variables and secrets.
-# env:
-  # Configure environment variables.
-  # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
-  # - variable: MESSAGE
-  #   value: Hello world!
-  #   availability:
-  #     - BUILD
-  #     - RUNTIME
+env:
+  # Signs the CMS login cookie (secret, created with the commands below).
+  - variable: CMS_SECRET
+    secret: CMS_SECRET
 
-  # Grant access to secrets in Cloud Secret Manager.
-  # You can create secrets with the CLI command `firebase apphosting:secrets:set <secretName>`.
-  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
-  # - variable: MY_SECRET
-  #   secret: mySecretRef
+  # PackMyBags Firebase project (optional: the code already defaults to these).
+  - variable: FIREBASE_PROJECT_ID
+    value: "pack-my-bags-1c85e"
+    availability:
+      - RUNTIME
+
+  - variable: FIREBASE_DATABASE_URL
+    value: "https://pack-my-bags-1c85e-default-rtdb.asia-southeast1.firebasedatabase.app"
+    availability:
+      - RUNTIME
+
+  - variable: FIREBASE_STORAGE_BUCKET
+    value: "pack-my-bags-1c85e.firebasestorage.app"
+    availability:
+      - RUNTIME
