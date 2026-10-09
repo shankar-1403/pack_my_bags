@@ -14,9 +14,10 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    // Firebase App Hosting does not serve Next's image optimiser (/_next/image returns 404 there), so images
-    // load straight from their source. CMS uploads are already resized to WebP; Unsplash links carry a size.
-    unoptimized: true,
+    // Firebase App Hosting does not run Next's image optimiser, so a custom loader picks a right-sized copy:
+    // Unsplash resizes on request, and CMS uploads have smaller copies stored beside them.
+    loader: "custom",
+    loaderFile: "./lib/image-loader.ts",
     remotePatterns: [
       { protocol: "https", hostname: "**" },
     ],

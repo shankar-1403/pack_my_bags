@@ -10,7 +10,8 @@
     "build": "next build",
     "postbuild": "node scripts/copy-standalone.mjs",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "images:variants": "node scripts/image-variants.mjs"
   },
   "dependencies": {
     "docx": "^9.8.1",

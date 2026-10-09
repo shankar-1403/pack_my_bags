@@ -107,7 +107,23 @@ const EDGES = [
  * Polygonises the union with surface nets. `tint` returns a colour multiplier for each vertex (given the
  * position, its normal and the field), for creases and skin tone variation.
  */
-export function sculpt(shapes: Shape[], step: number, tint: (p: Vec, n: Vec, field: (x: number, y: number, z: number) => number) => Vec) {
+export type SculptData = { position: Float32Array; normal: Float32Array; color: Float32Array; index: Uint32Array };
+
+export function sculpt(...args: Parameters<typeof sculptData>) {
+  return toGeometry(sculptData(...args));
+}
+
+export function toGeometry(data: SculptData) {
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(data.position, 3));
+  geometry.setAttribute("normal", new THREE.BufferAttribute(data.normal, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(data.color, 3));
+  geometry.setIndex(new THREE.BufferAttribute(data.index, 1));
+  return geometry;
+}
+
+/** The surface as plain arrays: transferable, so the hands can be sculpted off the main thread. */
+export function sculptData(shapes: Shape[], step: number, tint: (p: Vec, n: Vec, field: (x: number, y: number, z: number) => number) => Vec) {
   const field = union(shapes);
   const lo: Vec = [Infinity, Infinity, Infinity];
   const hi: Vec = [-Infinity, -Infinity, -Infinity];
@@ -217,12 +233,7 @@ export function sculpt(shapes: Shape[], step: number, tint: (p: Vec, n: Vec, fie
     normals.set(nrm, v);
     colors.set(tint([x, y, z], nrm, field), v);
   }
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("normal", new THREE.BufferAttribute(normals, 3));
-  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-  geometry.setIndex(indices);
-  return geometry;
+  return { position: new Float32Array(positions), normal: normals, color: colors, index: new Uint32Array(indices) };
 }
 
 /** Ambient occlusion from the field: how much the surface is crowded within a few millimetres. */

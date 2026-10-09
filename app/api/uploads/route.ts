@@ -6,9 +6,17 @@ import sharp from "sharp";
 import { getStorage } from "firebase-admin/storage";
 import { firebaseApp, PROJECT_ID, usesDatabase } from "@/lib/firebase";
 import { denyIfGuest, fail } from "@/lib/guard";
+import { VARIANT_WIDTHS } from "@/lib/image-sizes";
 
 const MAX_BYTES = 15 * 1024 * 1024;
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif", "image/heic", "image/heif"];
+/** Smaller WebP copies of an image, one per VARIANT_WIDTHS entry (never enlarged). */
+async function variants(image: Buffer): Promise<[number, Buffer][]> {
+  return Promise.all(
+    VARIANT_WIDTHS.map(async (w): Promise<[number, Buffer]> => [w, await sharp(image).resize({ width: w, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer()]),
+  );
+}
+
 export const BUCKET = process.env.FIREBASE_STORAGE_BUCKET || `${PROJECT_ID}.firebasestorage.app`;
 
 /**
@@ -36,18 +44,21 @@ export async function POST(request: Request) {
       const target = path.join(process.cwd(), "public", name);
       fs.mkdirSync(path.dirname(target), { recursive: true });
       fs.writeFileSync(target, output);
+      for (const [w, data] of await variants(output)) fs.writeFileSync(target.replace(/\.webp$/, `_w${w}.webp`), data);
       return NextResponse.json({ url: `/${name}`, width, height });
     }
 
+    // The original plus smaller copies (same download token) that the site's image loader picks between.
     const token = randomUUID();
-    await getStorage(firebaseApp())
-      .bucket(BUCKET)
-      .file(name)
-      .save(output, {
+    const bucket = getStorage(firebaseApp()).bucket(BUCKET);
+    const save = (file: string, data: Buffer) =>
+      bucket.file(file).save(data, {
         resumable: false,
         contentType: "image/webp",
         metadata: { cacheControl: "public, max-age=31536000, immutable", metadata: { firebaseStorageDownloadTokens: token } },
       });
+    const copies = await variants(output);
+    await Promise.all([save(name, output), ...copies.map(([w, data]) => save(name.replace(/\.webp$/, `_w${w}.webp`), data))]);
     const url = `https://firebasestorage.googleapis.com/v0/b/${BUCKET}/o/${encodeURIComponent(name)}?alt=media&token=${token}`;
     return NextResponse.json({ url, width, height });
   } catch (error) {

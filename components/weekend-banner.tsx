@@ -128,7 +128,7 @@ export function WeekendBanner({ slides }: { slides: Slide[] }) {
                   onClick={() => go(i)}
                   aria-label={`Show slide ${i + 1}`}
                   aria-current={i === index}
-                  className="group relative h-6 flex-1"
+                  className="group relative h-10 flex-1"
                 >
                   <span className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 overflow-hidden rounded-full bg-cream/30 transition group-hover:bg-cream/50">
                     <span

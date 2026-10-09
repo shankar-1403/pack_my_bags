@@ -2,7 +2,9 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
-import { GRIP_AXIS, GRIP_BAR, handGeometry } from "./hand";
+import { GRIP_AXIS, GRIP_BAR } from "./hand";
+import { sculptHandsAsync, type HandJob } from "./hands-async";
+import { toGeometry } from "./sculpt";
 import * as T from "./textures";
 import { clock, travel, WALK_CLOCK } from "./timeline";
 
@@ -45,12 +47,13 @@ const VIEW_DEPTH = 3;
 const VIEW_SIZE = new THREE.Vector2(WINDOW + 4, 2.4);
 const VIEW_SHIFT = -1.5;
 const VIEW_CENTRE_Y = 0.8;
-// Straight from Unsplash, which allows cross-origin use, so WebGL can read the pixels.
-const photo = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=2048&q=75`;
+// Straight from Unsplash, which allows cross-origin use, so WebGL can read the pixels; sized to the screen
+// (a phone shows each view at well under 1024 px, so it is not sent a 2048 px one).
+const photo = (id: string, width: number) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${width}&q=75`;
 const VIEWS = [
-  { src: photo("1432405972618-c60b0225b8f9"), lift: 0.06 }, // Meghalaya forest
-  { src: photo("1624664929067-5bc278a7c57e"), lift: 0.12 }, // Thar dunes
-  { src: photo("1659651117607-d2b397cf100f"), lift: 0.1 }, // Almaty skyline
+  { id: "1432405972618-c60b0225b8f9", lift: 0.06 }, // Meghalaya forest
+  { id: "1624664929067-5bc278a7c57e", lift: 0.12 }, // Thar dunes
+  { id: "1659651117607-d2b397cf100f", lift: 0.1 }, // Almaty skyline
 ];
 
 // Looks through the glass onto a picture VIEW_DEPTH metres outside: each pixel follows the camera ray
@@ -1002,7 +1005,8 @@ function buildWorld(scene: THREE.Scene, m: Mats, width: number, height: number, 
     const pane = new THREE.Mesh(new THREE.PlaneGeometry(WINDOW, paneH), material);
     pane.position.set(centre, 0.07 + paneH / 2, FACADE_Z - 0.02);
     facade.add(pane);
-    loader.load(view.src, (map) => {
+    const longest = Math.max(width, height);
+    loader.load(photo(view.id, longest > 2600 ? 2048 : longest > 1600 ? 1600 : 1024), (map) => {
       map.colorSpace = THREE.SRGBColorSpace;
       map.anisotropy = 8;
       map.wrapS = map.wrapT = THREE.MirroredRepeatWrapping;
@@ -1062,7 +1066,7 @@ function buildWorld(scene: THREE.Scene, m: Mats, width: number, height: number, 
 
 export type IntroScene = ReturnType<typeof createIntroScene>;
 
-export function createIntroScene(canvas: HTMLCanvasElement, width: number, height: number, inset: number, onPhoto: () => void) {
+export function createIntroScene(canvas: HTMLCanvasElement, width: number, height: number, inset: number, onPhoto: () => void, handsStarted?: HandJob | null) {
   const compact = Math.min(width, height) < 700;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, compact ? 1.5 : 1.6));
@@ -1155,17 +1159,24 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
   const restHand = new THREE.Quaternion();
   const gripPoint = new THREE.Vector3(...GRIP_BAR);
 
-  // The hands are sculpted the first time a portrait frame needs them: the grip at once, the relaxed hand
-  // (only seen after letting go of the handle) a moment later, off the critical path.
+  // The hands appear only in portrait framing. They are sculpted in a worker (about a second's work on a
+  // phone), started at once on a portrait screen so they are ready by the first frame, and attached as they
+  // arrive: the grip, then the relaxed hand (only seen after letting go of the handle).
   const hands: { grip?: THREE.Mesh; loose?: THREE.Mesh; left?: THREE.Mesh } = {};
   let disposed = false;
+  let handJob: HandJob | null = null;
   function sculptHands() {
-    if (hands.grip) return;
-    hands.grip = solid(handGeometry("grip"), m.hand);
-    upper.right.wrist.add(hands.grip);
-    window.setTimeout(() => {
+    if (handJob) return handJob;
+    handJob = handsStarted ?? sculptHandsAsync();
+    handJob.grip.then((data) => {
       if (disposed) return;
-      const relaxed = handGeometry("loose");
+      hands.grip = solid(toGeometry(data), m.hand);
+      upper.right.wrist.add(hands.grip);
+      onPhoto();
+    });
+    handJob.loose.then((data) => {
+      if (disposed) return;
+      const relaxed = toGeometry(data);
       hands.loose = solid(relaxed, m.hand);
       hands.loose.visible = false;
       upper.right.wrist.add(hands.loose);
@@ -1173,7 +1184,19 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
       hands.left = solid(relaxed, m.hand);
       hands.left.scale.z = -1;
       upper.left.wrist.add(hands.left);
-    }, 400);
+      onPhoto();
+    });
+    return handJob;
+  }
+  if (height > width || handsStarted) sculptHands();
+
+  /**
+   * Ready to show: on a portrait screen the gripping hand is in place, and every material's shaders are
+   * compiled in the background (where the browser supports it), so the first frame does not stall.
+   */
+  async function prepare() {
+    if (viewW < viewH) await sculptHands().grip;
+    await renderer.compileAsync(scene, camera).catch(() => undefined);
   }
 
   // The hand closes on the bar along its diagonal (GRIP_AXIS): a frame built on that axis in the hand,
@@ -1400,5 +1423,5 @@ export function createIntroScene(canvas: HTMLCanvasElement, width: number, heigh
     renderer.dispose();
   }
 
-  return { render, setScreen, resize, dispose };
+  return { render, setScreen, resize, dispose, prepare };
 }

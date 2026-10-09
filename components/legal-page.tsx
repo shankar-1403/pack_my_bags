@@ -34,7 +34,7 @@ export function LegalPage({
           <ol className="mt-3 grid gap-0.5 text-sm sm:grid-cols-2 lg:grid-cols-1">
             {sections.map((section, index) => (
               <li key={section.id}>
-                <a href={`#${section.id}`} className="flex min-h-9 items-baseline gap-2 rounded-lg py-1.5 text-ink/70 transition hover:text-ink">
+                <a href={`#${section.id}`} className="flex min-h-11 items-center gap-2 rounded-lg py-1.5 text-ink/70 lg:min-h-9 lg:items-baseline transition hover:text-ink">
                   <span className="w-5 shrink-0 font-header text-xs tabular-nums text-[#f94f18]">{index + 1}</span>
                   {section.title}
                 </a>

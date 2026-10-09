@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { sculptHandsAsync } from "./hands-async";
 import type { IntroScene } from "./scene";
 import { progress, progressAtTravel, RUNWAY_VH } from "./timeline";
 
@@ -12,6 +13,14 @@ const skipped = () => document.documentElement.hasAttribute("data-intro-skip");
 // Set when the intro unmounts for real (leaving the home page); cancelled by React's dev-mode remount.
 let pendingSkip = 0;
 const FADE_FROM = progress(0.965);
+
+// When this visit will play the film, start fetching the 3D scene as soon as this module loads (during
+// hydration), not after the page has mounted: on a phone that saves a network round trip.
+const scenePromise =
+  typeof window !== "undefined" && !skipped() && window.matchMedia(INTRO_QUERY).matches ? import("./scene") : null;
+scenePromise?.catch(() => undefined);
+// Portrait framing shows the traveller's hands: start sculpting them now, in a worker, alongside the download.
+const handsPromise = scenePromise && window.innerHeight > window.innerWidth ? sculptHandsAsync() : null;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -137,20 +146,36 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       paint(current);
     };
 
+    // Phones fire "resize" whenever the address bar slides in or out; the film's box does not change size
+    // then (it is sized to the large viewport), so only real size changes re-render and re-capture.
+    let size = `${cover.clientWidth}x${cover.clientHeight}`;
     function onResize() {
       if (!scene || done) return;
+      const next = `${cover.clientWidth}x${cover.clientHeight}`;
+      if (next === size) return;
+      size = next;
       scene.resize(cover.clientWidth, cover.clientHeight, headerHeight());
       onScroll();
       window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(capture, 300);
     }
 
+    // On a very slow connection the words do not wait for the film for ever.
+    const wordsTimer = window.setTimeout(() => (cover.dataset.ready = "true"), 4000);
+
     (async () => {
       try {
-        const { createIntroScene } = await import("./scene");
-        await document.fonts.ready;
+        const [{ createIntroScene }] = await Promise.all([scenePromise ?? import("./scene"), document.fonts.ready]);
         if (disposed) return;
-        scene = createIntroScene(canvas, cover.clientWidth, cover.clientHeight, headerHeight(), () => paint(current));
+        const built = createIntroScene(canvas, cover.clientWidth, cover.clientHeight, headerHeight(), () => paint(current), handsPromise);
+        // Hands sculpted (portrait) and shaders compiled before the first frame, so it does not stall; a slow
+        // device still shows the film after a few seconds, and the hands join it when they are ready.
+        await Promise.race([built.prepare(), new Promise((resolve) => setTimeout(resolve, 6000))]);
+        if (disposed) {
+          built.dispose();
+          return;
+        }
+        scene = built;
       } catch {
         if (disposed) return;
         delete root.dataset.intro;
@@ -162,6 +187,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       current = target;
       paint(current);
       canvas.dataset.ready = "true";
+      cover.dataset.ready = "true";
       requestAnimationFrame(() => requestAnimationFrame(capture));
     })();
 
@@ -175,6 +201,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.clearTimeout(resizeTimer);
+      window.clearTimeout(wordsTimer);
       if (frame) cancelAnimationFrame(frame);
       scene?.dispose();
       hero.inert = false;
@@ -193,7 +220,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
       <div
         ref={stageRef}
         data-intro-stage
-        className={`relative ${on("motion-safe:sticky motion-safe:top-0 motion-safe:min-h-[100dvh] motion-safe:overflow-hidden")}`}
+        className={`relative ${on("motion-safe:sticky motion-safe:top-0 motion-safe:min-h-[100lvh] motion-safe:overflow-hidden")}`}
       >
         <div ref={heroRef} data-intro-hero className={on("motion-safe:pt-[var(--site-header-height,7.5rem)]")}>
           {children}
@@ -201,7 +228,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
 
         {plain ? null : (
           // Sized to the screen, not the hero: on phones the hero runs taller than the viewport.
-          <div ref={coverRef} data-intro-cover className="absolute inset-x-0 top-0 hidden h-[100dvh] motion-safe:block">
+          <div ref={coverRef} data-intro-cover className="group/cover absolute inset-x-0 top-0 hidden h-[100lvh] motion-safe:block">
             <div aria-hidden className="absolute inset-0 bg-[#eee7db]" />
             <canvas
               ref={canvasRef}
@@ -250,12 +277,14 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
               className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-[34%] portrait:block"
               style={{ background: "linear-gradient(0deg, rgba(243,238,230,0.9), rgba(243,238,230,0.6) 45%, rgba(243,238,230,0))" }}
             />
+            {/* The words arrive with the film (both fade in together once the scene is ready), never before it. */}
+            <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[ready]/cover:opacity-100">
             <div
               aria-hidden
               data-beat
               data-from="0"
               data-to={progressAtTravel(0.2)}
-              className="pointer-events-none absolute left-0 right-0 top-[calc(var(--site-header-height,7.5rem)+7vh)] mx-auto w-full max-w-7xl px-4 sm:px-5 portrait:top-auto portrait:bottom-[max(2.5rem,6dvh)]"
+              className="pointer-events-none absolute left-0 right-0 top-[calc(var(--site-header-height,7.5rem)+7vh)] mx-auto w-full max-w-7xl px-4 sm:px-5 portrait:top-auto portrait:bottom-[calc(100lvh-100svh+max(2.5rem,6svh))]"
             >
               <div className="[text-shadow:0_0_14px_rgba(243,238,230,0.95),0_0_32px_rgba(243,238,230,0.75)]">
                 <p className="font-header text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f94f18]">Group trips across India and beyond</p>
@@ -269,7 +298,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
               data-beat
               data-from={progress(0.585)}
               data-to={progress(0.7)}
-              className="pointer-events-none absolute left-0 right-0 top-1/2 mx-auto w-full max-w-7xl -translate-y-1/2 px-4 sm:px-5 portrait:top-auto portrait:bottom-[max(2.5rem,6dvh)] portrait:translate-y-0"
+              className="pointer-events-none absolute left-0 right-0 top-1/2 mx-auto w-full max-w-7xl -translate-y-1/2 px-4 sm:px-5 portrait:top-auto portrait:bottom-[calc(100lvh-100svh+max(2.5rem,6svh))] portrait:translate-y-0"
             >
               <div className="max-w-[15rem] portrait:max-w-none">
                 <p className="font-header text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f94f18]">Inside every departure</p>
@@ -279,6 +308,7 @@ export function TrolleyIntro({ children }: { children: React.ReactNode }) {
                   <li className="italic text-pine">A captain on the trip</li>
                 </ul>
               </div>
+            </div>
             </div>
           </div>
         )}

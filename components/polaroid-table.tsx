@@ -4,13 +4,27 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import type Matter from "matter-js";
 import { layoutTable, type TableLayout } from "./gallery/layout";
-import { walnut } from "./gallery/wood";
 
 export type Print = { place: string; region: string; photo?: string };
 
 const STEP = 1000 / 60;
 // The camera intro runs on desktop; phones (for now) and reduced motion go straight to the table.
 const INTRO_QUERY = "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
+// The walnut planks, painted once (components/gallery/wood.ts) and shipped as an image: the page shows it
+// straight away and the camera film maps the same picture onto its table.
+const WOOD = "/textures/walnut.webp";
+
+// When the camera film will play, start fetching its scene as soon as this module loads.
+const scenePromise = typeof window !== "undefined" && window.matchMedia(INTRO_QUERY).matches ? import("./gallery/scene") : null;
+scenePromise?.catch(() => undefined);
+
+const loadImage = (src: string) =>
+  new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new window.Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const smooth = (t: number) => t * t * (3 - 2 * t);
 
@@ -241,7 +255,6 @@ function createTable(
 export function PolaroidTable({ prints }: { prints: Print[] }) {
   const runwayRef = useRef<HTMLElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
-  const woodRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const flashRef = useRef<HTMLDivElement>(null);
@@ -254,8 +267,6 @@ export function PolaroidTable({ prints }: { prints: Print[] }) {
     const canvas = canvasRef.current!;
     const intro = window.matchMedia(INTRO_QUERY).matches;
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const wood = walnut();
-    woodRef.current!.style.backgroundImage = `url(${wood.toDataURL("image/jpeg", 0.9)})`;
     let disposed = false;
     let cleanup = () => {};
 
@@ -263,6 +274,13 @@ export function PolaroidTable({ prints }: { prints: Print[] }) {
       const box = table.getBoundingClientRect();
       return layoutTable(box.width, box.height, prints.length);
     };
+
+    // The film's pieces load side by side rather than one after another.
+    const font = getComputedStyle(table).getPropertyValue("--font-hand").trim() || "cursive";
+    const filmParts = intro
+      ? Promise.all([scenePromise ?? import("./gallery/scene"), loadImage(WOOD), document.fonts.load(`500 48px ${font}`).catch(() => undefined)])
+      : null;
+    filmParts?.catch(() => undefined);
 
     (async () => {
       const matter = await import("matter-js");
@@ -288,9 +306,7 @@ export function PolaroidTable({ prints }: { prints: Print[] }) {
         return;
       }
 
-      const font = getComputedStyle(table).getPropertyValue("--font-hand").trim() || "cursive";
-      await document.fonts.load(`500 48px ${font}`).catch(() => undefined);
-      const { createGalleryScene, flashAt, HANDOFF } = await import("./gallery/scene");
+      const [{ createGalleryScene, flashAt, HANDOFF }, wood] = await filmParts!;
       if (disposed) return;
       const scene = createGalleryScene(canvas, { prints, font, wood });
 
@@ -407,7 +423,7 @@ export function PolaroidTable({ prints }: { prints: Print[] }) {
             data-phase="intro"
             className="group/table relative h-[min(88svh,760px)] min-h-[520px] w-full lg:motion-safe:min-h-[360px] overflow-hidden rounded-[32px] bg-[#3b2618] shadow-[inset_0_2px_40px_rgba(0,0,0,0.45)] sm:h-[min(80svh,760px)] lg:motion-safe:h-[calc(100svh-var(--site-header-height,6rem)-1.5rem)]"
           >
-            <div ref={woodRef} aria-hidden className="pointer-events-none absolute inset-0 bg-cover bg-center" />
+            <div aria-hidden className="pointer-events-none absolute inset-0 bg-[url(/textures/walnut.webp)] bg-cover bg-center" />
 
             {prints.map((print, i) => (
               <figure

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { sizedImage } from "@/lib/image-sizes";
 import type { Post } from "@/lib/types";
 
 const PAPER = "#fbf8f2";
@@ -129,13 +130,13 @@ export function JournalShelf({ posts }: { posts: Post[] }) {
     <div ref={root} className="relative mt-10" style={{ height: `${turns * 160 + 100}vh` }}>
       <div
         data-pin
-        className="sticky flex flex-col items-center justify-center overflow-hidden [--page-w:min(420px,calc(100vw_-_3rem),calc((100dvh_-_var(--site-header-height,5rem)_-_11rem)*0.72))] sm:[--page-w:min(420px,calc(50vw_-_1.25rem),calc((100dvh_-_var(--site-header-height,5rem)_-_11rem)*0.72))]"
+        className="sticky flex flex-col items-center justify-center overflow-hidden [--page-w:min(420px,calc(100vw_-_3rem),calc((100svh_-_var(--site-header-height,5rem)_-_11rem)*0.72))] sm:[--page-w:min(420px,calc(50vw_-_1.25rem),calc((100svh_-_var(--site-header-height,5rem)_-_11rem)*0.72))]"
         style={{
           top: "var(--site-header-height, 5rem)",
-          height: "calc(100dvh - var(--site-header-height, 5rem))",
+          height: "calc(100svh - var(--site-header-height, 5rem))",
         }}
       >
-        <div data-stage className="relative flex will-change-transform" style={{ width: "calc(var(--page-w) * 2)", height: "calc(var(--page-w) / 0.72)" }}>
+        <div data-stage className="relative flex will-change-transform" style={{ width: "calc(var(--page-w) * 2)", height: "calc(var(--page-w) / 0.72)", transform: "translate3d(-25%, 0, 0)" }}>
           {/* ground shadow */}
           <span
             data-ground
@@ -327,7 +328,7 @@ function StoryFace({ post }: { post: Post }) {
           <span
             aria-hidden
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[1200ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]"
-            style={{ backgroundImage: `url("${post.image}")` }}
+            style={{ backgroundImage: `url("${sizedImage(post.image, 960)}")` }}
           />
         </span>
       </div>

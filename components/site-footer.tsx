@@ -44,7 +44,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         <Frame className="flex flex-col gap-2 pb-6 pt-5 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between md:pb-5 md:pr-24">
           <p>
             © {year} PackMyBags · A division of{" "}
-            <a href="https://pcred.org" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#f94f18] transition-colors hover:text-[#ff7a4a]">
+            <a href="https://pcred.org" target="_blank" rel="noopener noreferrer" className="-my-3 inline-block py-3 font-semibold text-[#f94f18] transition-colors hover:text-[#ff7a4a]">
               PCRED Venture Pvt. Ltd.
             </a>
           </p>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUp } from "lucide-react";
 import { FaWhatsapp, FaArrowUp } from "react-icons/fa6";
 
 /** Bottom-right: a scroll-to-top arrow (once you have scrolled) above a WhatsApp chat button. */

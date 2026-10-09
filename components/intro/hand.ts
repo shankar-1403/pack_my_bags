@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { ball, cone, ellipsoid, occlusion, roundBox, sculpt } from "./sculpt";
+import { ball, cone, ellipsoid, occlusion, roundBox, sculptData, toGeometry } from "./sculpt";
 
 // A right hand in the wrist's frame: fingers run along -y, the palm faces +x, the thumb is on the +z side.
 // "grip" closes round a handle bar lying along z through GRIP_BAR; "loose" is the softly curled hand of
@@ -83,8 +83,13 @@ function dorsal(joints: Vec[], i: number): Vec {
 const offset = (p: Vec, d: Vec, by: number): Vec => [p[0] + d[0] * by, p[1] + d[1] * by, p[2] + d[2] * by];
 
 export function handGeometry(pose: "grip" | "loose") {
+  return toGeometry(handData(pose));
+}
+
+/** The sculpted hand as plain arrays (see hand-worker.ts). */
+export function handData(pose: "grip" | "loose") {
   const { shapes, knuckles, nails } = handShapes(pose);
-  return sculpt(shapes, 0.0017, (p, n, field) => {
+  return sculptData(shapes, 0.0017, (p, n, field) => {
     // Creases between fingers and in the palm fall into soft shadow.
     const ao = occlusion(p, n, field);
     let r = 0.42 + 0.58 * ao;

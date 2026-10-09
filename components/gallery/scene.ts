@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { BODY, buildInstantCamera, DOOR_OPEN, STACK } from "./camera-model";
+import { sizedImage } from "@/lib/image-sizes";
 import { ASPECT, seeded, type TableLayout } from "./layout";
 
 // The gallery intro: an instant camera on a walnut table under a desk lamp. Scrolling plays it forward —
@@ -60,17 +61,9 @@ function track(keys: [number, number][]) {
   };
 }
 
-/** Photos load straight from their source (Unsplash and Firebase Storage both allow cross-origin reads),
- *  asking Unsplash for a small copy since a print is only a few hundred pixels wide. */
+/** A print is drawn at 512 px, so a 640 px copy of each photo is plenty (straight from its source, with CORS). */
 function photoUrl(src: string) {
-  if (!/^https?:/.test(src)) return src;
-  if (src.includes("images.unsplash.com")) {
-    const url = new URL(src);
-    url.searchParams.set("w", "640");
-    url.searchParams.set("q", "75");
-    return url.toString();
-  }
-  return src;
+  return /^https?:/.test(src) ? sizedImage(src, 640) : src;
 }
 
 /** The face of a print, drawn exactly like the interactive card: white frame, square photo, caption by hand. */
@@ -122,7 +115,7 @@ type Flight = {
   slide: number;
 };
 
-export function createGalleryScene(canvas: HTMLCanvasElement, options: { prints: ScenePrint[]; font: string; wood: HTMLCanvasElement }) {
+export function createGalleryScene(canvas: HTMLCanvasElement, options: { prints: ScenePrint[]; font: string; wood: HTMLCanvasElement | HTMLImageElement }) {
   const { prints, font, wood } = options;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
@@ -243,7 +236,8 @@ export function createGalleryScene(canvas: HTMLCanvasElement, options: { prints:
           faces[i].texture.needsUpdate = true;
           resolve();
         };
-        image.onerror = () => resolve();
+        // A missing smaller copy (photos uploaded before copies existed) falls back to the original.
+        image.onerror = () => (/_w\d+\.webp\?/.test(image.src) ? (image.src = image.src.replace(/_w\d+\.webp\?/, ".webp?")) : resolve());
         image.src = photoUrl(print.photo);
       }),
   );
