@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { ArrowUpRight, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { FaArrowUpRightFromSquare, FaEnvelope, FaLocationDot, FaPhone, } from "react-icons/fa6";
+import { IoLogoWhatsapp } from "react-icons/io";
 import { EnquiryForm } from "@/components/enquiry-form";
 import { Frame } from "@/components/frame";
 import { getSettings } from "@/lib/content";
@@ -9,14 +10,14 @@ export const metadata: Metadata = { title: "Contact" };
 export default async function ContactPage() {
   const settings = await getSettings();
   const channels = [
-    { label: "Call", value: settings.phone, href: `tel:${settings.phone.replace(/\s/g, "")}`, icon: Phone },
-    { label: "WhatsApp", value: settings.phone, href: `https://wa.me/${settings.whatsapp}`, icon: MessageCircle, external: true },
-    { label: "Email", value: settings.email, href: `mailto:${settings.email}`, icon: Mail, wide: true },
+    { label: "Call", value: settings.phone, href: `tel:${settings.phone.replace(/\s/g, "")}`, icon: FaPhone },
+    { label: "WhatsApp", value: settings.phone, href: `https://wa.me/${settings.whatsapp}`, icon: IoLogoWhatsapp, external: true },
+    { label: "Email", value: settings.email, href: `mailto:${settings.email}`, icon: FaEnvelope, wide: true },
     {
       label: "Studio",
       value: settings.address,
       href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address)}`,
-      icon: MapPin,
+      icon: FaLocationDot,
       external: true,
       wide: true,
     },
@@ -43,14 +44,13 @@ export default async function ContactPage() {
                   className="group flex h-full items-start gap-4 rounded-[24px] border border-line bg-cream p-5 transition duration-300 hover:-translate-y-0.5 hover:border-pine/30 hover:shadow-[0_18px_40px_-28px_rgba(23,20,15,0.5)]"
                 >
                   <span className="grid size-11 shrink-0 place-items-center rounded-full bg-pine text-cream transition-colors duration-300 group-hover:bg-[#f94f18]">
-                    <Icon aria-hidden className="size-5" strokeWidth={1.75} />
+                    <Icon aria-hidden className={label === "WhatsApp" ? "size-6.5" : "size-5"}/>
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-header text-[11px] font-semibold uppercase tracking-[0.2em] text-mist">{label}</span>
                     <span className={`mt-1 block text-base leading-6 text-ink ${label === "Email" ? "break-all" : ""}`}>{value}</span>
                   </span>
-                  <ArrowUpRight
-                    aria-hidden
+                  <FaArrowUpRightFromSquare
                     className="size-5 shrink-0 text-mist transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#f94f18]"
                   />
                 </a>

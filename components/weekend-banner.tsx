@@ -68,7 +68,7 @@ export function WeekendBanner({ slides }: { slides: Slide[] }) {
         touch.current = null;
       }}
     >
-      <div className="relative aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]">
+      <div className="relative aspect-[4/2] md:aspect-[16/7] lg:aspect-[21/9]">
         {slides.map((slide, i) => {
           const active = i === index;
           return (
@@ -86,9 +86,9 @@ export function WeekendBanner({ slides }: { slides: Slide[] }) {
                 fill
                 priority={i === 0}
                 sizes="(min-width: 1280px) 80rem, 100vw"
-                className={`object-cover transition-transform ease-linear ${active && !still ? "scale-[1.07] duration-[7000ms]" : "scale-100 duration-0"}`}
+                className={`transition-transform ease-linear ${active && !still ? "scale-[1.07] duration-[7000ms]" : "scale-100 duration-0"}`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-pine/90 via-pine/45 to-pine/5 sm:bg-gradient-to-r sm:from-pine/80 sm:via-pine/25" />
+              <div className="absolute inset-0 bg-gradient-to-t from-pine/90 via-pine/45 to-pine/5 sm:bg-gradient-to-r sm:from-pine/10 sm:via-pine/25" />
               {slide.title || slide.subtitle ? (
                 <div className="absolute inset-x-0 bottom-0 p-5 pb-14 text-cream sm:inset-y-0 sm:right-auto sm:flex sm:max-w-xl sm:flex-col sm:justify-end sm:p-10 sm:pb-16 lg:p-14 lg:pb-20">
                   {slide.title ? (
@@ -119,7 +119,7 @@ export function WeekendBanner({ slides }: { slides: Slide[] }) {
         })}
 
         {count > 1 ? (
-          <div className="absolute inset-x-5 bottom-5 z-20 flex items-center gap-4 sm:inset-x-10 sm:bottom-7 lg:inset-x-14">
+          <div className="absolute inset-x-5 bottom-1 z-20 flex items-center gap-4 sm:inset-x-10 sm:bottom-7 lg:inset-x-14">
             <div className="flex flex-1 gap-1.5">
               {slides.map((slide, i) => (
                 <button

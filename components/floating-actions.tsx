@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
+import { FaWhatsapp, FaArrowUp } from "react-icons/fa6";
 
 /** Bottom-right: a scroll-to-top arrow (once you have scrolled) above a WhatsApp chat button. */
 export function FloatingActions({ whatsapp }: { whatsapp: string }) {
@@ -39,7 +40,7 @@ export function FloatingActions({ whatsapp }: { whatsapp: string }) {
           aria-label="Scroll to top"
           className="pointer-events-auto flex size-12 items-center justify-center rounded-full bg-[#f94f18] text-white shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5 hover:bg-[#b85324] md:size-14"
         >
-          <ArrowUp className="size-5 md:size-6" strokeWidth={2} />
+          <FaArrowUp className="size-5" strokeWidth={2} />
         </button>
       ) : null}
 
@@ -50,10 +51,7 @@ export function FloatingActions({ whatsapp }: { whatsapp: string }) {
         aria-label="Chat on WhatsApp"
         className="pointer-events-auto flex size-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5 hover:bg-[#1ebe57] md:size-14"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="size-6 md:size-7" aria-hidden>
-          <path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9" />
-          <path d="M9 10a.5 .5 0 0 0 1 0v-1a.5 .5 0 0 0 -1 0v1a5 5 0 0 0 5 5h1a.5 .5 0 0 0 0 -1h-1a.5 .5 0 0 0 0 1" />
-        </svg>
+        <FaWhatsapp className="size-7"/>
       </a>
     </div>
   );
